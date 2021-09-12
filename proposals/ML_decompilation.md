@@ -76,6 +76,8 @@ This article proposes an approach to identify functions from binary blobs throug
 ## https://github.com/nforest/awesome-decompilation
 ## [Deep Analysis of Binaries to Recover Program Structure](https://drum.lib.umd.edu/bitstream/handle/1903/15449/ElWazeer_umd_0117E_15040.pdf?sequence=1&isAllowed=y)
 
+## [Debin: predicting debug information](https://files.sri.inf.ethz.ch/website/papers/ccs18-debin.pdf)
+
 
 
 Decompilation approaches based on neural machine translation (NMT)mechanism
