@@ -21,33 +21,39 @@ Later on, in 2021, Liang et al. managed to improve the existing neural decompila
 Another very recent contribution in the area of neural-based decompilers is N-Bref framework []. It aims to solve multiple of the key challenges faced by previous attempts of neural-based decompilers. To solve the problem of incompatibility between the neural architectures of machine translation and the intrinsic structures of decompiler's data, a back-bone structural transformer was developed using inductive Graph Neural Networks (GNNs) to represent low-level code (LLC) as control/data flow dependency graphs (LLC Encoder) and source code as an Abstract Syntax Tree (AST Encoder) []. It additionally integrates an AST decoder as well as memory augmentation techniques to tackle the poor scalability problem that is faced with the growing size of programs. Since decompilation is composed of too many subtasks(eg, data type recovery and source code generation), Chen et al. avoided handling them all using one neural network, they instead composed the process into separate tasks using the same backbone structural transformer with different parameters to achieve better performance for each for these tasks. According to [], N-Bref framework indeed boosted the performance of decompilation and outperformed previous neural-based decompiler. 
 
 
-# Contribution 
-While there has a been huge progress achieved with ML-based decompilation, there are many aspects that are not explored as well as key limitations that are still prevalent in the currently proposed ML-assisted decompilers. The most significant of these limitations is the decompilers' inability to reverse engineer obfuscated or optimized binary samples. However, since decompilers and similar tools are mostly used by malware analysts and other security professionals, these tools need to be able to deal with the highest degree of sophistication that might be present in executable programs, this is mainly due to the complexity of the binary samples offered by malware developers. Therefore, we propose a ML-based decompiler tool that is driven by the most popular techniques that are used by malware developers to hinder the efficiency or slow down the process of binary sample analysis.
+# Contribution
+A great number of the recent advances in decompilers have focused squarely on the desktop x86 architecure, here we intend to implement these more advanced methods to the android platform and its underlying byte-code.
 
-Hence, our key contributions to this idea are summarized below:
+`hile there has a been huge progress achieved with ML-based decompilation, there are many aspects that are not explored as well as key limitations that are still prevalent in the currently proposed ML-assisted decompilers. The most significant of these limitations is the decompilers' inability to reverse engineer obfuscated or optimized binary samples. However, since decompilers and similar tools are mostly used by malware analysts and other security professionals, these tools need to be able to deal with the highest degree of sophistication that might be present in executable programs, this is mainly due to the complexity of the binary samples offered by malware developers. Therefore, we propose a ML-based decompiler tool that is driven by the most popular techniques that are used by malware developers to hinder the efficiency or slow down the process of binary sample analysis.
 
-1. We are planning to develop a decompiler tool that is able to accurately and clearly reconstruct a highly-readable source code of obfuscated, encrypted, protected, and packed binary samples.
-
-	Reason: Complex techniques, such as the ones mentioned above, are very often applied to binary samples to slowdown the analysis process. Hence, we thought that the tool we are proposing must be well equipped to handle such popular malware evasion techniques. 
-
-
-2. We are planning to offer a tool that is robust against ML-adversarial attacks; an aspect that has not been explored in any of the previous ML-based decompiler proposals.
-
-	Reason: ML-adversarial attacks such as poisoning or evasion attacks have been heavily exercised against different ML models to tamper with the output of these models and negatively influence their decision. Since the tool we are proposing will be mainly used by practitioners in the cybersecurity field to analyze samples developed by malicious actors, it must be robust against such attacks to offer credible results to whoever using it. 
-
-
-3. We are planning to offer an extra feature in the decompiler that summarizes, in plaintext format, the main functionality of the program and each of its functions. 
-	
-	Reason: This extra feature is proposed due to the realization that the process of analysis becomes much less tedious when the program functionality is known in advance. This way, analysts, at least, know what they might be looking for and instead of reading a function line by line to understand its task, they will be offered a breif summary that provides some hints and insights about the job of this function. 
-	
-
-
-
-# Overview
-
-Here we propose a means of decompiling binary blobs and executables back into human readable C code.
+Hence, our key contributions to this idea are summarized below:`
 
 # Literature
+## [N-BREF: A HIGH-FIDELITY DECOMPILER EXPLOITING PROGRAMMING STRUCTURES](https://ai.facebook.com/blog/introducing-n-bref-a-neural-based-decompiler-framework/)
+
+current state of the art decompiler
+
+paper: https://ai.facebook.com/blog/introducing-n-bref-a-neural-based-decompiler-framework/
+
+code: https://github.com/facebookresearch/nbref?fbclid=IwAR3i37sj0z0YpLErZRoexZS_g2Oef-SspCwCxdPDdp-QQaYf1d2BOA0rtwY
+
+## [Debin: predicting debug information](https://files.sri.inf.ethz.ch/website/papers/ccs18-debin.pdf)
+
+Decompilation approaches based on neural machine translation (NMT)mechanism
+
+## [Java decompiler diversity and its application to meta-decompilation](https://www.sciencedirect.com/science/article/abs/pii/S0164121220301151)
+
+A survey on java decompilers, helps us identify their shortcomings
+
+## [Neutron: an attention-based neural decompiler](https://link.springer.com/content/pdf/10.1186/s42400-021-00070-0.pdf)
+
+## [Improving type information inferred by decompilers with supervised machine learning](https://arxiv.org/pdf/2101.08116.pdf)
+
+## [A Neural-based Program Decompiler](https://arxiv.org/pdf/1906.12029.pdf)
+
+## [Evolving Exact Decompilation](http://storm-country.com/blog/evo-deco)
+
+paper: https://www.cs.unm.edu/~eschulte/data/bed.pdf
 
 ## [Using Recurrent Neural Networks for Decompilation](https://www.cs.unm.edu/~eschulte/data/katz-saner-2018-preprint.pdf)
 
@@ -57,38 +63,23 @@ This article proposes an approach to completely reverse engineer binary blobs to
 
 This article proposes an approach to identify functions from binary blobs through a CNN.
 
-## [Neural Reverse Engineering of Stripped Binaries using Augmented Control Flow Graphs](https://arxiv.org/pdf/1902.09122.pdf)
-
-
-
-## [Machine Learning-Assisted Binary Code Analysis](http://pages.cs.wisc.edu/~jerryzhu/pub/nips07-abs.pdf)
-
 ## [Talk on reverse engineering malware binary with ML](https://www.blackhat.com/docs/us-15/materials/us-15-Davis-Deep-Learning-On-Disassembly.pdf)
 
-## [Evolving Exact Decompilation](https://www.cs.unm.edu/~eschulte/data/bed.pdf)
+## https://github.com/nforest/awesome-decompilation
 
-## [Evolving a Decompiler](http://storm-country.com/blog/evo-deco)
+Useful resources on decompilation
+
+## [Recognizing Functions in Binaries With Neural Networks](https://people.eecs.berkeley.edu/~dawnsong/papers/Recognizing%20functions%20in%20binaries%20with%20neural%20networks_augsut%202015.pdf)
+
+## [Decompiling Obfuscated Android Applications](https://www.guardsquare.com/blog/decompiling-obfuscated-android-applications)
+
+## [Kerberoid: A Practical Android Decompiler](https://seclab.skku.edu/wp-content/uploads/2019/11/p2557-jang.pdf)
+
+## [Neural Reverse Engineering of Stripped Binaries using Augmented Control Flow Graphs](https://arxiv.org/pdf/1902.09122.pdf)
 
 ## [Towards Neural Decompilation](https://arxiv.org/pdf/1905.08325.pdf)
 
-## [Improving type information inferred by decompilers with supervised machine learning](https://arxiv.org/pdf/2101.08116.pdf)
-
-## https://github.com/nforest/awesome-decompilation
-## [Deep Analysis of Binaries to Recover Program Structure](https://drum.lib.umd.edu/bitstream/handle/1903/15449/ElWazeer_umd_0117E_15040.pdf?sequence=1&isAllowed=y)
-
-## [Debin: predicting debug information](https://files.sri.inf.ethz.ch/website/papers/ccs18-debin.pdf)
-
-
-
-Decompilation approaches based on neural machine translation (NMT)mechanism
-
-## [Neutron: an attention-based neural decompiler] https://link.springer.com/content/pdf/10.1186/s42400-021-00070-0.pdf
-
-## [N-BREF: A HIGH-FIDELITY DECOMPILER EXPLOITING PROGRAMMING STRUCTURES] 
-https://openreview.net/references/pdf?id=yyKS6n7L-K
-https://ai.facebook.com/blog/introducing-n-bref-a-neural-based-decompiler-framework/
-
-A list of useful resources for decompilation
+## [Machine Learning-Assisted Binary Code Analysis](http://pages.cs.wisc.edu/~jerryzhu/pub/nips07-abs.pdf)
 
 # Contribution
 This is an area not too explored and we have yet to see more nuanced approaches applied to decompilation.
