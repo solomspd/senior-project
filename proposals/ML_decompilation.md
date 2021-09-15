@@ -33,7 +33,7 @@ Hence, our key contributions to this idea are summarized below:`
 
 current state of the art decompiler
 
-paper: https://ai.facebook.com/blog/introducing-n-bref-a-neural-based-decompiler-framework/
+paper: https://openreview.net/group?id=ICLR.cc/2021/Conference
 
 code: https://github.com/facebookresearch/nbref?fbclid=IwAR3i37sj0z0YpLErZRoexZS_g2Oef-SspCwCxdPDdp-QQaYf1d2BOA0rtwY
 
