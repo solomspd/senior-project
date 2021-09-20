@@ -45,6 +45,8 @@ Decompilation approaches based on neural machine translation (NMT)mechanism
 
 A survey on java decompilers, helps us identify their shortcomings
 
+paper: https://reader.elsevier.com/reader/sd/pii/S0164121220301151?token=EDE1520D312B1F13F2F86C6E340D9F21BE11331D6D3F2662F75CD95A3BED26C897B0368BCC26BA3CE3BA60C73C635E1A&originRegion=eu-west-1&originCreation=20210920124041
+
 ## [Neutron: an attention-based neural decompiler](https://link.springer.com/content/pdf/10.1186/s42400-021-00070-0.pdf)
 
 ## [Improving type information inferred by decompilers with supervised machine learning](https://arxiv.org/pdf/2101.08116.pdf)
