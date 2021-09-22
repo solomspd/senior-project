@@ -22,7 +22,12 @@ We believe that the more expressive nature of java byte code has the potential t
 Also this is to provide tools to comabt the current rise in security concerns on the mobile platform.
 
 Beyond simply migrating well established solutins to byte code, we also propose a 3 phase solution to addressing the decompilation process, each phase leveraging a different approach to extracting information from the cryptic binary.
-The first phase involves
+
+
+
+The first part of the pipeline deals with the disassembly phase of the decompialtion process. Disassembly is a crucial step during the decompilation process since the rest of the phases are heavily dependent on the output of the disassembler. However, the complexity of optimizations and other compilation techniques induce many uncertainties that the disassembler needs to handle during the process. The output of the currenlty used disassembler have false postives and false negatives which negatively reflects on the decompiled code. Thus, in order to improve the accuracy of the disassembler output, probabilities are used to model the uncertainities that are induced during the compilation phase. The assigned probabilities basically reflect the likelihood of the corresponding instruction address to have false positive or false negative instruction. Probabilistic inference is used afterwards for disassembling the target binary file according to the probabilities assigned to each address in the code section. 
+
+
 The second phase relies ideas proposed by debin to find data within the disassembly itself without actually starting the transition back to a high level language.
 Here, we attempt to predict what symbols were omitted during the optimization process; think of it as taking a optimized binary and extrapolating from it a debug binary complete with debugging symbols.
 This would allow us more insight where creating the abstract syntax tree in the last phase to produce the final high level langauge prediction.
