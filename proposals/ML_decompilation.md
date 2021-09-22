@@ -82,3 +82,10 @@ Useful resources on decompilation
 ## [Towards Neural Decompilation](https://arxiv.org/pdf/1905.08325.pdf)
 
 ## [Machine Learning-Assisted Binary Code Analysis](http://pages.cs.wisc.edu/~jerryzhu/pub/nips07-abs.pdf)
+
+## Probabilistic Disassembly
+https://www.cs.purdue.edu/homes/zhan3299/res/ICSE19.pdf
+
+
+
+(http://pages.cs.wisc.edu/~jerryzhu/pub/nips07-abs.pdf)
