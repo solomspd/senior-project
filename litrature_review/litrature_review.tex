@@ -6,9 +6,22 @@
 
 	\maketitle
 
+\section{Overview}
+Although reverse engineering a binary program has a rather mature ecosystem of tools such as Ghidra and Binary Ninja, they all still involve a large amount of manual time and effort to bring back some sense of structure and human readability to the assembly code. This is mainly due to their dependence on pattern matching and other rule-based approaches which introduces many limitations to traditional decompilers including poor scalability and development. Since the purpose of decompilation is crucial to multiple cybersecurity domains such as malware analysis and vulnerability discovery, this more this processed is enhanced, we can offer better outcomes to the community. \\\\
+
+One of the core conceptual problems with decompilation is that although you can deterministically compile code into assembly, the reverse is not untrue; there are countless forms that code can take that produces the same Assembly.
+To this end the deterministic nature of rule based decompilers fails to pick which of the countless routes to take.
+Machine learning offers a heuristical approach to settling these uncertainties, allowing us to get as close as possible to how a human have written it.
+
+Furthermore, x86 architecture has been given plenty of the focus in recent papers 
+
+\noindent Machine learning techniques offer an opportunity to dramatically automate this process. Thus, machine learning based decompilation has been explored in a number of research projects before [2,3,4,6]. However all of these projects target the recovery of C code running on x86 architecture. Although decompiling android applications has a lot of problems still that hinder the accurate recovery of the source code, none of the projects that got implemented tackle this issue. Besides the typical compilation problems that are present in any decompiler(e.g. syntatic distortion, semantic incorrectness, and major difficulty with code readability), android apps decompilers show a considerable failure rate in recovering programs as well as a major bias towards a specific goal/usage of the decompiler. In addition, android decompilers perform differently across different applications and the output of the decompiled code is heavily dependent on the compiler used to compile the original source code. Therefore, this project introduces a new platform for credible android apps decompilation that adopts major successful models that framatically enhanced the performance of desktop  
+
+In this 
 	\section{N-Bref}
 
 	This is the current state of the art for decompiling binaries with an \verb|x86| target.
+
 
 
 \end{document}
