@@ -25,7 +25,9 @@ Beyond simply migrating well established solutins to byte code, we also propose 
 The first phase involves
 The second phase relies ideas proposed by debin to find data within the disassembly itself without actually starting the transition back to a high level language.
 Here, we attempt to predict what symbols were omitted during the optimization process; think of it as taking a optimized binary and extrapolating from it a debug binary complete with debugging symbols.
+This would allow us more insight where creating the abstract syntax tree in the last phase to produce the final high level langauge prediction.
 
+Ofcourse, we will not only fully integrate these phases into a single cohesive tool stack and migrate them to another architecture but also to improve on each one individually.
 
 \noindent Machine learning techniques offer an opportunity to dramatically automate this process. Thus, machine learning based decompilation has been explored in a number of research projects before. 
 However all of these projects target the recovery of C code running on x86 architecture. Although decompiling android applications has a lot of problems still that hinder the accurate recovery of the source code, none of the projects that got implemented tackle this issue.
