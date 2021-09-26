@@ -90,6 +90,26 @@ Also, DEBIN uses a binary classifier to better evaluate the updated binary file'
 
 \noindent DEBIN's major key limitations exist in predicting the contents of struct and union types. Also, the trained-based output of different compilers works well in predicting symbols omitted in compilation, yet it does not perform well with the initial use of obfusication or human-based written assembly.\\
 
+\section{Toward Neural Decompilation}
+
+Discovering vulnerabilities and malware analysis begins by comprehending the low-level code comprising the program. Although most Reverse Engineers and Malware Analysts go through this process manually by reverse engineering
+the program, it is a slow, time consuming, and tedious task. The problem here lies in the act of manually going through each and every line to try and understand what a program does and how it is done. 
+Hence, decompilation can greatly improve this manual process by automatically translating the excutalbe binary code to a better visual and readable higher-level code. Not only is Decompilation useful in vulnerability and security analysis, but also in the
+easiness of portability to other architectures or operating systems since we are dealing with the source code itself.\\
+
+Many existing decompilers vary in their decompilation process. For instance, there are those who rely on pattern matching to clarify the relations between the low level and high level structures. However, the failure rate of this method is high when used on sophisticated code and advanced statements
+such as the goto. Semantically equivalence may be achieved in comparison to the orginal binary file, yet it's unreadable and non-efficient. Another decompiler method that is worth mentioning is those that are based on neural machine translation (NMT) due to their significant improvement and results in regards to binary to source code translation. 
+Still these decompilers have their own problems and constraints. For example, a decompiler that used RNN for decompialtion had difficulties relating between the transalted programming languages and our natural language, thus leading to poor results. Hence, the code they generate often is not recompilabe or is not equivalent to the original source code.\\
+
+Automatic neural deocmopiler is a two phased approach that aims at targeting some of the previously mentioned problems above. The first stage tries to generate a template code snippet that has an equivalent structure including computation to the input file. The second stage would be filling the template code snippet with the programs values to finalize the decompilation process.
+Instead of applying the methods of the existing NMT decompilers that work directly on binary files without strong natural langauge knowledge, Automatic nueral decomopiler applies first augmentation with programming-languages knowledge (domain-knowledge). Through domain-knowledge, the NMT translation will by more readable and simpler code in contrast to the original NMT decompilers.
+Also, Automatic neural deocmopiler incoperates techniques used in Natural Language Processing (NLP) to better structure the translated programming language.The second phase of the Automatic nueral deocmopiler recieves the template code snippet as input to find the right values for
+represent actual code from the template code snippet released from the NMT translation. The second phase verifies that the generated values are correct and relevant, if not then they are replaced using the delexicalization practices learned through NLP. Hence, the process starts from the assembly code, to the NMT mode, to the snippet code result, to the final NLP checking step.\\
+
+Automatic neural deocmopiler main purpose is decompile off-the-shelf compilers that use optimization techiniques in the compilation process. They do not aim to handle hand written assembly, nor do they try to outperform existing decompilers. Mjor limitation they face is thet as the length of an input
+increases, there is a higher chance that the decompiled code would fail. As the fields of NMT evolves to better handle long inputs, so would the resulted output. Finally, the decompilation testing was implemented on LLVM IR
+and x86 assembly to C.
+
 \section{Contact Details}
 contact us through solomspd@aucegypt.edu
 
