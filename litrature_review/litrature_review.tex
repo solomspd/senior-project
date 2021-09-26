@@ -64,10 +64,23 @@ Even their new tool Arlechino can produce semantic equivalence modulo inputs sou
 \section{N-Bref}
 
 This is the current state of the art neural to neural system for decompiling binaries with an \verb|x86| target back to high level \verb|C|.
-It is a neural to neural system that means to 
 Essentially, the paper proposes 2 models that support each other.
-One model creates an abstract syntax tree from the disassembly and another that extracts a graph neural netword from the assembly, to create a graph of how the low level registers interact with each other.
+One model creates an abstract syntax tree (AST) from the disassembly and another that extracts a graph neural network from the assembly, to create a graph of how the low level registers interact with each other.
 This way we have a way to inspect how the small scale variables interactions aswell as the larger scope and complexity of the application as a whole.
+
+The low level code, in this case the \verb|x86| assembly, is analyzed instruction by instruction to decompose it into its elemental components, the opcode and the registers it is manipulating identifying whether they act as sources or destinations.
+We can then create a graph of these relations how the instructions flow,
+From this we also try to extrapolate small scale data flows, such as adding directional edges to convey the equivalence of certain nodes and registers to make it easier for the model to recognize the flow of data.
+All this to have an idea of what the paper likes to call "Control Flow".
+
+The heart of the system is the  structural transformer.
+First it takes the abstract syntax tree and encodes it along with the graph of the assembly instructions to predict what node could be missing from the AST.
+Then this new AST is used for another iteration of predicting the next missing node.
+This leads to the AST being developed breadth first.
+This process concludes when the predicted node leads to termination.
+
+To address the lack of determinism in the structures expressed in abstract syntax tress, all unary operations are converted to conventional mathematical expressions and all while loops are made into for loops.
+
 
 \section{DEBIN}
 
@@ -89,8 +102,5 @@ Finally, after the predictions are applied on the unkown elements, an updated bi
 Also, DEBIN uses a binary classifier to better evaluate the updated binary file's accuracy based on the following formula, Accuracy = ${\frac{|TP|+|TN|}{|P|+|N|}}$. After going through all 9000 binary files and evaluating them, variable recovery reached 90.6\%, type recovery reached 73.8\%, name prediction accuracy up to 63.2\%, and structured prediction up to 63\% precision.\\
 
 \noindent DEBIN's major key limitations exist in predicting the contents of struct and union types. Also, the trained-based output of different compilers works well in predicting symbols omitted in compilation, yet it does not perform well with the initial use of obfusication or human-based written assembly.\\
-
-\section{Contact Details}
-contact us through solomspd@aucegypt.edu
 
 \end{document}
