@@ -80,6 +80,20 @@ This leads to the AST being developed breadth first.
 This process concludes when the predicted node leads to termination.
 
 To address the lack of determinism in the structures expressed in abstract syntax tress, all unary operations are converted to conventional mathematical expressions and all while loops are made into for loops.
+This however does hurt the final accuracy since the original code is likely to have been written with a variety of styles from different users.
+Various hyper parameters are used to fine tune the model, namely they influence how complex the code to be analyzed is expected to be and companstes accordingly.
+The dataset this papers used were mostly unoptimized. Their approach was not mature enough to extract the datatypes of optimized and stripped data structures.
+
+This system can be thought of as an encoder decoder transformer network where both the assembly and the abstract syntax tree are encoded to decode into a more elaborate AST.
+
+The actual acrchitecture of the system is a bit similar to natrual langugae processors.
+Both extracted structures are encoded fed into self attention layers and decoded into the new AST node.
+
+However the inerworkings of the model also involves more advanced techinques such as memory augmentation and graph augmentation.
+Graph augmentation is implemented by making the matrecies graphs between attention layers to allow more complicated intferences to be performed.
+
+
+\section{Evolving an Exact Decompiler}
 
 
 \section{DEBIN}
