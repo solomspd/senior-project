@@ -7,7 +7,7 @@
 
 \addbibresource{bibliography.bib}
 
-\title{Litrature Review}
+\title{Neural Program Decompilation Framerwork for Android Applications\\Litrature Review}
 
 \author{
 \IEEEauthorblockN{Abdelsalam ElTamawy}
@@ -88,7 +88,12 @@ The problem with BAP is that it is impossible to prove the correctness of its co
 The problem of the latter approach is to obtain 100\% accuracy because of the presence of indirect branches or functions without explicit calls. Thus, it is hard to have a precise image of the control flow. These problems are to be solved to a reasonable extent using \textbf{Probabilistic Disassembly}
 
 \subsubsection{Probabilistic Disassembly}
-Analyzing and reversing software has many applications; however, it is challenging because the source code is usually not present. The first problem is how to disassemble the software accurately. This process is highly complex because of the diversity in the compilation and optimization techniques. The paper discusses two popular disassemblers: linear sweep disassemblers and traversal disassemblers. Linear sweep follows the byte order, whereas traversal disassembling follows the control flow of function calls and jumps. The problem with a linear sweep is that it introduces many false positives and even false negatives, especially when data and code interleaves. On the other hand, traversal disassemblers suffer indirect control flow like in the switch-case statement.
+Analyzing and reversing software has many applications; however, it is challenging because the source code is usually not present.
+The first problem is how to disassemble the software accurately.
+This process is highly complex because of the diversity in the compilation and optimization techniques.
+The paper discusses two popular disassemblers: linear sweep disassemblers and traversal disassemblers.
+Linear sweep follows the byte order, whereas traversal disassembling follows the control flow of function calls and jumps.
+The problem with a linear sweep is that it introduces many false positives and even false negatives, especially when data and code interleaves. On the other hand, traversal disassemblers suffer indirect control flow like in the switch-case statement.
 
 The paper also discusses \textbf{Superset Disassembly}. It is the state-of-the-art technique in rewriting/instrumentation. The idea behind this approach is to consider every starts an instruction, called superset instruction. Consecutive superset instructions can share standard bytes. Superset disassemblers have no false-negative but must have a bloated code body because of the many superset instructions that are false positives.
 
