@@ -208,7 +208,8 @@ This culminates in this solution working well on very small examples but having 
 
 
 \section{Discussion}
-
+\subsection{Binary Enrichment}
+This stage is essential in our pipeline integration. As discussed in the previous sections, there is a lot of information lost or omitted in the compilation stage as we reach the binary file. As a result, we adopt DEBIN's methodology to predict the symbols omitted in the compilation stage with a high accuracy. Moreover, ARM is prone to the problems previously mentioned in the x86 disassembling. Therefore, to avoid such problems, we are modifying the disassembling stage adopted by DEBIN into the approach of Probabilistic Disassembly.
 
 \printbibliography
 
