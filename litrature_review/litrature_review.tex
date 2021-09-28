@@ -15,7 +15,8 @@
 \and
 \IEEEauthorblockN{Rinal}
 \and
-\IEEEauthorblockN{Andrew}
+\IEEEauthorblockN{Andrew Fahmy}
+\IEEEauthorblockA{School of Science and Engineering\\the American University in Cairo\\andrewk.kamal@aucegypt.edu}
 \and
 \IEEEauthorblockN{Ahmed}
 \and
@@ -136,14 +137,14 @@ Although the method proposed in \cite{fu_neural-based_2019} outperforms earlier 
 
 \subsubsection{Toward Neural Decompilation}
 
-Discovering vulnerabilities and malware analysis begins by comprehending the low-level code comprising the program. Although most Reverse Engineers and Malware Analysts go through this process manually by reverse engineering
+Toward Neural Decompilation tackles the limitation metioned in using recurrent neural networks for decompilation, which is the translation between natural and programming language. Discovering vulnerabilities and malware analysis begins by comprehending the low-level code comprising the program. Although most Reverse Engineers and Malware Analysts go through this process manually by reverse engineering
 the program, it is a slow, time consuming, and tedious task. The problem here lies in the act of manually going through each and every line to try and understand what a program does and how it is done.
 Hence, decompilation can greatly improve this manual process by automatically translating the excutalbe binary code to a better visual and readable higher-level code. Not only is Decompilation useful in vulnerability and security analysis, but also in the
 easiness of portability to other architectures or operating systems since we are dealing with the source code itself.
 
 Many existing decompilers vary in their decompilation process. For instance, there are those who rely on pattern matching to clarify the relations between the low level and high level structures. However, the failure rate of this method is high when used on sophisticated code and advanced statements
 such as the goto. Semantically equivalence may be achieved in comparison to the orginal binary file, yet it's unreadable and non-efficient. Another decompiler method that is worth mentioning is those that are based on neural machine translation (NMT) due to their significant improvement and results in regards to binary to source code translation.
-Still these decompilers have their own problems and constraints. For example, a decompiler that used RNN for decompialtion had difficulties relating between the transalted programming languages and our natural language, thus leading to poor results. Hence, the code they generate often is not recompilabe or is not equivalent to the original source code.
+As mentioned by the authors of \cite{katz_towards_2019}, still these decompilers have their own problems and constraints. For example, a decompiler that used RNN for decompialtion had difficulties in relating between the transalted programming languages and our natural language, thus leading to poor results. Hence, the code they generate often is not recompilabe or is not equivalent to the original source code.
 
 Automatic neural deocmopiler is a two phased approach that aims at targeting some of the previously mentioned problems above. The first stage tries to generate a template code snippet that has an equivalent structure including computation to the input file. The second stage would be filling the template code snippet with the programs values to finalize the decompilation process.
 Instead of applying the methods of the existing NMT decompilers that work directly on binary files without strong natural langauge knowledge, Automatic nueral decomopiler applies first augmentation with programming-languages knowledge (domain-knowledge). Through domain-knowledge, the NMT translation will by more readable and simpler code in contrast to the original NMT decompilers.
