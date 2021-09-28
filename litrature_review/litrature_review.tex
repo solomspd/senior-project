@@ -32,8 +32,8 @@
 
 \begin{document}
 
-\maketitle
 
+\maketitle
 
 \section{Introduction}
 Although reverse engineering a binary program has a relatively mature ecosystem of tools such as Ghidra and Binary Ninja, they all still involve a large amount
@@ -88,7 +88,7 @@ The problem with BAP is that it is impossible to prove the correctness of its co
 \cite{brumley_bap_2011} The problem of the latter approach is to obtain 100\% accuracy because of the presence of indirect branches or functions without explicit calls. Thus, it is hard to have a precise image of the control flow. These problems are to be solved to a reasonable extent using \textbf{Probabilistic Disassembly}
 
 \subsubsection{Probabilistic Disassembly}
-Analyzing and reversing software has many applications; however, it is challenging because the source code is usually not present.
+Analyzing and reversing software has many applications; however, it is challenging because the source code is usually not present\cite{miller_probabilistic_2019}.
 The first problem is how to disassemble the software accurately.
 This process is highly complex because of the diversity in the compilation and optimization techniques.
 The paper discusses two popular disassemblers: linear sweep disassemblers and traversal disassemblers.
@@ -253,19 +253,6 @@ The three most significant problems with this technique are how specific compile
 Another major problem is its lack of scaling for complex and large codebases; it would take an exponential amount of time to decompile as the binary grows.
 Finally, the last fundamental problem is that if the code being predicted is not a snippet from the dataset, it would be challenging to decompile it correctly, and it is too unlikely for a mutation to happen upon the right changes.
 This culminates in this solution working well on minimal examples but generalizing problems, especially at scale.
-
-\section{Discussion}
-Each of the surveyed papers inspired us in some way till we reached a final version for the system architecture for our project.
-
-\subsection{Binary Enrichment}
-For the first stage in our pipeline integration, as discussed in the previous sections, much information is lost or omitted during the compilation process as we reach the binary file.
-As a result, we adopt DEBIN's methodology to predict the symbols omitted in the compilation stage with high accuracy.
-Moreover, ARM is prone to the problems previously mentioned in the x86 disassembling.
-Therefore, to avoid such problems, we are modifying the disassembling stage adopted by DEBIN with the approach proposed in probabilistic disassembly paper \cite{miller_probabilistic_2019}.
-
-\subsection{Neural Decompilation}
-This survey served to give us insight into creating the necessary high-level code we are targeting.
-Initial attempts at neural decompilation attempted to use recurrent neural networks. 
 
 \printbibliography
 
