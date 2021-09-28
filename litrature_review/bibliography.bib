@@ -58,19 +58,6 @@
 	keywords = {android apps, decompilation, mobile security, reverse engineering},
 }
 
-@inproceedings{miller_probabilistic_2019,
-	title = {Probabilistic Disassembly},
-	doi = {10.1109/ICSE.2019.00121},
-	abstract = {Disassembling stripped binaries is a prominent challenge for binary analysis, due to the interleaving of code segments and data, and the difficulties of resolving control transfer targets of indirect calls and jumps. As a result, most existing disassemblers have both false positives ({FP}) and false negatives ({FN}). We observe that uncertainty is inevitable in disassembly due to the information loss during compilation and code generation. Therefore, we propose to model such uncertainty using probabilities and propose a novel disassembly technique, which computes a probability for each address in the code space, indicating its likelihood of being a true positive instruction. The probability is computed from a set of features that are reachable to an address, including control flow and data flow features. Our experiments with more than two thousands binaries show that our technique does not have any {FN} and has only 3.7\% {FP}. In comparison, a state-of-the-art superset disassembly technique has 85\% {FP}. A rewriter built on our disassembly can generate binaries that are only half of the size of those by superset disassembly and run 3\% faster. While many widely-used disassemblers such as {IDA} and {BAP} suffer from missing function entries, our experiment also shows that even without any function entry information, our disassembler can still achieve 0 {FN} and 6.8\% {FP}.},
-	eventtitle = {2019 {IEEE}/{ACM} 41st International Conference on Software Engineering ({ICSE})},
-	pages = {1187--1198},
-	booktitle = {2019 {IEEE}/{ACM} 41st International Conference on Software Engineering ({ICSE})},
-	author = {Miller, Kenneth and Kwon, Yonghwi and Sun, Yi and Zhang, Zhuo and Zhang, Xiangyu and Lin, Zhiqiang},
-	date = {2019-05},
-	note = {{ISSN}: 1558-1225},
-	keywords = {Computer science, Aggregates, binary, binary rewrite, disassembly, Instruments, probabilistic disassembly, Probabilistic logic, Registers, Runtime, Uncertainty},
-}
-
 @article{liang_neutron_2021,
 	title = {Neutron: an attention-based neural decompiler},
 	volume = {4},
@@ -127,7 +114,7 @@
 	keywords = {decompilation, Binary codes, Data models, Decoding, deep learning, Natural languages, recurrent neural networks, Recurrent neural networks, Tools, Training, translation},
 }
 
-@inproceedings{miller_probabilistic_2019-1,
+@inproceedings{miller_probabilistic_2019,
 	title = {Probabilistic Disassembly},
 	doi = {10.1109/ICSE.2019.00121},
 	abstract = {Disassembling stripped binaries is a prominent challenge for binary analysis, due to the interleaving of code segments and data, and the difficulties of resolving control transfer targets of indirect calls and jumps. As a result, most existing disassemblers have both false positives ({FP}) and false negatives ({FN}). We observe that uncertainty is inevitable in disassembly due to the information loss during compilation and code generation. Therefore, we propose to model such uncertainty using probabilities and propose a novel disassembly technique, which computes a probability for each address in the code space, indicating its likelihood of being a true positive instruction. The probability is computed from a set of features that are reachable to an address, including control flow and data flow features. Our experiments with more than two thousands binaries show that our technique does not have any {FN} and has only 3.7\% {FP}. In comparison, a state-of-the-art superset disassembly technique has 85\% {FP}. A rewriter built on our disassembly can generate binaries that are only half of the size of those by superset disassembly and run 3\% faster. While many widely-used disassemblers such as {IDA} and {BAP} suffer from missing function entries, our experiment also shows that even without any function entry information, our disassembler can still achieve 0 {FN} and 6.8\% {FP}.},
@@ -161,4 +148,17 @@
 	eprinttype = {arxiv},
 	eprint = {1908.06748},
 	keywords = {Computer Science - Computation and Language, Computer Science - Software Engineering},
+}
+
+@article{katz_towards_2019,
+	title = {Towards Neural Decompilation},
+	url = {http://arxiv.org/abs/1905.08325},
+	abstract = {We address the problem of automatic decompilation, converting a program in low-level representation back to a higher-level human-readable programming language. The problem of decompilation is extremely important for security researchers. Finding vulnerabilities and understanding how malware operates is much easier when done over source code. The importance of decompilation has motivated the construction of hand-crafted rule-based decompilers. Such decompilers have been designed by experts to detect specific control-flow structures and idioms in low-level code and lift them to source level. The cost of supporting additional languages or new language features in these models is very high. We present a novel approach to decompilation based on neural machine translation. The main idea is to automatically learn a decompiler from a given compiler. Given a compiler from a source language S to a target language T , our approach automatically trains a decompiler that can translate (decompile) T back to S . We used our framework to decompile both {LLVM} {IR} and x86 assembly to C code with high success rates. Using our {LLVM} and x86 instantiations, we were able to successfully decompile over 97\% and 88\% of our benchmarks respectively.},
+	journaltitle = {{arXiv}:1905.08325 [cs]},
+	author = {Katz, Omer and Olshaker, Yuval and Goldberg, Yoav and Yahav, Eran},
+	urldate = {2021-09-28},
+	date = {2019-05-20},
+	eprinttype = {arxiv},
+	eprint = {1905.08325},
+	keywords = {Computer Science - Machine Learning, Computer Science - Programming Languages},
 }
