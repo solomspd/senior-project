@@ -42,15 +42,15 @@ Since decompilation is crucial to multiple cybersecurity domains such as malware
 One of the core conceptual problems with decompilation is that although one can deterministically compile code into the assembly, the reverse is untrue; there are countless forms that code can take that produce the same assembly.
 To this end, the deterministic nature of rule-based decompilers fails to pick which of the countless routes to take.
 Machine learning offers a heuristical approach to settling these uncertainties, allowing us to get as close as possible to how a human has written it.
-Furthermore, x86 architecture has been given plenty of focus in recent papers, so this leads our attention to see what would happen if we use these techniques on other architectures, namely android and its Java virtual machine.
-Moreover, besides the typical compilation problems that are present in any decompiler(e.g., syntactic distortion, semantic incorrectness, and significant difficulty with code readability), android apps decompilers show a considerable failure rate in recovering programs as well as a significant bias towards a specific goal/usage of the decompiler.
+Furthermore, \verb|x86| architecture has been given plenty of focus in recent papers, so this leads our attention to see what would happen if we use these techniques on other architectures, namely android and its Java virtual machine.
+Moreover, besides the typical compilation problems that are present in any decompiler(e.g., syntactic distortion, semantic incorrectness, and significant difficulty with code readability), android app decompilers show a considerable failure rate in recovering programs as well as a significant bias towards a specific goal/usage of the decompiler.
 In addition, android decompilers perform differently across different applications, and the output of the decompiled code is heavily dependent on the compiler used to compile the source code.
 We believe that the more expressive nature of java byte code can open up better prediction and more straightforward extrapolation of the underlying structure due to java’s more strict object-oriented paradigm.
 Also, this is to provide tools to combat the current rise in security concerns on the mobile platform.
 
 \subsection{Proposed Solution}
 This project aims to propose a new platform for credible Android apps, ML-based decompilation, to raise the accuracy of code recovery.
-Our proposed project adopts and improves on major successful models that dramatically enhance the performance of desktop apps decompilation.
+Our proposed project adopts and improves on major successful models that dramatically enhance the performance of desktop app decompilation.
 Hence, beyond simply migrating well-established solutions from \verb|C| binaries to bytecode, we also propose a 3 phase solution to addressing the decompilation problem in Android applications, each phase leveraging a different approach to extracting information from the cryptic binary.
 
 \section{Literature Review}
