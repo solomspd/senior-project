@@ -11,20 +11,21 @@
 
 \author{
 \IEEEauthorblockN{Abdelsalam ElTamawy}
-\IEEEauthorblockA{School of Science and Engineering\\the American University in Cairo\\solomspd@aucegypt.edu}
+\IEEEauthorblockA{School of Science and Engineering\\The American University in Cairo\\solomspd@aucegypt.edu}
 \and
 \IEEEauthorblockN{Rinal Mohamed}
-\IEEEauthorblockA{School of Science and Engineering\\the American University in Cairo\\rinalmohamed@aucegypt.edu}
+\IEEEauthorblockA{School of Science and Engineering\\The American University in Cairo\\rinalmohamed@aucegypt.edu}
 \and
 \IEEEauthorblockN{Andrew Fahmy}
-\IEEEauthorblockA{School of Science and Engineering\\the American University in Cairo\\andrewk.kamal@aucegypt.edu}
+\IEEEauthorblockA{School of Science and Engineering\\The American University in Cairo\\andrewk.kamal@aucegypt.edu}
 \and
 \IEEEauthorblockN{Ahmed Ehab Hamouda}
-\IEEEauthorblockA{School of Science and Engineering\\the American University in Cairo\\botta633@aucegypt.edu}
+\IEEEauthorblockA{School of Science and Engineering\\The American University in Cairo\\botta633@aucegypt.edu}
 \and
 \IEEEauthorblockN{Ramy}
 \and
 \IEEEauthorblockN{Dina}
+\IEEEauthorblockA{School of Science and Engineering\\The American University in Cairo\\dinamarei@aucegypt.edu}
 }
 
 \begin{document}
@@ -215,22 +216,16 @@ This model is based on LSTM-Seq2Seq-attention (Luong et al. 2015) architecture.
 The AsmTran model is mainly divided into two sub-models.
 The first sub-model is a text classification model aiming to fine-grain code segmentation for low-level PL based on basic operations.
 The second sub-model is an NMT model which takes each basic operation of the target low-level PL as input and outputs its corresponding high-level PL.
-It is worth mentioning that the authors of [] introduce the iterative error correction (EC) mechanism in both sub-models in the training phrase.
-The prediction errors in the two sub-models’ output are fed back to the sub-model itself to improve the AsmTran’s performance through the manual definition of judgment and EC rules.
 
 In Neutron’s final phase, Function Reconstruction works with the aim of reconstructing the missing dependencies from the previous stage.
-This includes data flow recovery, control flow recovery, as well as parameters and return value recovery, and it works by the manual definition of rules as it aids in the reconstruction process.
-Neutron is implemented on the base of the attention-based NMt mechanism in the tensor2tensor framework. The results show that Neutron achieves an average accuracy of 96.96\% on three real-word projects and three different tasks.
+This includes data flow recovery, control flow recovery, as well as parameters and return value recovery, and it works by the manual definition of rules as it aids in the reconstruction process.Neutron is implemented on the base of the attention-based NMT mechanism in the tensor2tensor framework. The results show that Neutron achieves an average accuracy of 96.96\% on three real-word projects and three different tasks.
 
-Neutron’s contribution is mainly its introduction to a new technique that has high applicability and redability as measured by benchmarks in varying levels of complexity, and it offers a new understanding of the feasibility of applying NMT model that works on natural language to Pls.
+Neutron’s contribution is mainly its introduction to a new technique that has high applicability and redability as measured by benchmarks in varying levels of complexity, and it offers a new understanding of the feasibility of applying NMT model that works on natural language to PLs.
 Similar to natural language translation, the decompilation of low-level PL to high-level PL can also be seen as a translation problem between two natural languages.
 The results on three real-world projects and three different tasks show that Neutron’s accuracy can reach 96.96\% on average.
-Compared with using the LSTM-Seq2Seq-attention model (Luong et al. 2015), our approach achieves 36.11\% higher accuracy on average, which reflects that the attention- based NMT method fails to learn the conversion rules between PL pairs effectively.
-Besides, the proposed approach acheived 74.71\% improvement, on average, compared to using other LSTM models.
-Even though, the results shown by Neutron are promising, it still exhibits a number of limitations. Firstly, it does not effectively restore the semantics of target low-level PL.
-It also performs poorly in optimized code primarily due to the adoption of the slicing mechanism.
+Even though, the results shown by Neutron are promising, it still exhibits a number of limitations. Firstly, it does not effectively restore the semantics of target low-level PL.It also performs poorly in optimized code primarily due to the adoption of the slicing mechanism.
 The final limitation is Neutron’s inability to recover user-defined data types such as classes and structures which hinders the readability of the decompiled high-level PL.
-
+ \cite{liang_neutron_2021}
 
 \subsection{Evolutionary Decompiler}
 
