@@ -3,6 +3,9 @@
 \usepackage{float}
 \usepackage{dirtytalk}
 \usepackage{graphicx}
+\usepackage{biblatex}
+
+\addbibresource{bibliography.bib}
 
 \author{}
 
@@ -187,5 +190,8 @@ The second stage develops a neural decompilation model that performs the actual 
 
 In Neutron’s final phase, Function Reconstruction works with the aim of reconstructing the missing dependencies from the previous stage. This includes data flow recovery, control flow recovery, as well as parameters and return value recovery, and it works by the manual definition of rules as it aids in the reconstruction process. Neutron is implemented on the base of the attention-based NMt mechanism in the tensor2tensor framework. The results show that Neutron achieves an average accuracy of 96.96\% on three real-word projects and three different tasks.
 
-Neutron’s contribution is mainly its introduction to a new technique that has high applicability and redability as measured by benchmarks in varying levels of complexity, and it offers a new understanding of the feasibility of applying NMT model that works on natural language to Pls. Similar to natural language translation, the decompilation of low-level PL to high-level PL can also be seen as a translation problem between two natural languages. The results on three real-world projects and three different tasks show that Neutron’s accuracy can reach 96.96\% on average. Compared with using the LSTM-Seq2Seq-attention model (Luong et al. 2015), our approach achieves 36.11% higher accuracy on average, which reflects that the attention- based NMT method fails to learn the conversion rules between PL pairs effectively. Besides, the proposed approach acheived 74.71% improvement, on average, compared to using other LSTM models. Even though, the results shown by Neutron are promising, it still exhibits a number of limitations. Firstly, it does not effectively restore the semantics of target low-level PL. It also performs poorly in optimized code primarily due to the adoption of the slicing mechanism. The final limitation is Neutron’s inability to recover user-defined data types such as classes and structures which hinders the readability of the decompiled high-level PL.
+Neutron’s contribution is mainly its introduction to a new technique that has high applicability and redability as measured by benchmarks in varying levels of complexity, and it offers a new understanding of the feasibility of applying NMT model that works on natural language to Pls. Similar to natural language translation, the decompilation of low-level PL to high-level PL can also be seen as a translation problem between two natural languages. The results on three real-world projects and three different tasks show that Neutron’s accuracy can reach 96.96\% on average. Compared with using the LSTM-Seq2Seq-attention model (Luong et al. 2015), our approach achieves 36.11\% higher accuracy on average, which reflects that the attention- based NMT method fails to learn the conversion rules between PL pairs effectively. Besides, the proposed approach acheived 74.71\% improvement, on average, compared to using other LSTM models. Even though, the results shown by Neutron are promising, it still exhibits a number of limitations. Firstly, it does not effectively restore the semantics of target low-level PL. It also performs poorly in optimized code primarily due to the adoption of the slicing mechanism. The final limitation is Neutron’s inability to recover user-defined data types such as classes and structures which hinders the readability of the decompiled high-level PL.
+
+\printbibliography
+
 \end{document}
