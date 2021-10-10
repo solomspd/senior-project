@@ -87,5 +87,10 @@ Useful resources on decompilation
 https://www.cs.purdue.edu/homes/zhan3299/res/ICSE19.pdf
 
 
-
 (http://pages.cs.wisc.edu/~jerryzhu/pub/nips07-abs.pdf)
+
+
+## [Deep Code Comment Generation](https://xin-xia.github.io/publication/icpc182.pdf)
+
+## [A Graph-based Dataset of Commit History
+of Real-World Android apps](https://sci-hub.mksa.top/10.1145/3196398.3196460)
