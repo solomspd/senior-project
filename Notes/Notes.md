@@ -1,5 +1,7 @@
 # senior-project
 
-Golden C Tree.py
-Golden Obj asm_mips.py
-Feats and graphs npy asm_mips.py
+Golden C created in Tree.py
+
+Golden Obj created in asm_mips.py
+
+Feats and graphs npy created in asm_mips.py
