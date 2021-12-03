@@ -1,0 +1,37 @@
+create file
+Number of training examples: 80
+Number of validation examples: 15
+Number of testing examples: 5
+Unique tokens in source assembly vocabulary: 72 
+Max input length : 583
+Max output length : 235
+Epoch: 0 | Time: 0m 3s | learning rate 0.003
+  - (Training)   ppl:  87.37419, accuracy: 2.020 %, elapse: 0.056 min
+  - (Validation) ppl:  154.95641, accuracy: 0.000 %, elapse: 0.056 min
+Epoch: 1 | Time: 0m 0s | learning rate 0.006
+  - (Training)   ppl:  118.53607, accuracy: 0.000 %, elapse: 0.013 min
+  - (Validation) ppl:  49.31881, accuracy: 0.000 %, elapse: 0.013 min
+Epoch: 2 | Time: 0m 0s | learning rate 0.009
+  - (Training)   ppl:  103.41222, accuracy: 3.226 %, elapse: 0.012 min
+  - (Validation) ppl:  67.26462, accuracy: 0.000 %, elapse: 0.012 min
+Epoch: 3 | Time: 0m 0s | learning rate 0.012
+  - (Training)   ppl:  88.41318, accuracy: 1.942 %, elapse: 0.012 min
+  - (Validation) ppl:  86.02349, accuracy: 0.000 %, elapse: 0.012 min
+Epoch: 4 | Time: 0m 0s | learning rate 0.016
+  - (Training)   ppl:  88.35279, accuracy: 2.000 %, elapse: 0.012 min
+  - (Validation) ppl:  130.05485, accuracy: 0.000 %, elapse: 0.012 min
+Epoch: 5 | Time: 0m 0s | learning rate 0.019
+  - (Training)   ppl:  101.55655, accuracy: 5.155 %, elapse: 0.012 min
+  - (Validation) ppl:  67.24662, accuracy: 0.000 %, elapse: 0.012 min
+Epoch: 6 | Time: 0m 0s | learning rate 0.022
+  - (Training)   ppl:  57.18192, accuracy: 7.547 %, elapse: 0.012 min
+  - (Validation) ppl:  65.44479, accuracy: 5.263 %, elapse: 0.012 min
+Epoch: 7 | Time: 0m 0s | learning rate 0.025
+  - (Training)   ppl:  55.01773, accuracy: 9.278 %, elapse: 0.012 min
+  - (Validation) ppl:  57.72846, accuracy: 17.647 %, elapse: 0.012 min
+Epoch: 8 | Time: 0m 0s | learning rate 0.028
+  - (Training)   ppl:  61.44455, accuracy: 13.592 %, elapse: 0.011 min
+  - (Validation) ppl:  99.50837, accuracy: 16.667 %, elapse: 0.011 min
+Epoch: 9 | Time: 0m 0s | learning rate 0.031
+  - (Training)   ppl:  53.75401, accuracy: 11.881 %, elapse: 0.011 min
+  - (Validation) ppl:  50.44380, accuracy: 33.333 %, elapse: 0.011 min

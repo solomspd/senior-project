@@ -1,0 +1,7 @@
+create file
+Number of training examples: 64
+Number of validation examples: 12
+Number of testing examples: 4
+Unique tokens in source assembly vocabulary: 69 
+Max input length : 491
+Max output length : 235

@@ -1,0 +1,25 @@
+create file
+Number of training examples: 64
+Number of validation examples: 12
+Number of testing examples: 4
+Unique tokens in source assembly vocabulary: 72 
+Max input length : 583
+Max output length : 235
+Epoch: 0 | Time: 0m 2s | learning rate 0.003
+  - (Training)   ppl:  106.26415, accuracy: 5.000 %, elapse: 0.045 min
+  - (Validation) ppl:  150.09486, accuracy: 0.000 %, elapse: 0.045 min
+Epoch: 1 | Time: 0m 0s | learning rate 0.005
+  - (Training)   ppl:  113.30990, accuracy: 0.000 %, elapse: 0.014 min
+  - (Validation) ppl:  141.46332, accuracy: 0.000 %, elapse: 0.014 min
+Epoch: 2 | Time: 0m 0s | learning rate 0.008
+  - (Training)   ppl:  97.66217, accuracy: 0.000 %, elapse: 0.014 min
+  - (Validation) ppl:  65.71757, accuracy: 0.000 %, elapse: 0.014 min
+Epoch: 3 | Time: 0m 0s | learning rate 0.010
+  - (Training)   ppl:  93.09196, accuracy: 1.190 %, elapse: 0.013 min
+  - (Validation) ppl:  120.71156, accuracy: 0.000 %, elapse: 0.013 min
+Epoch: 4 | Time: 0m 0s | learning rate 0.012
+  - (Training)   ppl:  89.82145, accuracy: 3.659 %, elapse: 0.013 min
+  - (Validation) ppl:  96.55693, accuracy: 0.000 %, elapse: 0.013 min
+Epoch: 5 | Time: 0m 0s | learning rate 0.015
+  - (Training)   ppl:  106.95542, accuracy: 2.532 %, elapse: 0.014 min
+  - (Validation) ppl:  47.74707, accuracy: 0.000 %, elapse: 0.014 min

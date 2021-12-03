@@ -1,0 +1,391 @@
+create file
+Epoch: 0 | Time: 0m 1s | learning rate 0.001
+  - (Training)   ppl:  100.77136, accuracy: 2.564 %, elapse: 0.021 min
+  - (Validation) ppl:  44.72367, accuracy: 0.000 %, elapse: 0.021 min
+Epoch: 1 | Time: 0m 0s | learning rate 0.003
+  - (Training)   ppl:  120.32482, accuracy: 0.000 %, elapse: 0.010 min
+  - (Validation) ppl:  77.47318, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 2 | Time: 0m 0s | learning rate 0.004
+  - (Training)   ppl:  128.36175, accuracy: 2.439 %, elapse: 0.009 min
+  - (Validation) ppl:  56.25377, accuracy: 0.000 %, elapse: 0.009 min
+Epoch: 3 | Time: 0m 0s | learning rate 0.005
+  - (Training)   ppl:  100.30058, accuracy: 0.000 %, elapse: 0.011 min
+  - (Validation) ppl:  107.31433, accuracy: 0.000 %, elapse: 0.011 min
+Epoch: 4 | Time: 0m 0s | learning rate 0.006
+  - (Training)   ppl:  122.51628, accuracy: 2.500 %, elapse: 0.010 min
+  - (Validation) ppl:  78.80375, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 5 | Time: 0m 1s | learning rate 0.008
+  - (Training)   ppl:  75.22641, accuracy: 0.000 %, elapse: 0.020 min
+  - (Validation) ppl:  54.78782, accuracy: 0.000 %, elapse: 0.020 min
+Epoch: 6 | Time: 0m 0s | learning rate 0.009
+  - (Training)   ppl:  97.36901, accuracy: 4.878 %, elapse: 0.012 min
+  - (Validation) ppl:  139.97503, accuracy: 0.000 %, elapse: 0.012 min
+Epoch: 7 | Time: 0m 0s | learning rate 0.010
+  - (Training)   ppl:  104.95608, accuracy: 2.439 %, elapse: 0.011 min
+  - (Validation) ppl:  42.46379, accuracy: 0.000 %, elapse: 0.011 min
+Epoch: 8 | Time: 0m 0s | learning rate 0.011
+  - (Training)   ppl:  95.33155, accuracy: 4.878 %, elapse: 0.010 min
+  - (Validation) ppl:  96.44184, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 9 | Time: 0m 0s | learning rate 0.012
+  - (Training)   ppl:  89.31740, accuracy: 10.526 %, elapse: 0.012 min
+  - (Validation) ppl:  151.22081, accuracy: 0.000 %, elapse: 0.012 min
+Epoch: 10 | Time: 0m 0s | learning rate 0.014
+  - (Training)   ppl:  91.66022, accuracy: 7.500 %, elapse: 0.011 min
+  - (Validation) ppl:  74.91872, accuracy: 0.000 %, elapse: 0.011 min
+Epoch: 11 | Time: 0m 0s | learning rate 0.015
+  - (Training)   ppl:  88.30730, accuracy: 4.545 %, elapse: 0.010 min
+  - (Validation) ppl:  57.42991, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 12 | Time: 0m 0s | learning rate 0.016
+  - (Training)   ppl:  83.00554, accuracy: 2.381 %, elapse: 0.011 min
+  - (Validation) ppl:  46.28572, accuracy: 0.000 %, elapse: 0.011 min
+Epoch: 13 | Time: 0m 0s | learning rate 0.017
+  - (Training)   ppl:  58.05645, accuracy: 7.895 %, elapse: 0.010 min
+  - (Validation) ppl:  50.95518, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 14 | Time: 0m 0s | learning rate 0.019
+  - (Training)   ppl:  63.18025, accuracy: 0.000 %, elapse: 0.010 min
+  - (Validation) ppl:  81.75392, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 15 | Time: 0m 0s | learning rate 0.020
+  - (Training)   ppl:  98.38796, accuracy: 2.381 %, elapse: 0.010 min
+  - (Validation) ppl:  100.99407, accuracy: 7.692 %, elapse: 0.010 min
+Epoch: 16 | Time: 0m 0s | learning rate 0.021
+  - (Training)   ppl:  75.17742, accuracy: 5.882 %, elapse: 0.012 min
+  - (Validation) ppl:  33.79709, accuracy: 20.000 %, elapse: 0.012 min
+Epoch: 17 | Time: 0m 0s | learning rate 0.022
+  - (Training)   ppl:  56.27678, accuracy: 13.514 %, elapse: 0.010 min
+  - (Validation) ppl:  33.57208, accuracy: 35.714 %, elapse: 0.010 min
+Epoch: 18 | Time: 0m 0s | learning rate 0.024
+  - (Training)   ppl:  53.46881, accuracy: 7.143 %, elapse: 0.009 min
+  - (Validation) ppl:  44.90032, accuracy: 26.667 %, elapse: 0.009 min
+Epoch: 19 | Time: 0m 0s | learning rate 0.025
+  - (Training)   ppl:  81.55439, accuracy: 9.524 %, elapse: 0.013 min
+  - (Validation) ppl:  46.72958, accuracy: 23.529 %, elapse: 0.013 min
+Epoch: 20 | Time: 0m 1s | learning rate 0.026
+  - (Training)   ppl:  37.67165, accuracy: 17.391 %, elapse: 0.018 min
+  - (Validation) ppl:  41.83443, accuracy: 21.429 %, elapse: 0.018 min
+Epoch: 21 | Time: 0m 0s | learning rate 0.028
+  - (Training)   ppl:  43.21607, accuracy: 14.634 %, elapse: 0.013 min
+  - (Validation) ppl:  35.65680, accuracy: 29.412 %, elapse: 0.013 min
+Epoch: 22 | Time: 0m 0s | learning rate 0.029
+  - (Training)   ppl:  78.31531, accuracy: 13.158 %, elapse: 0.010 min
+  - (Validation) ppl:  59.72755, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 23 | Time: 0m 0s | learning rate 0.030
+  - (Training)   ppl:  43.44649, accuracy: 18.421 %, elapse: 0.011 min
+  - (Validation) ppl:  56.58502, accuracy: 14.286 %, elapse: 0.011 min
+Epoch: 24 | Time: 0m 0s | learning rate 0.031
+  - (Training)   ppl:  42.96636, accuracy: 22.727 %, elapse: 0.012 min
+  - (Validation) ppl:  50.22797, accuracy: 12.500 %, elapse: 0.012 min
+Epoch: 25 | Time: 0m 0s | learning rate 0.033
+  - (Training)   ppl:  41.97166, accuracy: 17.391 %, elapse: 0.017 min
+  - (Validation) ppl:  23.47616, accuracy: 33.333 %, elapse: 0.017 min
+Epoch: 26 | Time: 0m 1s | learning rate 0.034
+  - (Training)   ppl:  31.98303, accuracy: 23.256 %, elapse: 0.024 min
+  - (Validation) ppl:  53.02777, accuracy: 18.750 %, elapse: 0.024 min
+Epoch: 27 | Time: 0m 1s | learning rate 0.035
+  - (Training)   ppl:  51.35370, accuracy: 19.444 %, elapse: 0.017 min
+  - (Validation) ppl:  26.27408, accuracy: 21.429 %, elapse: 0.017 min
+Epoch: 28 | Time: 0m 0s | learning rate 0.036
+  - (Training)   ppl:  48.68378, accuracy: 23.077 %, elapse: 0.012 min
+  - (Validation) ppl:  18.71047, accuracy: 33.333 %, elapse: 0.012 min
+Epoch: 29 | Time: 0m 0s | learning rate 0.037
+  - (Training)   ppl:  29.71448, accuracy: 15.909 %, elapse: 0.011 min
+  - (Validation) ppl:  29.20818, accuracy: 20.000 %, elapse: 0.011 min
+Epoch: 30 | Time: 0m 0s | learning rate 0.039
+  - (Training)   ppl:  39.53240, accuracy: 19.512 %, elapse: 0.010 min
+  - (Validation) ppl:  54.84494, accuracy: 7.692 %, elapse: 0.010 min
+Epoch: 31 | Time: 0m 0s | learning rate 0.040
+  - (Training)   ppl:  35.06532, accuracy: 21.622 %, elapse: 0.011 min
+  - (Validation) ppl:  50.34763, accuracy: 7.692 %, elapse: 0.011 min
+Epoch: 32 | Time: 0m 0s | learning rate 0.041
+  - (Training)   ppl:  35.10166, accuracy: 18.421 %, elapse: 0.010 min
+  - (Validation) ppl:  14.17044, accuracy: 37.500 %, elapse: 0.010 min
+Epoch: 33 | Time: 0m 0s | learning rate 0.043
+  - (Training)   ppl:  29.37506, accuracy: 28.889 %, elapse: 0.010 min
+  - (Validation) ppl:  22.19366, accuracy: 33.333 %, elapse: 0.010 min
+Epoch: 34 | Time: 0m 0s | learning rate 0.044
+  - (Training)   ppl:  34.39535, accuracy: 13.158 %, elapse: 0.010 min
+  - (Validation) ppl:  43.77209, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 35 | Time: 0m 0s | learning rate 0.045
+  - (Training)   ppl:  17.47039, accuracy: 31.707 %, elapse: 0.010 min
+  - (Validation) ppl:  33.29884, accuracy: 7.692 %, elapse: 0.010 min
+Epoch: 36 | Time: 0m 0s | learning rate 0.046
+  - (Training)   ppl:  24.76578, accuracy: 21.429 %, elapse: 0.010 min
+  - (Validation) ppl:  16.50064, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 37 | Time: 0m 0s | learning rate 0.047
+  - (Training)   ppl:  24.48170, accuracy: 13.158 %, elapse: 0.012 min
+  - (Validation) ppl:  20.02570, accuracy: 33.333 %, elapse: 0.012 min
+Epoch: 38 | Time: 0m 0s | learning rate 0.049
+  - (Training)   ppl:  21.65021, accuracy: 25.641 %, elapse: 0.010 min
+  - (Validation) ppl:  29.04344, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 39 | Time: 0m 0s | learning rate 0.050
+  - (Training)   ppl:  26.31918, accuracy: 22.500 %, elapse: 0.011 min
+  - (Validation) ppl:  24.22659, accuracy: 14.286 %, elapse: 0.011 min
+Epoch: 40 | Time: 0m 0s | learning rate 0.051
+  - (Training)   ppl:  40.63792, accuracy: 5.556 %, elapse: 0.010 min
+  - (Validation) ppl:  21.08381, accuracy: 21.429 %, elapse: 0.010 min
+Epoch: 41 | Time: 0m 0s | learning rate 0.052
+  - (Training)   ppl:  29.05226, accuracy: 15.000 %, elapse: 0.009 min
+  - (Validation) ppl:  48.42724, accuracy: 0.000 %, elapse: 0.009 min
+Epoch: 42 | Time: 0m 0s | learning rate 0.054
+  - (Training)   ppl:  32.37995, accuracy: 13.158 %, elapse: 0.010 min
+  - (Validation) ppl:  20.87326, accuracy: 35.714 %, elapse: 0.010 min
+Epoch: 43 | Time: 0m 0s | learning rate 0.055
+  - (Training)   ppl:  34.79851, accuracy: 19.512 %, elapse: 0.010 min
+  - (Validation) ppl:  12.93173, accuracy: 28.571 %, elapse: 0.010 min
+Epoch: 44 | Time: 0m 0s | learning rate 0.056
+  - (Training)   ppl:  21.04421, accuracy: 31.707 %, elapse: 0.011 min
+  - (Validation) ppl:  11.52354, accuracy: 41.176 %, elapse: 0.011 min
+Epoch: 45 | Time: 0m 0s | learning rate 0.058
+  - (Training)   ppl:  20.67730, accuracy: 18.182 %, elapse: 0.010 min
+  - (Validation) ppl:  24.18589, accuracy: 25.000 %, elapse: 0.010 min
+Epoch: 46 | Time: 0m 0s | learning rate 0.059
+  - (Training)   ppl:  33.22605, accuracy: 10.000 %, elapse: 0.010 min
+  - (Validation) ppl:  23.42838, accuracy: 14.286 %, elapse: 0.010 min
+Epoch: 47 | Time: 0m 0s | learning rate 0.060
+  - (Training)   ppl:  28.54342, accuracy: 25.000 %, elapse: 0.010 min
+  - (Validation) ppl:  20.06834, accuracy: 21.429 %, elapse: 0.010 min
+Epoch: 48 | Time: 0m 0s | learning rate 0.061
+  - (Training)   ppl:  14.58709, accuracy: 30.769 %, elapse: 0.010 min
+  - (Validation) ppl:  24.07114, accuracy: 25.000 %, elapse: 0.010 min
+Epoch: 49 | Time: 0m 0s | learning rate 0.062
+  - (Training)   ppl:  17.81863, accuracy: 17.500 %, elapse: 0.011 min
+  - (Validation) ppl:  11.14781, accuracy: 35.714 %, elapse: 0.011 min
+Epoch: 50 | Time: 0m 0s | learning rate 0.064
+  - (Training)   ppl:  22.74952, accuracy: 18.182 %, elapse: 0.011 min
+  - (Validation) ppl:  14.59655, accuracy: 33.333 %, elapse: 0.011 min
+Epoch: 51 | Time: 0m 0s | learning rate 0.065
+  - (Training)   ppl:  21.38412, accuracy: 29.730 %, elapse: 0.010 min
+  - (Validation) ppl:  19.45438, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 52 | Time: 0m 0s | learning rate 0.066
+  - (Training)   ppl:  18.59024, accuracy: 22.222 %, elapse: 0.010 min
+  - (Validation) ppl:  15.01848, accuracy: 33.333 %, elapse: 0.010 min
+Epoch: 53 | Time: 0m 0s | learning rate 0.067
+  - (Training)   ppl:  23.35384, accuracy: 16.667 %, elapse: 0.011 min
+  - (Validation) ppl:  15.41998, accuracy: 27.778 %, elapse: 0.011 min
+Epoch: 54 | Time: 0m 0s | learning rate 0.069
+  - (Training)   ppl:  19.48761, accuracy: 25.641 %, elapse: 0.010 min
+  - (Validation) ppl:  18.95484, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 55 | Time: 0m 0s | learning rate 0.070
+  - (Training)   ppl:  28.45345, accuracy: 15.385 %, elapse: 0.010 min
+  - (Validation) ppl:  12.72958, accuracy: 33.333 %, elapse: 0.010 min
+Epoch: 56 | Time: 0m 0s | learning rate 0.071
+  - (Training)   ppl:  20.07982, accuracy: 24.390 %, elapse: 0.010 min
+  - (Validation) ppl:  28.34691, accuracy: 13.333 %, elapse: 0.010 min
+Epoch: 57 | Time: 0m 0s | learning rate 0.072
+  - (Training)   ppl:  24.99184, accuracy: 17.073 %, elapse: 0.010 min
+  - (Validation) ppl:  22.95996, accuracy: 21.053 %, elapse: 0.010 min
+Epoch: 58 | Time: 0m 0s | learning rate 0.074
+  - (Training)   ppl:  19.55051, accuracy: 22.500 %, elapse: 0.011 min
+  - (Validation) ppl:  8.08490, accuracy: 41.176 %, elapse: 0.011 min
+Epoch: 59 | Time: 0m 0s | learning rate 0.075
+  - (Training)   ppl:  21.96147, accuracy: 24.390 %, elapse: 0.010 min
+  - (Validation) ppl:  20.18127, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 60 | Time: 0m 0s | learning rate 0.076
+  - (Training)   ppl:  16.22390, accuracy: 16.667 %, elapse: 0.010 min
+  - (Validation) ppl:  13.38578, accuracy: 35.714 %, elapse: 0.010 min
+Epoch: 61 | Time: 0m 0s | learning rate 0.077
+  - (Training)   ppl:  11.94115, accuracy: 30.000 %, elapse: 0.009 min
+  - (Validation) ppl:  19.49364, accuracy: 23.529 %, elapse: 0.009 min
+Epoch: 62 | Time: 0m 0s | learning rate 0.079
+  - (Training)   ppl:  12.11963, accuracy: 27.907 %, elapse: 0.010 min
+  - (Validation) ppl:  21.35503, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 63 | Time: 0m 0s | learning rate 0.080
+  - (Training)   ppl:  15.39193, accuracy: 25.000 %, elapse: 0.010 min
+  - (Validation) ppl:  23.81226, accuracy: 26.667 %, elapse: 0.010 min
+Epoch: 64 | Time: 0m 0s | learning rate 0.081
+  - (Training)   ppl:  18.98071, accuracy: 23.256 %, elapse: 0.010 min
+  - (Validation) ppl:  17.06032, accuracy: 7.692 %, elapse: 0.010 min
+Epoch: 65 | Time: 0m 0s | learning rate 0.082
+  - (Training)   ppl:  24.68825, accuracy: 20.000 %, elapse: 0.011 min
+  - (Validation) ppl:  26.19264, accuracy: 13.333 %, elapse: 0.011 min
+Epoch: 66 | Time: 0m 0s | learning rate 0.084
+  - (Training)   ppl:  21.72618, accuracy: 23.684 %, elapse: 0.010 min
+  - (Validation) ppl:  15.21189, accuracy: 33.333 %, elapse: 0.010 min
+Epoch: 67 | Time: 0m 0s | learning rate 0.085
+  - (Training)   ppl:  19.61692, accuracy: 23.077 %, elapse: 0.010 min
+  - (Validation) ppl:  22.85947, accuracy: 25.000 %, elapse: 0.010 min
+Epoch: 68 | Time: 0m 0s | learning rate 0.086
+  - (Training)   ppl:  22.37576, accuracy: 20.455 %, elapse: 0.011 min
+  - (Validation) ppl:  10.97231, accuracy: 31.250 %, elapse: 0.011 min
+Epoch: 69 | Time: 0m 0s | learning rate 0.087
+  - (Training)   ppl:  20.29402, accuracy: 20.000 %, elapse: 0.009 min
+  - (Validation) ppl:  11.81835, accuracy: 31.250 %, elapse: 0.009 min
+Epoch: 70 | Time: 0m 0s | learning rate 0.089
+  - (Training)   ppl:  25.87826, accuracy: 17.949 %, elapse: 0.010 min
+  - (Validation) ppl:  13.40354, accuracy: 21.429 %, elapse: 0.010 min
+Epoch: 71 | Time: 0m 0s | learning rate 0.090
+  - (Training)   ppl:  14.63518, accuracy: 17.500 %, elapse: 0.010 min
+  - (Validation) ppl:  17.46279, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 72 | Time: 0m 0s | learning rate 0.091
+  - (Training)   ppl:  17.50682, accuracy: 25.000 %, elapse: 0.014 min
+  - (Validation) ppl:  21.17502, accuracy: 21.429 %, elapse: 0.014 min
+Epoch: 73 | Time: 0m 0s | learning rate 0.092
+  - (Training)   ppl:  22.11917, accuracy: 17.949 %, elapse: 0.017 min
+  - (Validation) ppl:  11.24709, accuracy: 31.250 %, elapse: 0.017 min
+Epoch: 74 | Time: 0m 0s | learning rate 0.094
+  - (Training)   ppl:  22.29189, accuracy: 15.385 %, elapse: 0.016 min
+  - (Validation) ppl:  9.83245, accuracy: 40.000 %, elapse: 0.016 min
+Epoch: 75 | Time: 0m 1s | learning rate 0.095
+  - (Training)   ppl:  24.26608, accuracy: 17.500 %, elapse: 0.018 min
+  - (Validation) ppl:  15.54587, accuracy: 13.333 %, elapse: 0.018 min
+Epoch: 76 | Time: 0m 0s | learning rate 0.096
+  - (Training)   ppl:  19.05606, accuracy: 25.000 %, elapse: 0.016 min
+  - (Validation) ppl:  15.43222, accuracy: 23.077 %, elapse: 0.016 min
+Epoch: 77 | Time: 0m 0s | learning rate 0.098
+  - (Training)   ppl:  18.15244, accuracy: 23.684 %, elapse: 0.011 min
+  - (Validation) ppl:  15.12698, accuracy: 20.000 %, elapse: 0.011 min
+Epoch: 78 | Time: 0m 0s | learning rate 0.099
+  - (Training)   ppl:  20.06539, accuracy: 23.684 %, elapse: 0.012 min
+  - (Validation) ppl:  13.44339, accuracy: 43.750 %, elapse: 0.012 min
+Epoch: 79 | Time: 0m 0s | learning rate 0.100
+  - (Training)   ppl:  16.36563, accuracy: 25.581 %, elapse: 0.016 min
+  - (Validation) ppl:  18.99269, accuracy: 23.077 %, elapse: 0.016 min
+Epoch: 80 | Time: 0m 0s | learning rate 0.101
+  - (Training)   ppl:  17.36072, accuracy: 23.077 %, elapse: 0.010 min
+  - (Validation) ppl:  15.66909, accuracy: 35.714 %, elapse: 0.010 min
+Epoch: 81 | Time: 0m 0s | learning rate 0.103
+  - (Training)   ppl:  13.58648, accuracy: 27.273 %, elapse: 0.010 min
+  - (Validation) ppl:  15.85873, accuracy: 28.571 %, elapse: 0.010 min
+Epoch: 82 | Time: 0m 1s | learning rate 0.104
+  - (Training)   ppl:  14.03476, accuracy: 34.091 %, elapse: 0.018 min
+  - (Validation) ppl:  11.99105, accuracy: 21.429 %, elapse: 0.018 min
+Epoch: 83 | Time: 0m 0s | learning rate 0.105
+  - (Training)   ppl:  15.37800, accuracy: 28.261 %, elapse: 0.016 min
+  - (Validation) ppl:  15.65725, accuracy: 21.429 %, elapse: 0.016 min
+Epoch: 84 | Time: 0m 0s | learning rate 0.106
+  - (Training)   ppl:  19.32831, accuracy: 26.190 %, elapse: 0.010 min
+  - (Validation) ppl:  14.00025, accuracy: 26.667 %, elapse: 0.010 min
+Epoch: 85 | Time: 0m 0s | learning rate 0.107
+  - (Training)   ppl:  15.94753, accuracy: 13.889 %, elapse: 0.012 min
+  - (Validation) ppl:  14.23638, accuracy: 28.571 %, elapse: 0.012 min
+Epoch: 86 | Time: 0m 0s | learning rate 0.109
+  - (Training)   ppl:  16.19276, accuracy: 24.390 %, elapse: 0.010 min
+  - (Validation) ppl:  26.44933, accuracy: 26.667 %, elapse: 0.010 min
+Epoch: 87 | Time: 0m 0s | learning rate 0.110
+  - (Training)   ppl:  15.51500, accuracy: 33.333 %, elapse: 0.010 min
+  - (Validation) ppl:  17.85697, accuracy: 15.385 %, elapse: 0.010 min
+Epoch: 88 | Time: 0m 0s | learning rate 0.111
+  - (Training)   ppl:  15.22417, accuracy: 25.581 %, elapse: 0.012 min
+  - (Validation) ppl:  22.91864, accuracy: 14.286 %, elapse: 0.012 min
+Epoch: 89 | Time: 0m 0s | learning rate 0.112
+  - (Training)   ppl:  13.52233, accuracy: 28.571 %, elapse: 0.010 min
+  - (Validation) ppl:  18.24185, accuracy: 25.000 %, elapse: 0.010 min
+Epoch: 90 | Time: 0m 0s | learning rate 0.114
+  - (Training)   ppl:  20.12610, accuracy: 21.053 %, elapse: 0.010 min
+  - (Validation) ppl:  14.26357, accuracy: 26.667 %, elapse: 0.010 min
+Epoch: 91 | Time: 0m 0s | learning rate 0.115
+  - (Training)   ppl:  12.59166, accuracy: 32.609 %, elapse: 0.009 min
+  - (Validation) ppl:  18.04069, accuracy: 26.667 %, elapse: 0.009 min
+Epoch: 92 | Time: 0m 0s | learning rate 0.116
+  - (Training)   ppl:  16.35181, accuracy: 17.073 %, elapse: 0.011 min
+  - (Validation) ppl:  19.71905, accuracy: 15.385 %, elapse: 0.011 min
+Epoch: 93 | Time: 0m 0s | learning rate 0.117
+  - (Training)   ppl:  16.52844, accuracy: 15.385 %, elapse: 0.009 min
+  - (Validation) ppl:  16.49874, accuracy: 25.000 %, elapse: 0.009 min
+Epoch: 94 | Time: 0m 0s | learning rate 0.119
+  - (Training)   ppl:  9.86513, accuracy: 37.209 %, elapse: 0.011 min
+  - (Validation) ppl:  12.90009, accuracy: 28.571 %, elapse: 0.011 min
+Epoch: 95 | Time: 0m 0s | learning rate 0.120
+  - (Training)   ppl:  12.87830, accuracy: 34.091 %, elapse: 0.015 min
+  - (Validation) ppl:  9.14125, accuracy: 31.250 %, elapse: 0.015 min
+Epoch: 96 | Time: 0m 0s | learning rate 0.121
+  - (Training)   ppl:  12.01311, accuracy: 26.829 %, elapse: 0.010 min
+  - (Validation) ppl:  20.99358, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 97 | Time: 0m 0s | learning rate 0.122
+  - (Training)   ppl:  13.51208, accuracy: 22.222 %, elapse: 0.016 min
+  - (Validation) ppl:  39.81500, accuracy: 7.143 %, elapse: 0.016 min
+Epoch: 98 | Time: 0m 0s | learning rate 0.124
+  - (Training)   ppl:  23.69757, accuracy: 25.000 %, elapse: 0.015 min
+  - (Validation) ppl:  12.69002, accuracy: 29.412 %, elapse: 0.015 min
+Epoch: 99 | Time: 0m 0s | learning rate 0.125
+  - (Training)   ppl:  22.90829, accuracy: 18.421 %, elapse: 0.011 min
+  - (Validation) ppl:  20.18509, accuracy: 21.429 %, elapse: 0.011 min
+Epoch: 100 | Time: 0m 0s | learning rate 0.126
+  - (Training)   ppl:  16.19744, accuracy: 17.073 %, elapse: 0.010 min
+  - (Validation) ppl:  13.06975, accuracy: 31.250 %, elapse: 0.010 min
+Epoch: 101 | Time: 0m 0s | learning rate 0.128
+  - (Training)   ppl:  20.06413, accuracy: 23.684 %, elapse: 0.011 min
+  - (Validation) ppl:  15.90622, accuracy: 20.000 %, elapse: 0.011 min
+Epoch: 102 | Time: 0m 0s | learning rate 0.129
+  - (Training)   ppl:  17.06942, accuracy: 23.684 %, elapse: 0.012 min
+  - (Validation) ppl:  12.56814, accuracy: 33.333 %, elapse: 0.012 min
+Epoch: 103 | Time: 0m 0s | learning rate 0.130
+  - (Training)   ppl:  21.68277, accuracy: 22.727 %, elapse: 0.010 min
+  - (Validation) ppl:  22.18316, accuracy: 12.500 %, elapse: 0.010 min
+Epoch: 104 | Time: 0m 0s | learning rate 0.131
+  - (Training)   ppl:  14.17172, accuracy: 23.684 %, elapse: 0.010 min
+  - (Validation) ppl:  20.63461, accuracy: 21.429 %, elapse: 0.010 min
+Epoch: 105 | Time: 0m 0s | learning rate 0.133
+  - (Training)   ppl:  15.19429, accuracy: 28.205 %, elapse: 0.010 min
+  - (Validation) ppl:  9.32426, accuracy: 33.333 %, elapse: 0.010 min
+Epoch: 106 | Time: 0m 0s | learning rate 0.134
+  - (Training)   ppl:  12.88195, accuracy: 35.000 %, elapse: 0.012 min
+  - (Validation) ppl:  10.51037, accuracy: 26.667 %, elapse: 0.012 min
+Epoch: 107 | Time: 0m 0s | learning rate 0.135
+  - (Training)   ppl:  17.53874, accuracy: 29.268 %, elapse: 0.010 min
+  - (Validation) ppl:  21.58713, accuracy: 0.000 %, elapse: 0.010 min
+Epoch: 108 | Time: 0m 0s | learning rate 0.136
+  - (Training)   ppl:  15.33435, accuracy: 21.622 %, elapse: 0.011 min
+  - (Validation) ppl:  8.48143, accuracy: 45.000 %, elapse: 0.011 min
+Epoch: 109 | Time: 0m 0s | learning rate 0.137
+  - (Training)   ppl:  17.07546, accuracy: 20.000 %, elapse: 0.012 min
+  - (Validation) ppl:  10.64553, accuracy: 35.294 %, elapse: 0.012 min
+Epoch: 110 | Time: 0m 0s | learning rate 0.139
+  - (Training)   ppl:  16.63596, accuracy: 25.641 %, elapse: 0.010 min
+  - (Validation) ppl:  17.48673, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 111 | Time: 0m 0s | learning rate 0.140
+  - (Training)   ppl:  10.57940, accuracy: 34.884 %, elapse: 0.011 min
+  - (Validation) ppl:  12.37032, accuracy: 46.154 %, elapse: 0.011 min
+Epoch: 112 | Time: 0m 0s | learning rate 0.141
+  - (Training)   ppl:  17.42801, accuracy: 22.857 %, elapse: 0.010 min
+  - (Validation) ppl:  13.99496, accuracy: 25.000 %, elapse: 0.010 min
+Epoch: 113 | Time: 0m 0s | learning rate 0.142
+  - (Training)   ppl:  18.55246, accuracy: 13.158 %, elapse: 0.010 min
+  - (Validation) ppl:  7.79036, accuracy: 60.000 %, elapse: 0.010 min
+Epoch: 114 | Time: 0m 1s | learning rate 0.144
+  - (Training)   ppl:  19.90374, accuracy: 17.949 %, elapse: 0.019 min
+  - (Validation) ppl:  27.31341, accuracy: 14.286 %, elapse: 0.019 min
+Epoch: 115 | Time: 0m 0s | learning rate 0.145
+  - (Training)   ppl:  22.68904, accuracy: 17.143 %, elapse: 0.012 min
+  - (Validation) ppl:  13.64491, accuracy: 28.571 %, elapse: 0.012 min
+Epoch: 116 | Time: 0m 0s | learning rate 0.146
+  - (Training)   ppl:  15.79999, accuracy: 26.190 %, elapse: 0.012 min
+  - (Validation) ppl:  16.73789, accuracy: 25.000 %, elapse: 0.012 min
+Epoch: 117 | Time: 0m 0s | learning rate 0.147
+  - (Training)   ppl:  19.33215, accuracy: 21.951 %, elapse: 0.013 min
+  - (Validation) ppl:  25.84008, accuracy: 14.286 %, elapse: 0.013 min
+Epoch: 118 | Time: 0m 1s | learning rate 0.149
+  - (Training)   ppl:  17.96873, accuracy: 18.421 %, elapse: 0.019 min
+  - (Validation) ppl:  16.89880, accuracy: 33.333 %, elapse: 0.019 min
+Epoch: 119 | Time: 0m 0s | learning rate 0.150
+  - (Training)   ppl:  11.01758, accuracy: 29.545 %, elapse: 0.016 min
+  - (Validation) ppl:  52.11396, accuracy: 7.692 %, elapse: 0.016 min
+Epoch: 120 | Time: 0m 1s | learning rate 0.151
+  - (Training)   ppl:  22.96193, accuracy: 18.919 %, elapse: 0.017 min
+  - (Validation) ppl:  22.12499, accuracy: 18.750 %, elapse: 0.017 min
+Epoch: 121 | Time: 0m 0s | learning rate 0.152
+  - (Training)   ppl:  13.03143, accuracy: 33.333 %, elapse: 0.015 min
+  - (Validation) ppl:  9.20627, accuracy: 28.571 %, elapse: 0.015 min
+Epoch: 122 | Time: 0m 1s | learning rate 0.154
+  - (Training)   ppl:  20.51701, accuracy: 23.684 %, elapse: 0.018 min
+  - (Validation) ppl:  45.37214, accuracy: 7.692 %, elapse: 0.018 min
+Epoch: 123 | Time: 0m 0s | learning rate 0.155
+  - (Training)   ppl:  13.62630, accuracy: 29.730 %, elapse: 0.014 min
+  - (Validation) ppl:  12.92944, accuracy: 33.333 %, elapse: 0.014 min
+Epoch: 124 | Time: 0m 0s | learning rate 0.156
+  - (Training)   ppl:  12.25856, accuracy: 34.146 %, elapse: 0.010 min
+  - (Validation) ppl:  13.17441, accuracy: 35.294 %, elapse: 0.010 min
+Epoch: 125 | Time: 0m 0s | learning rate 0.158
+  - (Training)   ppl:  18.39798, accuracy: 23.077 %, elapse: 0.010 min
+  - (Validation) ppl:  13.01833, accuracy: 28.571 %, elapse: 0.010 min
+Epoch: 126 | Time: 0m 0s | learning rate 0.159
+  - (Training)   ppl:  14.31376, accuracy: 23.810 %, elapse: 0.010 min
+  - (Validation) ppl:  12.81410, accuracy: 20.000 %, elapse: 0.010 min
+Epoch: 127 | Time: 0m 0s | learning rate 0.160
+  - (Training)   ppl:  12.04730, accuracy: 31.579 %, elapse: 0.010 min
+  - (Validation) ppl:  9.81031, accuracy: 36.842 %, elapse: 0.010 min
+Epoch: 128 | Time: 0m 0s | learning rate 0.161
+  - (Training)   ppl:  13.49779, accuracy: 41.860 %, elapse: 0.011 min
+  - (Validation) ppl:  14.26124, accuracy: 35.294 %, elapse: 0.011 min
+Epoch: 129 | Time: 0m 0s | learning rate 0.162
+  - (Training)   ppl:  16.02287, accuracy: 23.256 %, elapse: 0.009 min
+  - (Validation) ppl:  13.01253, accuracy: 25.000 %, elapse: 0.009 min
