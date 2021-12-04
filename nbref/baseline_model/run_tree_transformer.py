@@ -11,7 +11,7 @@ from torchtext.datasets import TranslationDataset
 from torchtext.data import Field, RawField, BucketIterator,TabularDataset,Dataset,Example
 
 import torch.nn.functional as F
-import spacy
+# import spacy
 
 import random
 import math

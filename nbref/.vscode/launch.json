@@ -20,7 +20,7 @@
       "name": "Debug Model",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceRoot}/baseline_model/run_tree_transformer_mult.py",
+      "program": "${workspaceRoot}/baseline_model/run_tree_transformer_multi_gpu.py",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
       "args": ["--n_dist_gpu", "2", "--gen_num", "100", "--n_epoch", "1"],

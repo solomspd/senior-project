@@ -83,28 +83,29 @@ def get_novel_positional_encoding(node, branch, parent):
         _positional_encoding = []
     return _positional_encoding
 
-# def preprocessing_graph(src, edge, hid_dim_in):
-    # g = dgl.DGLGraph()
-    # src_len = len(src)
-    # g.add_nodes(src_len)
-    # idmap = range(0,src_len)
-    # g.ndata['node_id'] = torch.tensor(idmap, dtype=torch.long)
-    # edge_types = []
-    # annotation = torch.zeros([src_len, hid_dim_in], dtype=torch.long)
+def preprocessing_graph(src, edge, hid_dim_in):
+    g = dgl.DGLGraph()
+    src_len = len(src)
+    g.add_nodes(src_len)
+    idmap = range(0,src_len)
+    g.ndata['node_id'] = torch.tensor(idmap, dtype=torch.long)
+    edge_types = []
+    annotation = torch.zeros([src_len, hid_dim_in], dtype=torch.long)
 
-    # for idx in range(0,src_len):
-    #     annotation[idx][src[idx]-1] = 1
-    # for s, e, t in edge:
-    #     if s == 0 and e ==0 and t ==0:
-    #         break
-    #     g.add_edge(s, t)
-    #     edge_types.append(e)
-    #     g.add_edge(t, s)
-    #     edge_types.append(e)
+    for idx in range(0,src_len):
+        annotation[idx][src[idx]-1] = 1
+    for s, e, t in edge:
+        if s == 0 and e ==0 and t ==0:
+            break
+        g.add_edge(s, t)
+        edge_types.append(e)
+        g.add_edge(t, s)
+        edge_types.append(e)
 
-    # g.edata['type'] = torch.tensor(edge_types, dtype=torch.long)
-    # g.ndata['annotation'] = annotation 
-    # return g
+    g.edata['type'] = torch.tensor(edge_types, dtype=torch.long)
+    g.ndata['annotation'] = annotation 
+    return g
+
 def load_bytecode(lines):
     address_mapper = {}
     sameloc_mapper = {}
@@ -113,6 +114,9 @@ def load_bytecode(lines):
     data_edge_type = 0
     control_edge_type = 1
     instruction_edge_type = 2
+    ft_fn_type = -1
+    ft_cls_type = -2
+    ft_ar_type = -3
     classes = []
     instructions = []
     functions = []
@@ -129,6 +133,7 @@ def load_bytecode(lines):
                 className = re.findall("\b(?:class )\b|(\w+)", line)[1]
                 graph.add_node(idx)
                 classes.append(idx)
+                feat.append(ft_cls_type)
                 idx += 1
 
             #Functions
@@ -141,6 +146,7 @@ def load_bytecode(lines):
                 if(functionName):
                     graph.add_edge(classes[-1], idx, e_type=control_edge_type, n_type = -2)
                     edges.append((classes[-1], control_edge_type, idx))
+                    feat.append(ft_fn_type)
                     f_idx = idx
                     idx += 1
 
@@ -148,6 +154,7 @@ def load_bytecode(lines):
                 if type:
                     graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
                     edges.append((f_idx, instruction_edge_type, idx))
+                    feat.append(ft_fn_type)
                     idx += 1
 
                 if (functionName): 
@@ -155,12 +162,14 @@ def load_bytecode(lines):
                     if returnType:
                         graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
                         edges.append((f_idx, instruction_edge_type, idx))
+                        feat.append(ft_fn_type)
                         idx += 1
                 
                 for arg in args:
                     if arg:
                         graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
                         edges.append((f_idx, instruction_edge_type, idx))
+                        feat.append(ft_fn_type)
                         idx += 1
                 functions.append(f_idx)
                      
@@ -173,7 +182,6 @@ def load_bytecode(lines):
                     instruction_identifier[instructionName] = identifier
 
                 k = instruction_identifier[instructionName]
-                feat.append(k)
                 I_idx = idx
                 if(instructions):
                     graph.add_edge(instructions[-1], idx, e_type=control_edge_type, n_type = k)
@@ -183,10 +191,12 @@ def load_bytecode(lines):
                     graph.add_edge(functions[-1], idx, e_type=control_edge_type, n_type = k)
                     edges.append((functions[-1], control_edge_type, idx))
                     idx += 1
+                feat.append(k)
                 if(len(instructionInfo) > 2):
                     if(re.findall("#{0,1}\d+", instructionInfo[2])):
                         graph.add_edge(idx, I_idx, e_type=instruction_edge_type, n_type = 0)
                         edges.append((idx, instruction_edge_type,I_idx))
+                        feat.append(ft_ar_type)
                         idx += 1
                         if(instructionInfo[2][0] == '#'):
                             if instructionInfo[2] in sameloc_mapper:
@@ -199,100 +209,101 @@ def load_bytecode(lines):
                     if(re.findall("#{0,1}\d+", instructionInfo[3])):
                         graph.add_edge(idx, I_idx, e_type=instruction_edge_type, n_type = -1)
                         edges.append((idx, instruction_edge_type, I_idx))
+                        feat.append(ft_ar_type)
                         idx += 1
                 instructions.append(I_idx)
 
     return dgl.from_networkx(graph, edge_attrs = ['e_type','n_type']), feat, edges
 
-def preprocessing_graph(lines):
-    address_mapper = {}
-    sameloc_mapper = {}
-    instruction_identifier = {}
-    identifier = 0
-    data_edge_type = 0
-    control_edge_type = 1
-    instruction_edge_type = 2
-    classes = []
-    instructions = []
-    functions = []
-    graph = nx.DiGraph()
-    idx = 0
-    identifier = 0    
-    for line in lines:
-        if line:
+# def preprocessing_graph(lines):
+#     address_mapper = {}
+#     sameloc_mapper = {}
+#     instruction_identifier = {}
+#     identifier = 0
+#     data_edge_type = 0
+#     control_edge_type = 1
+#     instruction_edge_type = 2
+#     classes = []
+#     instructions = []
+#     functions = []
+#     graph = nx.DiGraph()
+#     idx = 0
+#     identifier = 0    
+#     for line in lines:
+#         if line:
             
-            #class
-            if re.findall("^class", line):
-                className = re.findall("\b(?:class )\b|(\w+)", line)[1]
-                graph.add_node(idx)
-                classes.append(idx)
-                idx += 1
+#             #class
+#             if re.findall("^class", line):
+#                 className = re.findall("\b(?:class )\b|(\w+)", line)[1]
+#                 graph.add_node(idx)
+#                 classes.append(idx)
+#                 idx += 1
 
-            #Functions
-            if re.findall(".+({.*}|\(.*\));",line):
-                functionName = re.findall("\s(\w*?)\(",line)
-                args = []
-                instructions.clear()
-                if('(' in line):
-                    args = line[line.find('(')+1: line.find(')')].split(',')
-                if(functionName):
-                    graph.add_edge(classes[-1], idx, e_type=control_edge_type, n_type = -2)
+#             #Functions
+#             if re.findall(".+({.*}|\(.*\));",line):
+#                 functionName = re.findall("\s(\w*?)\(",line)
+#                 args = []
+#                 instructions.clear()
+#                 if('(' in line):
+#                     args = line[line.find('(')+1: line.find(')')].split(',')
+#                 if(functionName):
+#                     graph.add_edge(classes[-1], idx, e_type=control_edge_type, n_type = -2)
 
-                    f_idx = idx
-                    idx += 1
+#                     f_idx = idx
+#                     idx += 1
 
-                type = re.findall("(public|private|protected)",line)
-                if type:
-                    graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
-                    idx += 1
+#                 type = re.findall("(public|private|protected)",line)
+#                 if type:
+#                     graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
+#                     idx += 1
 
-                if (functionName): 
-                    returnType = re.findall("(?<=\s)(.*?)(?=\s{1,}%s)"%functionName,line)
-                    if returnType:
-                        graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
-                        idx += 1
+#                 if (functionName): 
+#                     returnType = re.findall("(?<=\s)(.*?)(?=\s{1,}%s)"%functionName,line)
+#                     if returnType:
+#                         graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
+#                         idx += 1
                 
-                for arg in args:
-                    if arg:
-                        graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
-                        idx += 1
-                functions.append(f_idx)
+#                 for arg in args:
+#                     if arg:
+#                         graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = -2)
+#                         idx += 1
+#                 functions.append(f_idx)
                      
-       #instructions
-            elif re.findall("\d+[:]\s\w+",line):
-                instructionInfo = re.findall("[^\s\\:\\\\\/\/<>.\'\"(),;]\w{0,}",line)
-                instructionName = instructionInfo[1]
-                if(instructionName in instruction_identifier):
-                    k = identifier
-                else:
-                    identifier= identifier+1
-                    instruction_identifier[instructionName] = identifier
+#        #instructions
+#             elif re.findall("\d+[:]\s\w+",line):
+#                 instructionInfo = re.findall("[^\s\\:\\\\\/\/<>.\'\"(),;]\w{0,}",line)
+#                 instructionName = instructionInfo[1]
+#                 if(instructionName in instruction_identifier):
+#                     k = identifier
+#                 else:
+#                     identifier= identifier+1
+#                     instruction_identifier[instructionName] = identifier
 
-                I_idx = idx
-                if(instructions):
-                    graph.add_edge(instructions[-1], idx, e_type=control_edge_type, n_type = identifier)
-                    idx += 1
-                else:
-                    graph.add_edge(functions[-1], idx, e_type=control_edge_type, n_type = identifier)
-                    idx += 1
-                if(len(instructionInfo) > 2):
-                    if(re.findall("#{0,1}\d+", instructionInfo[2])):
-                        graph.add_edge(idx, I_idx, e_type=instruction_edge_type, n_type = 0)
-                        idx += 1
-                        if(instructionInfo[2][0] == '#'):
-                            if instructionInfo[2] in sameloc_mapper:
-                                graph.add_edge(sameloc_mapper[instructionInfo[2]], idx, e_type = control_edge_type, n_type = -1)
+#                 I_idx = idx
+#                 if(instructions):
+#                     graph.add_edge(instructions[-1], idx, e_type=control_edge_type, n_type = identifier)
+#                     idx += 1
+#                 else:
+#                     graph.add_edge(functions[-1], idx, e_type=control_edge_type, n_type = identifier)
+#                     idx += 1
+#                 if(len(instructionInfo) > 2):
+#                     if(re.findall("#{0,1}\d+", instructionInfo[2])):
+#                         graph.add_edge(idx, I_idx, e_type=instruction_edge_type, n_type = 0)
+#                         idx += 1
+#                         if(instructionInfo[2][0] == '#'):
+#                             if instructionInfo[2] in sameloc_mapper:
+#                                 graph.add_edge(sameloc_mapper[instructionInfo[2]], idx, e_type = control_edge_type, n_type = -1)
                             
-                            sameloc_mapper[instructionInfo[2]] = idx
-                            comment = re.findall("(?<=\/\/ ).*[^;]", line)[0]
-                            address_mapper[instructionInfo[2]] = comment
-                if(len(instructionInfo) > 3):
-                    if(re.findall("#{0,1}\d+", instructionInfo[3])):
-                        graph.add_edge(idx, I_idx, e_type=instruction_edge_type, n_type = -1)
-                        idx += 1
-                instructions.append(I_idx)
+#                             sameloc_mapper[instructionInfo[2]] = idx
+#                             comment = re.findall("(?<=\/\/ ).*[^;]", line)[0]
+#                             address_mapper[instructionInfo[2]] = comment
+#                 if(len(instructionInfo) > 3):
+#                     if(re.findall("#{0,1}\d+", instructionInfo[3])):
+#                         graph.add_edge(idx, I_idx, e_type=instruction_edge_type, n_type = -1)
+#                         idx += 1
+#                 instructions.append(I_idx)
 
-    return dgl.from_networkx(graph, edge_attrs = ['e_type','n_type'])
+#     return dgl.from_networkx(graph, edge_attrs = ['e_type','n_type'])
 
 
 def processing_data(cache_dir, iterators):
