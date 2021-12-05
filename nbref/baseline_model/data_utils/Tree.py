@@ -19,7 +19,7 @@ import numpy as np
 
 # tree object from stanfordnlp/treelstm
 
-def create_trefrom_flat_list(node_list, index=1):
+def create_tree_from_flat_list(node_list, index=1):
 	if index >= len(node_list)-1 or node_list[index-1] is None:
 		return None
 	# pdb.set_trace()
