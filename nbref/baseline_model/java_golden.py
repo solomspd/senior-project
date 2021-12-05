@@ -1,5 +1,6 @@
 import javalang 
-
+import pickle
+final_tree=[]
 class Tree(object):
 	def __init__(self,value):
 		self.value = value
@@ -66,7 +67,7 @@ def test(node):
     global count 
    
     tree = Tree(0)
-
+  
     for i in range(0, len(node.children)):
         child = node.children[i]
         #print(type(child))
@@ -95,13 +96,20 @@ def test(node):
                     tree.add_child(test(child))
                     #tree.add_child(Tree(child))
     return tree
-
-with open("prime_source.txt") as f:
-    parser = javalang.parse.parse(f.read())
-    # for path, node in parser:
-    tree = test(parser)
-        
-        
+def get_golden():
+    with open("prime_source.txt") as f:
+        parser = javalang.parse.parse(f.read())
+        # for path, node in parser:  
+        for i in range(0 , 100):
+            tree = test(parser)
+            dict = {}
+            dict['id'] = i 
+            dict['tree'] = tree
+            dict['treelen'] = tree.num_children
+            final_tree.append(dict)
+        #with open("../data/re/tst_1/golden_c/samples.obj",'wb') as javafile:
+        #    pickle.dump(final_tree,javafile)
+    return final_tree       
         
             
 

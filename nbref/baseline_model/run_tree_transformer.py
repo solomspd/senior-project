@@ -6,7 +6,7 @@
 import torch
 import torch.nn as nn
 import torch.optim as optim
-
+import java_golden
 from torchtext.datasets import TranslationDataset
 from torchtext.data import Field, RawField, BucketIterator, TabularDataset, Dataset, Example
 
@@ -93,11 +93,10 @@ def main():
         os.makedirs(args.checkpoint_path)
 
         # Golden c file
-    with open(args.golden_c_path, 'rb') as file_c:
-        trg = pickle.load(file_c)
-
-    src_g = np.load(args.input_g_path, allow_pickle=True)
-    src_f = np.load(args.input_f_path, allow_pickle=True)
+    #with open(args.golden_c_path, 'rb') as file_c:
+    #    trg = pickle.load(file_c)
+    #src_g = np.load(args.input_g_path, allow_pickle=True)
+    #src_f = np.load(args.input_f_path, allow_pickle=True)
 
     with open("../data/prime") as f:
         data = f.readlines()
@@ -108,6 +107,7 @@ def main():
         src_f = [src_f] * 100
         src_g = [src_g] * 100
 
+    trg = java_golden.get_golden()
     graphs_asm = load_graphs(args, src_f, src_g)
 
     SEED = 1234
