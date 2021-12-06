@@ -4,6 +4,17 @@
   // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
   "version": "0.2.0",
   "configurations": [
+    {
+      "name": "Python: Dump Trace",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceRoot}/preprocess/dump_trace.py",
+      "console": "integratedTerminal",
+      "cwd": "${fileDirname}",
+      "env": {
+        "CUDA_LAUNCH_BLOCKING": "1"
+      }
+    },
   
     {
       "name": "Python: Current File",
@@ -12,7 +23,7 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
-      "args": ["--gen_num", "80", "--sample_len", "1","--n_epoch", "100"],
+      "args": ["--gen_num", "100", "--sample_len", "1","--n_epoch", "100"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }
@@ -24,7 +35,7 @@
       "program": "${workspaceRoot}/baseline_model/run_tree_transformer_multi_gpu.py",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
-      "args": ["--n_dist_gpu", "2", "--gen_num", "100", "--n_epoch", "1"],
+      "args": ["--gen_num", "80", "--sample_len", "1","--n_epoch", "100"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }

@@ -18,8 +18,10 @@ import math
 import os
 import time,json
 import pdb, sys
+import baseline_model.java_golden as java_golden
 
-from baseline_model.data_utils.train_tree_encoder import processing_data
+
+from baseline_model.data_utils.train_tree_encoder import load_bytecode, processing_data
 import baseline_model.data_utils.Tree as Tree 
 
 import baseline_model.data_utils.Constants as Constants
@@ -42,10 +44,10 @@ def main():
     max_len_src = 0
     sys.modules['Tree'] = Tree
 
-    with open(args.golden_c_path,'rb') as file_c:
-        trg = pickle.load(file_c)
+    # with open(args.golden_c_path,'rb') as file_c:
+    #     trg = pickle.load(file_c)
 
-
+    trg = java_golden.get_golden()
     SEED=1234
     torch.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True
@@ -59,10 +61,22 @@ def main():
     DICT_INFO = RawField()
 
     cache_dir = args.cache_path
-    src_g = np.load(args.input_g_path, allow_pickle=True)
-    src_f = np.load(args.input_f_path, allow_pickle=True)
+    # src_g = np.load(args.input_g_path, allow_pickle=True)
+    # src_f = np.load(args.input_f_path, allow_pickle=True)
 
-    for i in range(0,args.gen_num):
+    with open("prime") as f:
+        data = f.readlines()
+        data = [line.strip() for line in data]
+        graphs_asm, src_f, src_g = load_bytecode(data)
+
+        graphs_asm = [graphs_asm] * 100
+        src_f = [src_f] * 100
+        src_g = [src_g] * 100
+
+  
+# WE CHANGED gen_num IN THE CONFIG.PY FILE TO BE 100
+# WE ARE CHANGING for i in range(0,args.gen_num):  TO  for i in range(0,100):
+    for i in range(0,100):
         src_elem = src_f[i]
         dict_info = 0
         trg_elem = trg[i]['tree']
@@ -85,7 +99,7 @@ def main():
     print("Unique tokens in source assembly vocabulary: %d "%(len(SRC.vocab)))
     print("Max input length : %d" % (max_len_src))
     print("Max output length : %d" % (max_len_trg))
-    del trg, src_f, src_g
+    #del trg, src_f, src_g
 
     BATCH_SIZE = 1
 
