@@ -339,7 +339,7 @@ def processing_data(cache_dir, iterators):
             cur_index, max_index = 1,1
             ic = 0
             dict_info = {}
-            last_append = [None] * batch_size
+            last_append = [100] * batch_size   #CHANGED THIS
 
             while (cur_index <= max_index):
                 max_w_len = -1
@@ -393,12 +393,12 @@ def processing_data(cache_dir, iterators):
                         max_w_len_path = len(t_path)
                     if len(graphs_data[i-1]) > max_w_len:
                         max_w_len = len(graphs_data[i-1])
-                    batch_w_list_trg.append(w_list_trg)
+                    batch_w_list_trg.append(w_list_trg if w_list_trg is not None else -1)  #changed this
                     batch_w_list.append(t_path)
 
                 dict_info = {
                     'batch_w_list' : batch_w_list[0],
-                    'batch_w_list_trg' : batch_w_list_trg[0],
+                    'batch_w_list_trg' : batch_w_list_trg[0] if batch_w_list_trg[0] is not None else -1 ,   #changed this
                     'graphs': graphs[0],
                     "graph_data":torch.tensor(graphs_data[0]),
                     "graph_depth":torch.tensor(graphs_data_depth[0]),
@@ -467,7 +467,7 @@ def train_eval_tree(args, model, iterator, optimizer, device, \
             ic = 0
             cur_index_batch = [1] * batch_size
 
-            batch_nodes_num = [None] * batch_size
+            batch_nodes_num = [100] * batch_size #CHANGED THIS
             for aa in range(0, batch_size):
                 batch_nodes_num[aa] = len([i for i in dict_info[aa].keys()  if '_0' in i])
                 if batch_nodes_num[aa] > sample_len:
@@ -480,10 +480,10 @@ def train_eval_tree(args, model, iterator, optimizer, device, \
                         cur_index_batch[aa] = rand_int
 
             max_index = max(batch_nodes_num)
-            graphs = [None] * batch_size
-            graphs_data = [None] * batch_size
-            graphs_data_depth = [None] * batch_size
-            graphs_data_encoding = [None] * batch_size
+            graphs = [100] * batch_size  #CHANGED THIS
+            graphs_data = [100] * batch_size  #CHANGED THIS
+            graphs_data_depth = [100] * batch_size  #CHANGED THIS
+            graphs_data_encoding = [100] * batch_size  #CHANGED THIS
 
             if max_index > sample_len:
                 max_index = sample_len
@@ -491,9 +491,9 @@ def train_eval_tree(args, model, iterator, optimizer, device, \
             while (cur_index <= max_index):
                 flag             =  1
                 max_w_len_path   = -1
-                batch_w_list_trg = [None] * batch_size 
-                batch_w_list     = [None] * batch_size
-                batch_len_trg    = [0] * batch_size
+                batch_w_list_trg = [100] * batch_size   #CHANGED THIS
+                batch_w_list     = [100] * batch_size  #CHANGED THIS
+                batch_len_trg    = [0] * batch_size  
                 batch_graph_len_list = [0] * batch_size
 
                 for aa in range(0, batch_size):
@@ -545,9 +545,6 @@ def train_eval_tree(args, model, iterator, optimizer, device, \
                         in_[i][-ic-1][len(t_path)-1] = 1
                         
                 in_ = in_.float().permute(0,2,1).cuda()
-                for i in graphs:
-                    if "_N" not in i.ntypes:
-                        graphs.remove(i)
                 batch_graph = dgl.batch(graphs).to(device)
                 trg_in = model.gnn(batch_graph) 
                 if args.graph_aug:
@@ -631,7 +628,7 @@ def test_tree(args, model, iterator, trg_pad_idx, device, smoothing, criterion, 
 
             cur_index, max_index = 1,1
             loss, ic = 0, 0
-            last_append = [None] * batch_size
+            last_append = [1] * batch_size #CHANGED THIS
 
             while (cur_index <= max_index):
                 max_w_len = -1
@@ -639,7 +636,7 @@ def test_tree(args, model, iterator, trg_pad_idx, device, smoothing, criterion, 
                 batch_w_list_trg = []
                 batch_w_list = []
                 flag = 1
-                t = [None] * batch_size
+                t = [1] * batch_size #CHANGED THIS
                 batch_graph_len_list = [0] * batch_size
                 graphs_tmp = [dgl.DGLGraph()] * batch_size
 

@@ -96,7 +96,7 @@ class MultiHeadAttentionLayer(nn.Module):
     def forward(self, query, key, value, mask = None):
 
         batch_size = query.shape[0]
-
+       # batch_size = 4
         Q = self.fc_q(query) #(bsz, q_len, h_dim)
         K = self.fc_k(key)
         V = self.fc_v(value)
@@ -106,6 +106,7 @@ class MultiHeadAttentionLayer(nn.Module):
         V = V.view(batch_size, -1, self.n_heads, self.head_dim).permute(0, 2, 1, 3)
 
         energy = torch.matmul(Q, K.permute(0, 1, 3, 2)) / self.scale.cuda()
+        # print(energy.shape)
         if mask is not None:
             energy = energy.masked_fill(mask == 0, -1e10) # (bsz, n_head, q_len, k_len)
         x = torch.matmul(self.dropout(torch.softmax(energy, dim = -1)), V)

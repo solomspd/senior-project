@@ -85,7 +85,7 @@ def main():
     args.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
     args.summary = TrainingSummaryWriter(args.log_dir)
     args.dist_gpu = False
-    args.parallel_gpu = False
+    # args.parallel_gpu = False
     logging = get_logger(log_path=os.path.join(
         args.log_dir, "log" + time.strftime('%Y%m%d-%H%M%S') + '.txt'), print_=True, log_=True)
 

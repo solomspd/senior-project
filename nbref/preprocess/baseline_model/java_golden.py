@@ -79,19 +79,20 @@ def test(node):
         # print(type(child))
         # newchild = Tree(0)
         if type(child) is None or (type(child) is not list and not ("javalang" in str(type(child)))):  # if not a list
-            tree.add_child(Tree(node.children[i]))
+            # tree.add_child( Tree(node.children[i]))
             #Tree("none" if type(child) is None else node.children[i]))
-            print(node.children[i],"case1")
+            tree.add_child(Tree(0 if type(child) is None else node.children[i]))
+            #print(node.children[i],"case1")
             # print("case1")
         elif type(child) == list and len(child) == 0 and not ("javalang" in str(type(child))):  # handle empty list
             tree.add_child( Tree(node.children[i]))
-            print(node.children[i],"case2")
+            #print(node.children[i],"case2")
 
             # print(0)
             # tree.add_child(Tree(0))
         elif type(child) is set and not ("javalang" in str(type(child))):
             tree.add_child( Tree(node.children[i]))
-            print(node.children[i],"case3")
+            #print(node.children[i],"case3")
             # tree.add_child(Tree(0))
             # print(node.children[i])
         else:  # >1 , repeat
