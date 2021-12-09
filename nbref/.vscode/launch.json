@@ -8,9 +8,9 @@
       "name": "Python: Dump Trace",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceRoot}/preprocess/dump_trace.py",
+      "module": "preprocess.dump_trace",
       "console": "integratedTerminal",
-      "cwd": "${fileDirname}",
+      "cwd": "${workspaceFolder}",
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }

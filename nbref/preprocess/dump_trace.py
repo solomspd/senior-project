@@ -47,7 +47,7 @@ def main():
     # with open(args.golden_c_path,'rb') as file_c:
     #     trg = pickle.load(file_c)
 
-    trg = java_golden.get_golden()
+    trg = java_golden.get_golden("data/prime_source.txt")
     SEED=1234
     torch.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True
@@ -64,7 +64,7 @@ def main():
     # src_g = np.load(args.input_g_path, allow_pickle=True)
     # src_f = np.load(args.input_f_path, allow_pickle=True)
 
-    with open("prime") as f:
+    with open("data/prime") as f:
         data = f.readlines()
         data = [line.strip() for line in data]
         graphs_asm, src_f, src_g = load_bytecode(data)
