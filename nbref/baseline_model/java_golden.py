@@ -66,17 +66,12 @@ def create_tree(node):
             tree.add_child(node)
 
 
-
-
-
-
 idx = 0
-map = {}
+map2 = {'java.util.HashMap': 0, False: 1, 'java.util.Map': 2, 'Map': 3, 'Integer': 4, 'boolean': 5, 'int': 6, '=': 7, '>>': 8, '+': 9, '<': 10, 'length': 11, '==': 12, 'false': 13, '&&': 14, '&': 15, 'Math': 16, 'sqrt': 17, '<=': 18, '*': 19, '+=': 20, 'double': 21, 'System.out': 22, 'print': 23, '", "': 24, 'println': 25, '/': 26, 'printf': 27, 'String': 28, 'long': 29, 'null': 30, '-': 31, '!=': 32}
 
 def test(node):
     count = 0
-    global idx, map
-
+    global idx, map2
 
     tree = Tree(0)
 
@@ -84,37 +79,31 @@ def test(node):
         child = node.children[i]
         if type(child) == set:
             child = "set"
-        elif type(child) == list and len(child)==0:
+        elif type(child) == list and len(child) == 0:
             child = "list"
         # print(type(child))
         # newchild = Tree(0)
         if type(child) is None or (type(child) is not list and not ("javalang" in str(type(child)))):  # if not a list
             # tree.add_child( Tree(node.children[i]))
             # Tree("none" if type(child) is None else node.children[i]))
-            if child not in map:
-                map[child] = idx
-                idx += 1
-            tree.add_child(Tree(map[child]))
+            tree.add_child(Tree(44 if child not in map2 else map2[child]))
             # tree.add_child(Tree(0 if type(child) is None else node.children[i]))
 
             # print(node.children[i],"case1")
             # print("case1")
         elif type(child) == list and len(child) == 0 and not ("javalang" in str(type(child))):  # handle empty list
             # tree.add_child(Tree(node.children[i]))
-            if child not in map:
-                map[child] = idx
-                idx += 1
-            tree.add_child(Tree(map[child]))
+            tree.add_child(Tree(44 if child not in map2 else map2[child]))
             # print(node.children[i],"case2")
 
             # print(0)
             # tree.add_child(Tree(0))
         elif type(child) is set and not ("javalang" in str(type(child))):
             # tree.add_child(Tree(node.children[i]))
-            if child not in map:
-                map[child] = idx
-                idx += 1
-            tree.add_child(Tree(map[child]))
+            # if child not in map:
+            #     map[child] = idx
+            #     idx += 1
+            tree.add_child(Tree(44 if child not in map2 else map2[child]))
             # print(node.children[i],"case3")
             # tree.add_child(Tree(0))
             # print(node.children[i])
@@ -133,16 +122,17 @@ def test(node):
                     # tree.add_child(Tree(child))
     return tree
 
+
 def get_golden(path):
     with open(path) as f:
-        parser= javalang.parse.parse(f.read())
+        parser = javalang.parse.parse(f.read())
         # for path, node in parser:
         for i in range(0, 100):
-            tree= test(parser)
-            dict= {}
-            dict['id']= i
-            dict['tree']= tree
-            dict['treelen']= tree.num_children
+            tree = test(parser)
+            dict = {}
+            dict['id'] = i
+            dict['tree'] = tree
+            dict['treelen'] = tree.num_children
             final_tree.append(dict)
         # with open("../data/re/tst_1/golden_c/samples.obj",'wb') as javafile:
         #    pickle.dump(final_tree,javafile)
@@ -153,12 +143,12 @@ def create_tree_from_flat_list(node_list, index=1):
     if index >= len(node_list)-1 or node_list[index-1] is None:
         return None
     # pdb.set_trace()
-    d= node_list[index-1]
-    l= index * 2
-    r= l + 1
-    tree= Tree(d)
-    left_child= create_tree_from_flat_list(node_list, l)
-    right_child= create_tree_from_flat_list(node_list, r)
+    d = node_list[index-1]
+    l = index * 2
+    r = l + 1
+    tree = Tree(d)
+    left_child = create_tree_from_flat_list(node_list, l)
+    right_child = create_tree_from_flat_list(node_list, r)
 
     if(left_child is not None):
         tree.add_child(left_child)
