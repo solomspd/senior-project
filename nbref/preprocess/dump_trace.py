@@ -20,6 +20,7 @@ import time,json
 import pdb, sys
 import baseline_model.java_golden as java_golden
 
+from pathlib import Path
 
 from baseline_model.data_utils.train_tree_encoder import load_bytecode, processing_data
 import baseline_model.data_utils.Tree as Tree 
@@ -47,7 +48,20 @@ def main():
     # with open(args.golden_c_path,'rb') as file_c:
     #     trg = pickle.load(file_c)
 
-    trg = java_golden.get_golden("data/prime_source.txt")
+    # trg = java_golden.get_golden("data/prime_source.txt")
+
+    trg = []
+    p = Path('data/jv')
+    for i in sorted((p / 'src').iterdir()):
+        trg.append(java_golden.get_golden(i))
+
+    src_f,src_g = [],[]
+    for i in sorted((p / 'bytecode').iterdir()): 
+        with open(i) as f:
+            ga,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
+            src_f.append(nf)
+            src_g.append(ng)
+
     SEED=1234
     torch.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True
@@ -64,19 +78,9 @@ def main():
     # src_g = np.load(args.input_g_path, allow_pickle=True)
     # src_f = np.load(args.input_f_path, allow_pickle=True)
 
-    with open("data/prime") as f:
-        data = f.readlines()
-        data = [line.strip() for line in data]
-        graphs_asm, src_f, src_g = load_bytecode(data)
-
-        graphs_asm = [graphs_asm] * 100
-        src_f = [src_f] * 100
-        src_g = [src_g] * 100
 
   
-# WE CHANGED gen_num IN THE CONFIG.PY FILE TO BE 100
-# WE ARE CHANGING for i in range(0,args.gen_num):  TO  for i in range(0,100):
-    for i in range(0,100):
+    for i in range(0,args.gen_num):
         src_elem = src_f[i]
         dict_info = 0
         trg_elem = trg[i]['tree']

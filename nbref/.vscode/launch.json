@@ -11,6 +11,7 @@
       "module": "preprocess.dump_trace",
       "console": "integratedTerminal",
       "cwd": "${workspaceFolder}",
+      "args": ["--gen_num", "100"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }
@@ -23,7 +24,7 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
-      "args": ["--gen_num", "100", "--sample_len", "1","--n_epoch", "100"],
+      "args": ["--gen_num", "20", "--sample_len", "1","--n_epoch", "100"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }

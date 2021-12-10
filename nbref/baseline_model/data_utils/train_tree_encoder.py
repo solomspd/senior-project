@@ -129,7 +129,7 @@ def load_bytecode(lines):
         if line:
             
             #class
-            if re.findall("^class", line):
+            if re.findall("class [a-zA-Z0-9_&$]*", line):
                 className = re.findall("\b(?:class )\b|(\w+)", line)[1]
                 graph.add_node(idx)
                 classes.append(idx)
@@ -138,7 +138,7 @@ def load_bytecode(lines):
 
             #Functions
             if re.findall(".+({.*}|\(.*\));",line):
-                functionName = re.findall("\s(\w*?)\(",line)
+                functionName = re.findall("([a-zA-Z0-9_&$]*?)\(",line)
                 args = []
                 instructions.clear()
                 if('(' in line):
@@ -521,7 +521,7 @@ def train_eval_tree(args, model, iterator, optimizer, device, \
                 in_ = torch.zeros((batch_size, args.output_dim, max_w_len_path), dtype=torch.long)
                 trg_list = [model.trg_pad_idx for i in range(0, batch_size)]
                 w_list_len = []
-
+                oldi = i
                 for i in range(batch_size):
                     annotation = torch.zeros([graphs[i].number_of_nodes(), args.hid_dim - args.depth_dim], dtype=torch.long).cuda()
                     depth_annotation = torch.zeros([graphs[i].number_of_nodes(), args.depth_dim], dtype=torch.long).cuda()

@@ -13,6 +13,8 @@ from torchtext.data import Field, RawField, BucketIterator, TabularDataset, Data
 import torch.nn.functional as F
 # import spacy
 
+from pathlib import Path
+
 import random
 import math
 import os
@@ -99,16 +101,27 @@ def main():
     #src_g = np.load(args.input_g_path, allow_pickle=True)
     #src_f = np.load(args.input_f_path, allow_pickle=True)
 
-    with open("prime") as f:
-        data = f.readlines()
-        data = [line.strip() for line in data]
-        graphs_asm, src_f, src_g = load_bytecode(data)
+    # with open("../data/prime.txt") as f:
+    #     data = f.readlines()
+    #     data = [line.strip() for line in data]
+    #     graphs_asm, src_f, src_g = load_bytecode(data)
 
-        graphs_asm = [graphs_asm] * 100
-        src_f = [src_f] * 100
-        src_g = [src_g] * 100
+    #     graphs_asm = [graphs_asm] * 100
+    #     src_f = [src_f] * 100
+    #     src_g = [src_g] * 100
+    
+    p = Path("../data/jv")
+    src_f,src_g = [],[]
+    for i in sorted((p / 'bytecode').iterdir()):
+        with open(i) as f:
+            gs,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
+            src_f.append(nf)
+            src_g.append(ng)
+        
+    trg = []
+    for i in sorted((p / 'src').iterdir()):
+        trg.append(java_golden.get_golden(i))
 
-    trg = java_golden.get_golden("../data/prime_source.txt")
     graphs_asm = load_graphs(args, src_f, src_g)
 
     SEED = 1234

@@ -1,0 +1,55 @@
+create file
+Number of training examples: 10
+Number of validation examples: 2
+Number of testing examples: 1
+Unique tokens in source assembly vocabulary: 45 
+Max input length : 1077
+Max output length : 9
+Epoch: 0 | Time: 0m 0s | learning rate 0.001
+  - (Training)   ppl:  95.41967, accuracy: 0.000 %, elapse: 0.017 min
+  - (Validation) ppl:  77.34118, accuracy: 0.000 %, elapse: 0.017 min
+Epoch: 1 | Time: 0m 0s | learning rate 0.001
+  - (Training)   ppl:  113.03046, accuracy: 0.000 %, elapse: 0.009 min
+  - (Validation) ppl:  76.90070, accuracy: 0.000 %, elapse: 0.009 min
+Epoch: 2 | Time: 0m 0s | learning rate 0.002
+  - (Training)   ppl:  96.55030, accuracy: 0.000 %, elapse: 0.006 min
+  - (Validation) ppl:  76.25061, accuracy: 0.000 %, elapse: 0.006 min
+Epoch: 3 | Time: 0m 0s | learning rate 0.003
+  - (Training)   ppl:  113.14245, accuracy: 0.000 %, elapse: 0.006 min
+  - (Validation) ppl:  75.39562, accuracy: 0.000 %, elapse: 0.006 min
+Epoch: 4 | Time: 0m 0s | learning rate 0.003
+  - (Training)   ppl:  100.51983, accuracy: 0.000 %, elapse: 0.006 min
+  - (Validation) ppl:  74.34744, accuracy: 0.000 %, elapse: 0.006 min
+Epoch: 5 | Time: 0m 0s | learning rate 0.004
+  - (Training)   ppl:  125.70044, accuracy: 0.000 %, elapse: 0.006 min
+  - (Validation) ppl:  73.11212, accuracy: 0.000 %, elapse: 0.006 min
+Epoch: 6 | Time: 0m 0s | learning rate 0.004
+  - (Training)   ppl:  89.07415, accuracy: 0.000 %, elapse: 0.008 min
+  - (Validation) ppl:  71.69841, accuracy: 0.000 %, elapse: 0.008 min
+Epoch: 7 | Time: 0m 0s | learning rate 0.005
+  - (Training)   ppl:  100.96828, accuracy: 0.000 %, elapse: 0.007 min
+  - (Validation) ppl:  70.11765, accuracy: 0.000 %, elapse: 0.007 min
+Epoch: 8 | Time: 0m 0s | learning rate 0.006
+  - (Training)   ppl:  94.83279, accuracy: 0.000 %, elapse: 0.007 min
+  - (Validation) ppl:  68.37971, accuracy: 0.000 %, elapse: 0.007 min
+Epoch: 9 | Time: 0m 0s | learning rate 0.006
+  - (Training)   ppl:  90.83822, accuracy: 0.000 %, elapse: 0.007 min
+  - (Validation) ppl:  66.50205, accuracy: 0.000 %, elapse: 0.007 min
+Epoch: 10 | Time: 0m 0s | learning rate 0.007
+  - (Training)   ppl:  82.07892, accuracy: 5.000 %, elapse: 0.007 min
+  - (Validation) ppl:  64.50005, accuracy: 0.000 %, elapse: 0.007 min
+Epoch: 11 | Time: 0m 0s | learning rate 0.008
+  - (Training)   ppl:  77.23766, accuracy: 0.000 %, elapse: 0.008 min
+  - (Validation) ppl:  62.38153, accuracy: 0.000 %, elapse: 0.008 min
+Epoch: 12 | Time: 0m 0s | learning rate 0.008
+  - (Training)   ppl:  88.05034, accuracy: 0.000 %, elapse: 0.007 min
+  - (Validation) ppl:  60.16411, accuracy: 0.000 %, elapse: 0.007 min
+Epoch: 13 | Time: 0m 0s | learning rate 0.009
+  - (Training)   ppl:  86.97239, accuracy: 0.000 %, elapse: 0.007 min
+  - (Validation) ppl:  57.86654, accuracy: 0.000 %, elapse: 0.007 min
+Epoch: 14 | Time: 0m 0s | learning rate 0.009
+  - (Training)   ppl:  86.60622, accuracy: 0.000 %, elapse: 0.008 min
+  - (Validation) ppl:  55.50183, accuracy: 0.000 %, elapse: 0.008 min
+Epoch: 15 | Time: 0m 0s | learning rate 0.010
+  - (Training)   ppl:  81.21513, accuracy: 0.000 %, elapse: 0.007 min
+  - (Validation) ppl:  53.08190, accuracy: 0.000 %, elapse: 0.007 min

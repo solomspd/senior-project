@@ -122,21 +122,22 @@ def test(node):
                     # tree.add_child(Tree(child))
     return tree
 
+i = 0
 
 def get_golden(path):
+    global i
     with open(path) as f:
         parser = javalang.parse.parse(f.read())
         # for path, node in parser:
-        for i in range(0, 100):
-            tree = test(parser)
-            dict = {}
-            dict['id'] = i
-            dict['tree'] = tree
-            dict['treelen'] = tree.num_children
-            final_tree.append(dict)
+        tree = test(parser)
+        dict = {}
+        dict['id'] = i
+        i += 1
+        dict['tree'] = tree
+        dict['treelen'] = tree.num_children
         # with open("../data/re/tst_1/golden_c/samples.obj",'wb') as javafile:
         #    pickle.dump(final_tree,javafile)
-    return final_tree
+    return dict
 
 
 def create_tree_from_flat_list(node_list, index=1):
