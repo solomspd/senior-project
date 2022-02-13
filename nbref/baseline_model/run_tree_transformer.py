@@ -120,6 +120,7 @@ def main():
         
     trg = []
     for i in sorted((p / 'src').iterdir()):
+        java_golden.Tree.gen_tokens(i)
         trg.append(java_golden.get_golden(i))
 
     graphs_asm = load_graphs(args, src_f, src_g)

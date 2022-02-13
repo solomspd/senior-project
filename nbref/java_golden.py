@@ -11,6 +11,7 @@ class Tree(object):
         self.idx = -1
         self.visited = False
         self.num_children = 0
+        self.map2 = {}
         self.children = list()
         # self.childr = None
 

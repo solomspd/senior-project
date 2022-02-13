@@ -4,8 +4,10 @@ final_tree = []
 
 
 class Tree(object):
+    map2 = {}
+    idx = 0
     def __init__(self, value):
-        self.value = value
+        self.value = 1 if value not in Tree.map2 else Tree.map2[value]
         self.parent = None
         self.state = None
         self.idx = -1
@@ -24,7 +26,20 @@ class Tree(object):
     # 	if childr is not None:
     # 		childr.parent = self
     # 		self.num_children += 1
+    
+    @staticmethod
+    def gen_tokens(file_name):
+        lines =""
+        with open(file_name) as f:
+            lines = f.read()
 
+        tokens = list(javalang.tokenizer.tokenize(lines))
+        for token in tokens:
+            if token.value not in Tree.map2:
+                Tree.map2[token.value] = Tree.idx
+                Tree.idx = Tree.idx + 1 
+        print(Tree.map2)
+        
     @staticmethod
     def get_root(node):
         if node.parent is None:
@@ -67,7 +82,7 @@ def create_tree(node):
 
 
 idx = 0
-map2 = {'java.util.HashMap': 0, False: 1, 'java.util.Map': 2, 'Map': 3, 'Integer': 4, 'boolean': 5, 'int': 6, '=': 7, '>>': 8, '+': 9, '<': 10, 'length': 11, '==': 12, 'false': 13, '&&': 14, '&': 15, 'Math': 16, 'sqrt': 17, '<=': 18, '*': 19, '+=': 20, 'double': 21, 'System.out': 22, 'print': 23, '", "': 24, 'println': 25, '/': 26, 'printf': 27, 'String': 28, 'long': 29, 'null': 30, '-': 31, '!=': 32}
+# map2 = {'java.util.HashMap': 0, False: 1, 'java.util.Map': 2, 'Map': 3, 'Integer': 4, 'boolean': 5, 'int': 6, '=': 7, '>>': 8, '+': 9, '<': 10, 'length': 11, '==': 12, 'false': 13, '&&': 14, '&': 15, 'Math': 16, 'sqrt': 17, '<=': 18, '*': 19, '+=': 20, 'double': 21, 'System.out': 22, 'print': 23, '", "': 24, 'println': 25, '/': 26, 'printf': 27, 'String': 28, 'long': 29, 'null': 30, '-': 31, '!=': 32}
 
 def test(node):
     count = 0
@@ -86,14 +101,16 @@ def test(node):
         if type(child) is None or (type(child) is not list and not ("javalang" in str(type(child)))):  # if not a list
             # tree.add_child( Tree(node.children[i]))
             # Tree("none" if type(child) is None else node.children[i]))
-            tree.add_child(Tree(44 if child not in map2 else map2[child]))
+            # tree.add_child(Tree(4444 if child not in map2 else map2[child]))
+            tree.add_child(Tree(child))
             # tree.add_child(Tree(0 if type(child) is None else node.children[i]))
 
             # print(node.children[i],"case1")
             # print("case1")
         elif type(child) == list and len(child) == 0 and not ("javalang" in str(type(child))):  # handle empty list
             # tree.add_child(Tree(node.children[i]))
-            tree.add_child(Tree(44 if child not in map2 else map2[child]))
+            # tree.add_child(Tree(44444 if child not in map2 else map2[child]))
+            tree.add_child(Tree(child))
             # print(node.children[i],"case2")
 
             # print(0)
@@ -103,7 +120,8 @@ def test(node):
             # if child not in map:
             #     map[child] = idx
             #     idx += 1
-            tree.add_child(Tree(44 if child not in map2 else map2[child]))
+            # tree.add_child(Tree(44444 if child not in map2 else map2[child]))
+            tree.add_child(Tree(child))
             # print(node.children[i],"case3")
             # tree.add_child(Tree(0))
             # print(node.children[i])
