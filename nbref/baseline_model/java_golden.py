@@ -8,9 +8,12 @@ class Tree(object):
     idx = 0
     def __init__(self, value):
         self.value = 1 if value not in Tree.map2 else Tree.map2[value]
+        # if value not in Tree.map2:
+        #     return
+        # self.value = Tree.map2
         self.parent = None
         self.state = None
-        self.idx = -1
+        self.idx = 0
         self.visited = False
         self.num_children = 0
         self.children = list()
@@ -93,9 +96,9 @@ def test(node):
     for i in range(0, len(node.children)):
         child = node.children[i]
         if type(child) == set:
-            child = "set"
+             child = node.children[i]
         elif type(child) == list and len(child) == 0:
-            child = "list"
+             child = node.children[i]
         # print(type(child))
         # newchild = Tree(0)
         if type(child) is None or (type(child) is not list and not ("javalang" in str(type(child)))):  # if not a list
