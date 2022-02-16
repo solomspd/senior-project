@@ -5,7 +5,10 @@ final_tree = []
 
 class Tree(object):
     map2 = {}
-    idx = 0
+    idx = 4
+    numeric_idx = 1
+    string_idx = 2
+    comment_idx = 3
     def __init__(self, value):
         self.value = 1 if value not in Tree.map2 else Tree.map2[value]
         # if value not in Tree.map2:
@@ -39,8 +42,18 @@ class Tree(object):
         tokens = list(javalang.tokenizer.tokenize(lines))
         for token in tokens:
             if token.value not in Tree.map2:
-                Tree.map2[token.value] = Tree.idx
-                Tree.idx = Tree.idx + 1 
+                 if token.value.isnumeric():
+                    Tree.map2[token.value] = numeric_idx
+                  # case user defined string
+                 elif token.value[0] == '\"':
+                    Tree.map2[token.value] = string_idx
+                  # case comment
+                 elif (token.value[0:3] == "/**"):
+                    Tree.map2[token.value] = comment_idx
+
+                else:
+                    Tree.map2[token.value] = idx
+                    idx += 1
         print(Tree.map2)
         
     @staticmethod
