@@ -105,7 +105,7 @@ def preprocessing_graph(src, edge, hid_dim_in):
     g.edata['type'] = torch.tensor(edge_types, dtype=torch.long)
     g.ndata['annotation'] = annotation 
     return g
-
+cnt = 0
 def load_bytecode(lines):
     address_mapper = {}
     sameloc_mapper = {}
@@ -125,6 +125,8 @@ def load_bytecode(lines):
     identifier = 0    
     feat = []
     edges = [] # format: (source, edge type, target)
+    global cnt
+    cnt+=1
     for line in lines:
         if line:
             
@@ -212,7 +214,6 @@ def load_bytecode(lines):
                         feat.append(ft_ar_type)
                         idx += 1
                 instructions.append(I_idx)
-
     return dgl.from_networkx(graph, edge_attrs = ['e_type','n_type']), feat, edges
 
 # def preprocessing_graph(lines):
@@ -340,7 +341,7 @@ def processing_data(cache_dir, iterators):
             ic = 0
             dict_info = {}
             last_append = [None] * batch_size
-
+            print(i)
             while (cur_index <= max_index):
                 max_w_len = -1
                 max_w_len_path = -1
@@ -384,8 +385,9 @@ def processing_data(cache_dir, iterators):
                                     queue_tree[i].append({"tree" : t.children[ic], "parent" : cur_index - 1, "child_index": ic, "tree_path":t_path, \
                                                         "depth" : t_depth + 1, "child_num": len(t.children[ic].children), "encoding":encoding})
 
-                        if(ic + 1 < t_node['child_num']):
-                            flag = 0
+                        # TODO UNCOMMENT THIS BEFORE ACTUAL TRAINING
+                        # if(ic + 1 < t_node['child_num']):
+                            # flag = 0
 
                         if len(queue_tree[i]) > max_index:
                             max_index = len(queue_tree[i])

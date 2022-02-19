@@ -14,6 +14,7 @@ import torch.nn.functional as F
 # import spacy
 
 from pathlib import Path
+import shutil
 
 import random
 import math
@@ -35,13 +36,15 @@ import data_utils.Tree as Tree
 import glob
 import multiprocessing
 
+import subprocess
+from tqdm import tqdm
+
 import numpy as np
 from torch.utils.data import DataLoader
 from collections import defaultdict
 
 import resource
 from torch.nn.parallel import DistributedDataParallel
-
 
 def text_data_collator(dataset: Dataset):
     def collate(data):
@@ -101,7 +104,13 @@ def main():
     #src_g = np.load(args.input_g_path, allow_pickle=True)
     #src_f = np.load(args.input_f_path, allow_pickle=True)
 
-    # with open("../data/prime.txt") as f:
+    c_root = Path() / ".." / "data" / "re"
+    c_root = c_root.resolve()
+    shutil.rmtree(c_root / "cache_tst_asm_1",ignore_errors=True)
+    shutil.rmtree(c_root / "cache_tst_ast_1", ignore_errors=True)
+    os.system(f"cd ..;python -m preprocess.dump_trace --gen_num {args.gen_num}")
+
+    # with open("../data/prime_source.txt") as f:
     #     data = f.readlines()
     #     data = [line.strip() for line in data]
     #     graphs_asm, src_f, src_g = load_bytecode(data)
@@ -109,19 +118,29 @@ def main():
     #     graphs_asm = [graphs_asm] * 100
     #     src_f = [src_f] * 100
     #     src_g = [src_g] * 100
+    #     java_golden.gen_tokens("../data/prime_source.txt")
+    #     trg = [java_golden.get_golden("../data/prime_source.txt")] * 100
     
     p = Path("../data/jv")
     src_f,src_g = [],[]
-    for i in sorted((p / 'bytecode').iterdir()):
+    exclude = set()
+    for i in tqdm(sorted((p / 'clean_ds_jv').iterdir())[:args.gen_num]):
         with open(i) as f:
-            gs,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
+            try:
+                gs,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
+            except:
+                exclude.add(i.stem)
+                continue
             src_f.append(nf)
             src_g.append(ng)
         
     trg = []
-    for i in sorted((p / 'src').iterdir()):
-        java_golden.Tree.gen_tokens(i)
+    for i in tqdm(sorted((p / 'clean_ds_src').iterdir())[:args.gen_num]):
+        if i.stem in exclude: continue
+        java_golden.gen_tokens(i)
         trg.append(java_golden.get_golden(i))
+    
+    args.gen_num = len(trg) # TODO REMOVE THIS
 
     graphs_asm = load_graphs(args, src_f, src_g)
 

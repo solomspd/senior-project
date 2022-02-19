@@ -18,7 +18,7 @@ def get_arg_parser(title):
         common_parser.add_argument('--one_hot_label', action='store_true' )
         common_parser.add_argument('--disable_cuda', action='store_true' )
         common_parser.add_argument('--cache_path', type=str, default ='../data/dataset-vul/cache/')
-        common_parser.add_argument('--batch-size', '-bs', type=int, default=8)
+        common_parser.add_argument('--batch-size', '-bs', type=int, default=4) #default=8
         common_parser.add_argument('--epoch-num', '-en', type=int, default=100)
 
         common_parser.add_argument('--seed', '-s', type=int, default=0)
@@ -64,7 +64,7 @@ def get_arg_parser(title):
         common_parser.add_argument('--gamma', '-g', type=float, default=32)
         common_parser.add_argument('--margin', '-m', type=float, default=0.4)
 
-        common_parser.add_argument('--batch-size', '-bs', type=int, default=32)
+        common_parser.add_argument('--batch-size', '-bs', type=int, default=4) #default =32
         common_parser.add_argument('--epoch-num', '-en', type=int, default=100)
         common_parser.add_argument('--train-epoch-size', '-tes',
                                 type=int, default=1000)

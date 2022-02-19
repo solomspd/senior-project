@@ -21,6 +21,7 @@ import pdb, sys
 import baseline_model.java_golden as java_golden
 
 from pathlib import Path
+from tqdm import tqdm
 
 from baseline_model.data_utils.train_tree_encoder import load_bytecode, processing_data
 import baseline_model.data_utils.Tree as Tree 
@@ -36,6 +37,7 @@ from collections import defaultdict
 
 import resource
 from torch.nn.parallel import DistributedDataParallel
+import shutil
 
 def main():
     title='dump-trace'
@@ -49,19 +51,36 @@ def main():
     #     trg = pickle.load(file_c)
 
     # trg = java_golden.get_golden("data/prime_source.txt")
+    c_root = Path() / "data" / "re"
+    c_root = c_root.resolve()
+    shutil.rmtree(c_root / "cache_tst_asm_1",ignore_errors=True)
+    shutil.rmtree(c_root / "cache_tst_ast_1", ignore_errors=True)
 
     trg = []
     p = Path('data/jv')
-    for i in sorted((p / 'src').iterdir()):
-        trg.append(java_golden.get_golden(i))
+    exclude = set()
+    for i in tqdm(sorted((p / 'clean_ds_src').iterdir())[:args.gen_num+1]):
+        try:
+            trg.append(java_golden.get_golden(i))
+        except:
+            exclude.add(i.stem)
+            continue
 
     src_f,src_g = [],[]
-    for i in sorted((p / 'bytecode').iterdir()): 
+    ii = 0
+    for i in tqdm(sorted((p / 'clean_ds_jv').iterdir())[:args.gen_num+1]): 
         with open(i) as f:
-            ga,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
+            if i.stem in exclude: continue
+            try:
+                ga,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
+            except:
+                del trg[ii]
+                continue
+            ii += 1
             src_f.append(nf)
             src_g.append(ng)
-
+    print(len(src_f))
+    print(len(src_g))
     SEED=1234
     torch.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True
@@ -79,8 +98,8 @@ def main():
     # src_f = np.load(args.input_f_path, allow_pickle=True)
 
 
-  
-    for i in range(0,args.gen_num):
+    # for i in range(0,args.gen_num):
+    for i in range(0,len(src_f) - 1) :
         src_elem = src_f[i]
         dict_info = 0
         trg_elem = trg[i]['tree']
@@ -115,6 +134,7 @@ def main():
         sort=False)
 
     processing_data(cache_dir, [train_iterator, valid_iterator])
+    print("dump trace complete")
 
 if __name__ == "__main__":
     main()
