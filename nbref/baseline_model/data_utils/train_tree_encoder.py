@@ -30,6 +30,10 @@ import torch.multiprocessing as mp
 import networkx as nx
 import re
 
+import javalang
+import sys,inspect
+type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
+
 def cal_performance(pred, gold, trg_pad_idx, smoothing=False):
     ''' Apply label smoothing if needed '''
 
@@ -341,7 +345,6 @@ def processing_data(cache_dir, iterators):
             ic = 0
             dict_info = {}
             last_append = [None] * batch_size
-            print(i)
             while (cur_index <= max_index):
                 max_w_len = -1
                 max_w_len_path = -1

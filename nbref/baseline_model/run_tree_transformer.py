@@ -3,6 +3,7 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 #
+from logging import exception
 import torch
 import torch.nn as nn
 import torch.optim as optim
@@ -122,23 +123,32 @@ def main():
     #     trg = [java_golden.get_golden("../data/prime_source.txt")] * 100
     
     p = Path("../data/jv")
-    src_f,src_g = [],[]
+    trg = []
     exclude = set()
-    for i in tqdm(sorted((p / 'clean_ds_jv').iterdir())[:args.gen_num]):
+    for i in tqdm(sorted((p / 'clean_ds_src').iterdir())[:args.gen_num+1]):
+        try:
+            # java_golden.gen_tokens(i)
+            trg.append(java_golden.get_golden(i))
+            if trg[-1]["tree"].num_children < 12:
+                del trg[-1]
+                raise
+        except:
+            exclude.add(i.stem)
+            continue
+
+    src_f,src_g = [],[]
+    ii = 0
+    for i in tqdm(sorted((p / 'clean_ds_jv').iterdir())[:args.gen_num+1]): 
         with open(i) as f:
+            if i.stem in exclude: continue
             try:
-                gs,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
+                ga,nf,ng = load_bytecode([line.strip() for line in f.readlines()])
             except:
-                exclude.add(i.stem)
+                del trg[ii]
                 continue
+            ii += 1
             src_f.append(nf)
             src_g.append(ng)
-        
-    trg = []
-    for i in tqdm(sorted((p / 'clean_ds_src').iterdir())[:args.gen_num]):
-        if i.stem in exclude: continue
-        java_golden.gen_tokens(i)
-        trg.append(java_golden.get_golden(i))
     
     args.gen_num = len(trg) # TODO REMOVE THIS
 

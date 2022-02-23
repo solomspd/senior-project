@@ -61,7 +61,11 @@ def main():
     exclude = set()
     for i in tqdm(sorted((p / 'clean_ds_src').iterdir())[:args.gen_num+1]):
         try:
+            # java_golden.gen_tokens(i)
             trg.append(java_golden.get_golden(i))
+            if trg[-1]["tree"].num_children < 12:
+                del trg[-1]
+                raise
         except:
             exclude.add(i.stem)
             continue
@@ -79,8 +83,7 @@ def main():
             ii += 1
             src_f.append(nf)
             src_g.append(ng)
-    print(len(src_f))
-    print(len(src_g))
+
     SEED=1234
     torch.manual_seed(SEED)
     torch.backends.cudnn.deterministic = True

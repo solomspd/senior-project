@@ -1,7 +1,8 @@
+from ast import Expression
 import javalang
 import pickle
-final_tree = []
 
+import random
 
 class Tree(object):
     # map2 = {}
@@ -21,6 +22,7 @@ class Tree(object):
         # self.childr = None
 
     def add_child(self, child):
+        if child is None: return
         self.num_children += 1
         child.parent = self
         self.children.append(child)
@@ -78,11 +80,11 @@ class Tree(object):
             return self.children[0]
 
 
-def create_tree(node):
-    tree = Tree(node)
-    if (node != None):
-        for child in node.children:
-            tree.add_child(node)
+# def create_tree(node):
+#     tree = Tree(node)
+#     if (node != None):
+#         for child in node.children:
+#             tree.add_child(node)
 
 
 idx = 4
@@ -114,11 +116,32 @@ def gen_tokens(file_name):
                 idx = idx + 1 
     print(map2)
 
+import sys,inspect
+type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
+
+def create_tree(node):
+    # if node is None:
+    #     return
+    if type(node) is list and len(node) == 1:
+        node = node[0]
+    tree = Tree(type_map.index(type(node)))
+    if 'body' in node.attrs and node.body is not None:
+        if type(node.body) is list:
+            for i in node.body:
+                tree.add_child(create_tree(i))
+        else:
+            tree.add_child(create_tree(node.body))
+    else:
+        if 'expression' in node.attrs and node.expression is not None:
+            tree.add_child(create_tree(node.expression))
+
+    return tree
+
 def test(node):
     count = 0
     global idx, map2
 
-    tree = Tree(0)
+    tree = Tree(10)
 
     for i in range(0, len(node.children)):
         child = node.children[i]
@@ -134,7 +157,7 @@ def test(node):
         if type(child) is None or (type(child) is not list and not ("javalang" in str(type(child)))):  # if not a list
             # tree.add_child( Tree(node.children[i]))
             # Tree("none" if type(child) is None else node.children[i]))
-            tree.add_child(Tree(1 if child not in map2 else map2[child]))
+            tree.add_child(Tree(42 if child not in map2 else map2[child]))
             # tree.add_child(Tree(child))
             # tree.add_child(Tree(0 if type(child) is None else node.children[i]))
 
@@ -142,7 +165,7 @@ def test(node):
             # print("case1")
         elif type(child) == list and len(child) == 0 and not ("javalang" in str(type(child))):  # handle empty list
             # tree.add_child(Tree(node.children[i]))
-            tree.add_child(Tree(1 if child not in map2 else map2[child]))
+            tree.add_child(Tree(42 if child not in map2 else map2[child]))
             # tree.add_child(Tree(child))
             # print(node.children[i],"case2")
 
@@ -153,7 +176,7 @@ def test(node):
             # if child not in map:
             #     map[child] = idx
             #     idx += 1
-            tree.add_child(Tree(1 if child not in map2 else map2[child]))
+            tree.add_child(Tree(42 if child not in map2 else map2[child]))
             # tree.add_child(Tree(child))
             # print(node.children[i],"case3")
             # tree.add_child(Tree(0))
@@ -180,7 +203,7 @@ def get_golden(path):
     with open(path) as f:
         parser = javalang.parse.parse(f.read())
         # for path, node in parser:
-        tree = test(parser)
+        tree = create_tree(parser.types[0])
         dict = {}
         dict['id'] = i
         i += 1

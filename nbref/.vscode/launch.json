@@ -24,7 +24,7 @@
       "program": "${file}",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
-      "args": ["--gen_num", "80", "--n_epoch", "100"],
+      "args": ["--gen_num", "87", "--n_epoch", "200", "--sample_len", "1", "--output_dim", "78", "--label_smoothing"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }
