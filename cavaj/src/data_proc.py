@@ -10,52 +10,68 @@ class data_proc:
 
 	def __init__(self):
 		self.exclude = set()
-		self.trg = []
+		self.ground_truth = []
 		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
 		self.ast = nx.graph()
-		self.src_f,self.src_g = [],[]
+		self.src_f,self.src_g,self.l = [],[]
+		self.ast_idx = 0
+	
+	def load_data(self, src_path, llc_path):
+		self.__load_src(self, src_path)
+		self.__load_llc(self, llc_path)
+		return self.ground_truth, self.src_l, self.src_f, self.src_g
 
-	def load_src(self, path):
+	def __load_src(self, path):
 		for i in tqdm(sorted(path.iterdir())):
 			with open(i) as file:
 				try:
-					self.trg.append(self.proc_ast(file))
+					self.ground_truth.append(self.__proc_ast(file))
 				except:
 					self.exclude.add(i)
     				
-	def load_llc(self, path):
+	def __load_llc(self, path):
 		ii = 0
 		for i in tqdm(sorted(path.iterdir())):
 			with open(i) as llc_file:
 				if i.stem in self.exclude: continue
 				try:
-					ga,nf,ng = self.load_bytecode([line.strip() for line in llc_file.readlines()])
+					ga,nf,ng = self.__load_bytecode(llc_file)
 				except:
 					del self.trg[ii]
 					continue
 				ii += 1
 				self.src_f.append(nf)
 				self.src_g.append(ng)
+				self.src_l.append(ga)
 		pass
 
 	def __proc_ast(self, in_file):
 		parsed_src = javalang.parse.parse(in_file.read())
-		return self.__propagate_ast(parsed_src.types[0])
+		self.ast = nx.graph()
+		self.ast_idx = 0
+		self.__propagate_ast(None, parsed_src.types[0])
+		return dgl.from_networkx(self.ast)
 
-	def __propagate_ast(self, node):
+	def __propagate_ast(self, parent, node):
 		if type(node) is list and len(node) == 1:
 			node = node[0]
+		cur_idx = self.ast_idx
+		if parent is not None:
+			self.ast.add_node(cur_idx, type=self.type_map.index(type(node)))
+			self.ast.add_edge(parent, cur_idx)
+		self.ast_idx += 1
 		if 'body' in node.attrs and node.body is not None:
 			if type(node.body) is list:
 				for i in node.body:
-					self.ast.add_child(self.__propagate_ast(i))
+					self.__propagate_ast(cur_idx, i)
 			else:
-				self.tree.add_child(self.__propagate_ast(node.body))
+				self.__propagate_ast(cur_idx, node.body)
 		else:
 			if 'expression' in node.attrs and node.expression is not None:
-				self.tree.add_child(self.__propagate_ast(node.expression))
+				self.__propagate_ast(cur_idx, node.expression)
 
-	def load_bytecode(lines):
+	def __load_bytecode(llc_file):
+		lines = [line.strip() for line in llc_file.readlines()]
 		address_mapper = {}
 		sameloc_mapper = {}
 		instruction_identifier = {}
@@ -162,4 +178,3 @@ class data_proc:
 							idx += 1
 					instructions.append(I_idx)
 		return dgl.from_networkx(graph, edge_attrs = ['e_type','n_type']), feat, edges
-
