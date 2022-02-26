@@ -9,7 +9,7 @@
 *.fot
 *.cb
 *.cb2
-nbref/data
+cavaj/data
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,latex

@@ -5,13 +5,26 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Python: Dump Trace",
+      "type": "python",
+      "request": "launch",
+      "module": "preprocess.dump_trace",
+      "console": "integratedTerminal",
+      "cwd": "${workspaceFolder}",
+      "args": ["--gen_num", "200"],
+      "env": {
+        "CUDA_LAUNCH_BLOCKING": "1"
+      }
+    },
+  
+    {
       "name": "Python: Current File",
       "type": "python",
       "request": "launch",
       "program": "${file}",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
-      "args": ["--gen_num", "80", "--sample_len", "1","--n_epoch", "100"],
+      "args": ["--gen_num", "87", "--n_epoch", "200", "--sample_len", "1", "--output_dim", "78", "--label_smoothing"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }
@@ -20,10 +33,10 @@
       "name": "Debug Model",
       "type": "python",
       "request": "launch",
-      "program": "${workspaceRoot}/nbref/baseline_model/run_tree_transformer.py",
+      "program": "${workspaceRoot}/baseline_model/run_tree_transformer_multi_gpu.py",
       "console": "integratedTerminal",
       "cwd": "${fileDirname}",
-      "args": ["--n_dist_gpu", "2", "--gen_num", "100", "--n_epoch", "1"],
+      "args": ["--gen_num", "80", "--sample_len", "1","--n_epoch", "100"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }
