@@ -1,4 +1,0 @@
-create file
-Epoch: 0 | Time: 0m 1s | learning rate 0.002
-  - (Training)   ppl:  86.96610, accuracy: 0.000 %, elapse: 0.017 min
-  - (Validation) ppl:  67.38380, accuracy: 0.000 %, elapse: 0.017 min
