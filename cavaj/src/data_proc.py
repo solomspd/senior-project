@@ -4,25 +4,26 @@ import networkx as nx
 import dgl
 import javalang
 import sys,inspect
-import regex as re
+import re
 
 class data_proc:
 
-	def __init__(self):
+	def __init__(self, arg):
 		self.exclude = set()
 		self.ground_truth = []
 		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
-		self.ast = nx.graph()
-		self.src_f,self.src_g,self.l = [],[]
+		self.src_f,self.src_g,self.src_l = [],[],[]
 		self.ast_idx = 0
+		self.arg = arg
 	
 	def load_data(self, src_path, llc_path):
-		self.__load_src(self, src_path)
-		self.__load_llc(self, llc_path)
+		self.__load_src(src_path)
+		self.__load_llc(llc_path)
+		print("Dataset size:", len(self.ground_truth), "\nRejected files:", self.arg.data_point_num - len(self.ground_truth))
 		return self.ground_truth, self.src_l, self.src_f, self.src_g
 
 	def __load_src(self, path):
-		for i in tqdm(sorted(path.iterdir())):
+		for i in tqdm(sorted(path.iterdir())[:self.arg.data_point_num], desc="Loading java source"):
 			with open(i) as file:
 				try:
 					self.ground_truth.append(self.__proc_ast(file))
@@ -31,13 +32,13 @@ class data_proc:
     				
 	def __load_llc(self, path):
 		ii = 0
-		for i in tqdm(sorted(path.iterdir())):
+		for i in tqdm(sorted(path.iterdir())[:self.arg.data_point_num], desc="Loading bytecode"):
 			with open(i) as llc_file:
 				if i.stem in self.exclude: continue
 				try:
 					ga,nf,ng = self.__load_bytecode(llc_file)
 				except:
-					del self.trg[ii]
+					del self.ground_truth[ii]
 					continue
 				ii += 1
 				self.src_f.append(nf)
@@ -47,7 +48,7 @@ class data_proc:
 
 	def __proc_ast(self, in_file):
 		parsed_src = javalang.parse.parse(in_file.read())
-		self.ast = nx.graph()
+		self.ast = nx.Graph()
 		self.ast_idx = 0
 		self.__propagate_ast(None, parsed_src.types[0])
 		return dgl.from_networkx(self.ast)
@@ -70,7 +71,7 @@ class data_proc:
 			if 'expression' in node.attrs and node.expression is not None:
 				self.__propagate_ast(cur_idx, node.expression)
 
-	def __load_bytecode(llc_file):
+	def __load_bytecode(self, llc_file):
 		lines = [line.strip() for line in llc_file.readlines()]
 		address_mapper = {}
 		sameloc_mapper = {}
