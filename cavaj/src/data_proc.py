@@ -20,7 +20,7 @@ class data_proc:
 		self.__load_src(src_path)
 		self.__load_llc(llc_path)
 		print("Dataset size:", len(self.ground_truth), "\nRejected files:", self.arg.data_point_num - len(self.ground_truth))
-		return self.ground_truth, self.src_l, self.src_f, self.src_g
+		return self.ground_truth, self.src_l, self.src_g, self.src_f # TODO more descriptive name
 
 	def __load_src(self, path):
 		for i in tqdm(sorted(path.iterdir())[:self.arg.data_point_num], desc="Loading java source"):

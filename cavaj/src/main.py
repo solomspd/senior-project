@@ -1,14 +1,19 @@
-from subprocess import list2cmdline
 import torch
+from torch.utils.data import DataLoader, Dataset
 import dgl
 import networkx as nx
 from pathlib import Path
-import matplotlib.pyplot as plt
-from data_proc import data_proc
-import param
-from torch.utils.data import DataLoader, Dataset
+
 from logging import exception
 from collections import defaultdict
+from subprocess import list2cmdline
+
+from data_proc import data_proc
+import param
+
+from model.model_top import GCN
+from model.c_dataset import dataset
+
 
 def text_data_collator(dataset: Dataset):
 	def collate(data):
@@ -25,13 +30,8 @@ def text_data_collator(dataset: Dataset):
 if __name__ == '__main__':
 	arg = param.parse_args()
 	dataset_path = Path("../data/50k")
-	trg_ast,src_f,src_g,trg_llc = data_proc(arg).load_data(dataset_path / "java_src", dataset_path / "bytecode")
+	trg_ast,trg_llc,_,_ = data_proc(arg).load_data(dataset_path / "java_src", dataset_path / "bytecode")
 
-	model = model(arg, trg_ast, trg_llc)
-
-	plt.figure()
-	nx.draw(dgl.to_networkx(trg_ast[0]))
-	plt.show()
 	#logging = get_logger(log_path=os.path.join(args.log_dir, "log" + time.strftime('%Y%m%d-%H%M%S') + '.txt'), print_=True, log_=True)
 
 	# Solom & botta todo
@@ -39,13 +39,12 @@ if __name__ == '__main__':
     #torch.manual_seed(SEED)
     #torch.backends.cudnn.deterministic = True
     
-	dataSet = []
-	source = []
-	target =[]
-	llcGraph = []
+	data_set = dataset(trg_llc,trg_ast)
 
-	data_sets = Dataset(list(zip(trg_llc,trg_ast)))
-	train, validate, test = data_sets.split([0.8, 0.05, 0.15])
+	trn_prop = int(len(data_set)*0.8)
+	val_prop = int((len(data_set)) - trn_prop * 0.25)
+	tst_prop = int(len(data_set) - trn_prop - val_prop)
+	train, validate, test = torch.utils.data.random_split(data_set, [trn_prop, val_prop, tst_prop])
 
 	#logging("Baby cavaj is training now!")
     #logging("Number of training examples: %d" % (len(train.examples)))
@@ -54,6 +53,8 @@ if __name__ == '__main__':
     #logging("Unique tokens in source assembly vocabulary: %d " % (len(SRC.vocab)))
     #logging("Max input length : %d" % (max_len_src))
     #logging("Max output length : %d" % (max_len_trg))
+
+	model = GCN(arg, trg_ast, trg_llc)
 
 	workers = 0
 	batchSize = 1
