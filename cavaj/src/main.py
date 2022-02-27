@@ -11,6 +11,9 @@ if __name__ == '__main__':
 	arg = param.parse_args()
 	dataset_path = Path("../data/50k")
 	trg_ast,src_f,src_g,trg_llc = data_proc(arg).load_data(dataset_path / "java_src", dataset_path / "bytecode")
+
+	model = model(arg, trg_ast, trg_llc)
+
 	plt.figure()
 	nx.draw(dgl.to_networkx(trg_ast[0]))
 	plt.show()

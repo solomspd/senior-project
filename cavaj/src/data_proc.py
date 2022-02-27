@@ -68,7 +68,7 @@ class data_proc:
 			else:
 				self.__propagate_ast(cur_idx, node.body)
 		else:
-			if 'expression' in node.attrs and node.expression is not None:
+			if 'expression' in node.attrs and node.expression is not None: #TODO exhaustively cover all possible nodes
 				self.__propagate_ast(cur_idx, node.expression)
 
 	def __load_bytecode(self, llc_file):

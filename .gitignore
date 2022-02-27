@@ -10,6 +10,7 @@
 *.cb
 *.cb2
 cavaj/data
+!cavaj/data/proc_scripts
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,latex
