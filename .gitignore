@@ -11,6 +11,7 @@
 *.cb2
 cavaj/data
 !cavaj/data/proc_scripts
+.vscode/log-dir
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,latex
