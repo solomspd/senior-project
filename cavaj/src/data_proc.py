@@ -5,6 +5,9 @@ import dgl
 import javalang
 import sys,inspect
 import re
+import pandas as pd
+
+url = 'https://en.wikipedia.org/wiki/List_of_Java_bytecode_instructions'
 
 class data_proc:
 
@@ -75,7 +78,10 @@ class data_proc:
 		lines = [line.strip() for line in llc_file.readlines()]
 		address_mapper = {}
 		sameloc_mapper = {}
-		instruction_identifier = {}
+		tables = pd.read_html(url)
+		df = tables[0]
+		firstColumn = df.iloc[: , [0]]
+		instruction_identifier = firstColumn.values.tolist()
 		identifier = 0
 		data_edge_type = 0
 		control_edge_type = 1
