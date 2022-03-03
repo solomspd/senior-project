@@ -97,6 +97,7 @@ class data_proc:
 				#class
 				if re.findall("class [a-zA-Z0-9_&$]*", line):
 					className = re.findall("\b(?:class )\b|(\w+)", line)[1]
+					
 					graph.add_node(idx)
 					classes.append(idx)
 					feat.append(ft_cls_type)

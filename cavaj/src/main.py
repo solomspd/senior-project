@@ -11,7 +11,6 @@ from subprocess import list2cmdline
 from data_proc import data_proc
 import param
 
-from model.model_top import GCN
 from model.c_dataset import dataset
 
 
@@ -54,7 +53,7 @@ if __name__ == '__main__':
     #logging("Max input length : %d" % (max_len_src))
     #logging("Max output length : %d" % (max_len_trg))
 
-	model = GCN(arg, trg_ast, trg_llc)
+	# model = GCN(arg, trg_ast, trg_llc)
 
 	workers = 0
 	batchSize = 1
