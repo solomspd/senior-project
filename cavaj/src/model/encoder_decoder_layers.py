@@ -3,24 +3,23 @@
 # This source code is licensed under the license found in the
 # LICENSE file in the root directory of this source tree.
 # 
-import torch
-import torch.nn as nn
-import torch.optim as optim
-
-from torchtext.datasets import TranslationDataset, Multi30k
-from torchtext.data import Field, BucketIterator
-import torch.nn.functional as F
-from dgl.nn.pytorch.conv import SAGEConv
-from dgl.nn.pytorch import GatedGraphConv, GlobalAttentionPooling
-import dgl
-
-import random
 import math
 import os
-import time
 import pdb
-import numpy as np
+import random
+import time
+
+import dgl
 import dgl.backend as Fdgl
+import numpy as np
+import torch
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+from dgl.nn.pytorch import GatedGraphConv, GlobalAttentionPooling
+from dgl.nn.pytorch.conv import SAGEConv
+from torchtext.data import BucketIterator, Field
+from torchtext.datasets import Multi30k, TranslationDataset
 
 READOUT_ON_ATTRS = {
     'nodes': ('ndata', 'batch_num_nodes', 'number_of_nodes'),

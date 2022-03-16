@@ -1,17 +1,17 @@
-import torch
-from torch.utils.data import DataLoader, Dataset
-import dgl
-import networkx as nx
-from pathlib import Path
-
-from logging import exception
 from collections import defaultdict
+from logging import exception
+from pathlib import Path
 from subprocess import list2cmdline
 
-from data_proc import data_proc
-import param
+import dgl
+import networkx as nx
+import torch
+from torch.utils.data import DataLoader, Dataset
 
+import param
+from data_proc import data_proc
 from model.c_dataset import dataset
+from model.model_top import GCN
 
 
 def text_data_collator(dataset: Dataset):
@@ -29,20 +29,21 @@ def text_data_collator(dataset: Dataset):
 if __name__ == '__main__':
 	arg = param.parse_args()
 	dataset_path = Path("../data/50k")
-	trg_ast,trg_llc,_,_ = data_proc(arg).load_data(dataset_path / "java_src", dataset_path / "bytecode")
+	trg_ast,trg_llc = data_proc(arg).load_data(dataset_path / "java_src", dataset_path / "bytecode")
 
 	#logging = get_logger(log_path=os.path.join(args.log_dir, "log" + time.strftime('%Y%m%d-%H%M%S') + '.txt'), print_=True, log_=True)
 
-	# Solom & botta todo
 	#SEED = 1234 
     #torch.manual_seed(SEED)
     #torch.backends.cudnn.deterministic = True
     
 	data_set = dataset(trg_llc,trg_ast)
 
+	# this is ugly please change it
 	trn_prop = int(len(data_set)*0.8)
 	val_prop = int((len(data_set)) - trn_prop * 0.25)
 	tst_prop = int(len(data_set) - trn_prop - val_prop)
+
 	train, validate, test = torch.utils.data.random_split(data_set, [trn_prop, val_prop, tst_prop])
 
 	#logging("Baby cavaj is training now!")
@@ -53,7 +54,7 @@ if __name__ == '__main__':
     #logging("Max input length : %d" % (max_len_src))
     #logging("Max output length : %d" % (max_len_trg))
 
-	# model = GCN(arg, trg_ast, trg_llc)
+	model = GCN(arg, trg_ast, trg_llc)
 
 	workers = 0
 	batchSize = 1
@@ -63,3 +64,5 @@ if __name__ == '__main__':
 	valid_iter = DataLoader(validate, batch_size=batchSize, collate_fn=None, num_workers=workers, shuffle=False)
 	collate = text_data_collator(test)
 	test_iter = DataLoader( test, batch_size=batchSize, collate_fn=None, num_workers=workers, shuffle=False)
+
+	model.train(train_iter, valid_iter)
