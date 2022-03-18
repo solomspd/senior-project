@@ -6,8 +6,8 @@ def parse_args():
 	parser.add_argument("--data_point_num", help="the number of files to be used from the dataset", type=int, default=None)
 	parser.add_argument('--hid_dim', type=int, default=256)
 	parser.add_argument('--mem_dim', type=int, default=64)
-	parser.add_argument('--n_layers', type=int, default=2) 
-	parser.add_argument('--n_gnn_layers', type=int, default=2) 
+	parser.add_argument('--encdec_units', type=int, default=2) 
+	parser.add_argument('--n_embed', type=int, default=2) 
 	parser.add_argument('--n_heads', type=int, default=4)
 	parser.add_argument('--pf_dim', type=int, default=512)
 	parser.add_argument('--max_tolerate_len', type=int, default=1200) #for small GPU mem 

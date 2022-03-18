@@ -4,6 +4,7 @@ import sys
 from pathlib import Path
 
 import dgl
+from torch_geometric.utils.convert import from_networkx
 import javalang
 import networkx as nx
 from tqdm import tqdm
@@ -49,8 +50,9 @@ class data_proc:
 		parsed_src = javalang.parse.parse(in_file.read())
 		self.ast = nx.Graph()
 		self.ast_idx = 0
+		self.ast.add_node(self.ast_idx, type=self.type_map.index(javalang.tree.ClassDeclaration))
 		self.__propagate_ast(None, parsed_src.types[0])
-		return dgl.from_networkx(self.ast)
+		return from_networkx(self.ast)
 
 	def __propagate_ast(self, parent, node):
 		if type(node) is list and len(node) == 1:
@@ -103,27 +105,27 @@ class data_proc:
 						args = line[line.find('(')+1: line.find(')')].split(',')
 					if(functionName):
 						graph.add_node(idx, n_type = fn_placeholder)
-						graph.add_edge(classes[-1], idx, e_type=control_edge_type, n_type = fn_placeholder)
+						graph.add_edge(classes[-1], idx, e_type=control_edge_type)
 						f_idx = idx
 						idx += 1
 
 					type = re.findall("(public|private|protected)",line)
 					if type:
 						graph.add_node(idx, n_type = fn_placeholder)
-						graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = fn_placeholder)
+						graph.add_edge(f_idx, idx, e_type=instruction_edge_type)
 						idx += 1
 
 					if (functionName): 
 						returnType = re.findall("(?<=\s)(.*?)(?=\s{1,}%s)"%functionName,line)
 						if returnType:
 							graph.add_node(idx, n_type = fn_placeholder)
-							graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = fn_placeholder)
+							graph.add_edge(f_idx, idx, e_type=instruction_edge_type)
 							idx += 1
 					
 					for arg in args:
 						if arg:
 							graph.add_node(idx, n_type = fn_placeholder)
-							graph.add_edge(f_idx, idx, e_type=instruction_edge_type, n_type = fn_placeholder)
+							graph.add_edge(f_idx, idx, e_type=instruction_edge_type)
 							idx += 1
 					functions.append(f_idx)
 						
@@ -149,7 +151,8 @@ class data_proc:
 							idx += 1
 							if(instructionInfo[2][0] == '#'):
 								if instructionInfo[2] in sameloc_mapper:
-									graph.add_edge(sameloc_mapper[instructionInfo[2]], idx, e_type = control_edge_type, n_type = instruction_edge_type)
+									graph.add_node(sameloc_mapper[instructionInfo[2]], n_type = instruction_edge_type)
+									graph.add_edge(sameloc_mapper[instructionInfo[2]], idx, e_type = control_edge_type)
 								
 								sameloc_mapper[instructionInfo[2]] = idx
 								comment = re.findall("(?<=\/\/ ).*[^;]", line)[0]
@@ -160,4 +163,4 @@ class data_proc:
 							graph.add_edge(idx, I_idx, e_type=instruction_edge_type)
 							idx += 1
 					instructions.append(I_idx)
-		return dgl.from_networkx(graph, edge_attrs=['e_type'], node_attrs=['n_type'])
+		return from_networkx(graph)
