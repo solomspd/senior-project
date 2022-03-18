@@ -74,9 +74,8 @@ class dec_unit(nn.Module):
 	
 	def forward(self, ast, llc_enc):
 		ret = self.ast_att(ast)
-		ret = self.norm1(ret)
-		ret = self.ast_lcc_att(ret, llc_enc)
 		ret = self.norm(ret)
+		ret = self.ast_lcc_att(ret, llc_enc)
 		ret = self.feed_for(ret)
 		return ret
 
