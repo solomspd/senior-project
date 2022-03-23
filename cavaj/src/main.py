@@ -14,18 +14,6 @@ from model.model_top import cavaj
 from model.utils import NoamOpt
 
 
-def text_data_collator(dataset: Dataset):
-	def collate(data):
-		batch = defaultdict(list)
-		for datum in data:
-			for name, field in dataset.fields.items():
-				batch[name].append(field.preprocess(getattr(datum, name)))
-		batch = {name: field.process(batch[name])
-				for name, field in dataset.fields.items()}
-		return batch
-	return collate
-
-
 if __name__ == '__main__':
 	arg = param.parse_args()
 	dataset_path = Path("../data/50k")
@@ -44,30 +32,25 @@ if __name__ == '__main__':
 	val_prop = int((len(data_set)) - trn_prop * 0.25)
 	tst_prop = int(len(data_set) - trn_prop - val_prop)
 
-	train, validate, test = torch.utils.data.random_split(data_set, [trn_prop, val_prop, tst_prop])
+	# vocab_len = torch.count_nonzero(torch.bincount(torch.cat([i.x.flatten() for i in trg_llc])))
+	vocab_len = torch.max(torch.cat([i.x.flatten() for i in trg_llc]))
 
-	#logging("Baby cavaj is training now!")
-    #logging("Number of training examples: %d" % (len(train.examples)))
-    #logging("Number of validation examples: %d" % (len(validate.examples)))
-    #logging("Number of testing examples: %d" % (len(test.examples)))
-    #logging("Unique tokens in source assembly vocabulary: %d " % (len(SRC.vocab)))
-    #logging("Max input length : %d" % (max_len_src))
-    #logging("Max output length : %d" % (max_len_trg))
+	train, validate, test = torch.utils.data.random_split(data_set, [trn_prop, val_prop, tst_prop])
 
 	model = cavaj(arg, trg_ast, trg_llc)
 
 	workers = 0
 	batchSize = 1
-	collate = text_data_collator(train)
 	train_iter = DataLoader(train, batch_size=batchSize, collate_fn=None, num_workers=workers, shuffle=False)
-	collate = text_data_collator(validate)
 	valid_iter = DataLoader(validate, batch_size=batchSize, collate_fn=None, num_workers=workers, shuffle=False)
-	collate = text_data_collator(test)
 	test_iter = DataLoader( test, batch_size=batchSize, collate_fn=None, num_workers=workers, shuffle=False)
 
 	# moved training to main
-	optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
+	# optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
 	crit = torch.nn.CrossEntropyLoss()
+
+	model(trg_ast[0], trg_llc[0])
+
 	for i in arg.epochs:
 		pass
 

@@ -52,7 +52,7 @@ class data_proc:
 		self.ast_idx = 0
 		self.ast.add_node(self.ast_idx, type=self.type_map.index(javalang.tree.ClassDeclaration))
 		self.__propagate_ast(None, parsed_src.types[0])
-		return from_networkx(self.ast)
+		return from_networkx(self.ast, group_node_attrs=['type'])
 
 	def __propagate_ast(self, parent, node):
 		if type(node) is list and len(node) == 1:
@@ -163,4 +163,4 @@ class data_proc:
 							graph.add_edge(idx, I_idx, e_type=instruction_edge_type)
 							idx += 1
 					instructions.append(I_idx)
-		return from_networkx(graph)
+		return from_networkx(graph, group_node_attrs=["n_type"], group_edge_attrs=["e_type"])

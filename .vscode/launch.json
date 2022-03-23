@@ -5,7 +5,7 @@
   "version": "0.2.0",
   "configurations": [
     {
-      "name": "Python: Debug Model",
+      "name": "Debug Model",
       "type": "python",
       "request": "launch",
       "program": "${workspaceRoot}/cavaj/src/main.py",
