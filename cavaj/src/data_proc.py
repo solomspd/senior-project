@@ -3,23 +3,61 @@ import re
 import sys
 from pathlib import Path
 
-import dgl
 from torch_geometric.utils.convert import from_networkx
 import javalang
 import networkx as nx
 from tqdm import tqdm
 from torch_geometric.data import Dataset
+import pickle
 
 
 class data_proc(Dataset):
 
-	def __init__(self, arg):
+	def __init__(self, arg, src_path, llc_path, cache_path=None):
 		super.__init__()
 		self.exclude = set()
 		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
 		self.trg_ast,self.trg_llc = [],[]
 		self.ast_idx = 0
+		self.llc_path = llc_path
+		self.src_path = src_path
+		self.cache_path = Path('tmp/') if cache_path is None else cache_path
 		self.arg = arg
+		self.num_data_points = 0
+	
+	def get(self, idx):
+		ast_load = pickle.load(self.cache_path / f"ast_cache_{idx}.pkl")
+		llc_load = pickle.load(self.cache_path / f"llc_cache_{idx}.pkl")
+		return ast_load,llc_load
+	
+	def process(self):
+		for i in tqdm(self.raw_paths, desc="Loading dataset"):
+			with open(i[0]) as file:
+				try:
+					trg_ast = self.__proc_ast(file)
+				except:
+					continue
+			with open(i[1]) as file:
+				try:
+					trg_llc = self.__load_bytecode(file)
+				except:
+					continue
+			with open(self.cache_path / f"ast_cache_{self.num_data_points}.pkl", 'wb') as file:
+				pickle.dump(trg_ast, file)
+			with open(self.cache_path / f"llc_cache_{self.num_data_points}.pkl", 'wb') as file:
+				pickle.dump(trg_llc, file)
+			self.num_data_points += 1
+	
+	def len(self):
+		return self.num_data_points
+
+	@property
+	def raw_paths(self):
+		return zip(sorted(self.llc_path.iterdir())[:self.arg.data_point_num], sorted(self.src_path.iterdir())[:self.arg.data_point_num])
+	
+	@property
+	def processed_file_names(self):
+		pass # TODO: add cache list here when 100% sure we're done with data handing. leaving this empty so we are forced to redo the entire cache every time we run the model
 	
 	def load_data(self, src_path, llc_path):
 		self.__load_src(src_path)
