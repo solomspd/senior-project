@@ -17,7 +17,7 @@ from model.utils import NoamOpt
 if __name__ == '__main__':
 	arg = param.parse_args()
 	dataset_path = Path("../data/50k")
-	trg_ast,trg_llc = data_proc(arg).load_data(dataset_path / "java_src", dataset_path / "bytecode")
+	trg_ast,trg_llc = data_proc(arg, dataset_path / "java_src", dataset_path / "bytecode", dataset_path / "cache")
 
 	#logging = get_logger(log_path=os.path.join(args.log_dir, "log" + time.strftime('%Y%m%d-%H%M%S') + '.txt'), print_=True, log_=True)
 

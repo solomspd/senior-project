@@ -14,16 +14,16 @@ import pickle
 class data_proc(Dataset):
 
 	def __init__(self, arg, src_path, llc_path, cache_path=None):
-		super.__init__()
+		self.llc_path = llc_path
+		self.src_path = src_path
+		self.arg = arg
 		self.exclude = set()
 		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
 		self.trg_ast,self.trg_llc = [],[]
 		self.ast_idx = 0
-		self.llc_path = llc_path
-		self.src_path = src_path
 		self.cache_path = Path('tmp/') if cache_path is None else cache_path
-		self.arg = arg
 		self.num_data_points = 0
+		super().__init__(cache_path)
 	
 	def get(self, idx):
 		ast_load = pickle.load(self.cache_path / f"ast_cache_{idx}.pkl")
@@ -31,13 +31,13 @@ class data_proc(Dataset):
 		return ast_load,llc_load
 	
 	def process(self):
-		for i in tqdm(self.raw_paths, desc="Loading dataset"):
-			with open(i[0]) as file:
+		for ast,llc in tqdm(self.raw_paths, desc="Loading dataset"):
+			with open(ast) as file:
 				try:
 					trg_ast = self.__proc_ast(file)
 				except:
 					continue
-			with open(i[1]) as file:
+			with open(llc) as file:
 				try:
 					trg_llc = self.__load_bytecode(file)
 				except:
@@ -57,6 +57,7 @@ class data_proc(Dataset):
 	
 	@property
 	def processed_file_names(self):
+		return []
 		pass # TODO: add cache list here when 100% sure we're done with data handing. leaving this empty so we are forced to redo the entire cache every time we run the model
 	
 	def load_data(self, src_path, llc_path):
