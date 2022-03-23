@@ -13,11 +13,13 @@ class cavaj(nn.Module):
 		super().__init__()
 		self.enc = encoder(arg)
 		self.dec = decoder(arg)
+		self.final = pyg.SAGEConv(arg.hid_dim, arg.hid_dim)
 
 	def forward(self, ast, llc):
 		enc_out = self.enc(llc)
 		dec_out = self.dec(ast, enc_out)
-		return dec_out
+		final_out = Data(self.final(dec_out.x, dec_out.edge_index), dec_out.edge_index)
+		return final_out
 
 
 # biggest things omitted for simplicity are masks, pos encoder, residuals and dropout

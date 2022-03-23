@@ -8,11 +8,13 @@ from torch_geometric.utils.convert import from_networkx
 import javalang
 import networkx as nx
 from tqdm import tqdm
+from torch_geometric.data import Dataset
 
 
-class data_proc:
+class data_proc(Dataset):
 
 	def __init__(self, arg):
+		super.__init__()
 		self.exclude = set()
 		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
 		self.trg_ast,self.trg_llc = [],[]

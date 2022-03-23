@@ -1,5 +1,5 @@
-from torch.utils.data import Dataset
-
+from torch_geometric.data import Dataset
+import torch.nn.functional as F
 
 class dataset(Dataset):
 
