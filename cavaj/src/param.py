@@ -4,6 +4,7 @@ import argparse
 def parse_args():
 	parser = argparse.ArgumentParser(description='Welcome to the Cavaj CLI decompilation tool')
 	parser.add_argument("--data_point_num", help="the number of files to be used from the dataset", type=int, default=None)
+	parser.add_argument("--batch_sz", help="the batch size to be used for training", type=int, default=16)
 	parser.add_argument('--hid_dim', type=int, default=256)
 	parser.add_argument('--mem_dim', type=int, default=64)
 	parser.add_argument('--encdec_units', type=int, default=2) 

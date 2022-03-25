@@ -9,7 +9,7 @@ from torch_geometric.data import Data
 
 class cavaj(nn.Module):
 
-	def __init__(self, arg, trg_ast, trg_llc) -> None:
+	def __init__(self, arg) -> None:
 		super().__init__()
 		self.enc = encoder(arg)
 		self.dec = decoder(arg)

@@ -10,7 +10,7 @@
       "request": "launch",
       "program": "${workspaceRoot}/cavaj/src/main.py",
       "console": "integratedTerminal",
-      "justMyCode": false,
+      "justMyCode": true,
       "cwd": "${fileDirname}",
       "args": ["--data_point_num", "100"],
       "env": {
