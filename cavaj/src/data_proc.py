@@ -3,10 +3,12 @@ import re
 import sys
 import logging
 from pathlib import Path
+from sklearn.preprocessing import OneHotEncoder
 
 import torch
 from torch_geometric.data import Dataset
 from torch_geometric.utils.convert import from_networkx
+import torch_geometric.transforms as T
 import networkx as nx
 
 import javalang
@@ -48,8 +50,13 @@ class data_proc(Dataset):
 				except Exception as e:
 					logging.info(f"{llc} failed to import due to {e}")
 					continue
-			torch.save(trg_ast, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
-			torch.save(trg_llc, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
+			
+			self.pre_transform = T.OneHotDegree(max(len(trg_ast), len(trg_llc)))
+			ast_data = [self.pre_transform(data) for data in trg_ast]
+			llc_data = [self.pre_transform(data) for data in trg_llc]
+			torch.save(ast_data, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
+			torch.save(llc_data, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
+
 			self.num_data_points += 1
 		n_rejected = self.arg.data_point_num - self.num_data_points
 		if n_rejected > 0:
