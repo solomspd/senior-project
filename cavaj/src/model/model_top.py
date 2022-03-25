@@ -31,11 +31,10 @@ class encoder(nn.Module):
 
 	def __init__(self, arg) -> None:
 		super().__init__()
-		self.src_embed = pyg.SAGEConv(206, arg.hid_dim) # embedding
+		self.src_embed = pyg.SAGEConv(-1, arg.hid_dim) # embedding
 		self.enc_units = nn.ModuleList([enc_unit(arg.hid_dim, arg.n_heads) for _ in range(arg.encdec_units)]) # encode units that do the actual attention
 	
 	def forward(self, x):
-		x.x = F.one_hot(x.x.squeeze(), num_classes=206).float()
 		x = Data(self.src_embed(x.x, x.edge_index), x.edge_index)
 		for enc in self.enc_units:
 			x = enc(x)
@@ -58,11 +57,11 @@ class decoder(nn.Module):
 
 	def __init__(self, arg) -> None:
 		super().__init__()
-		self.dec_embed = pyg.SAGEConv(arg.hid_dim, arg.hid_dim)
+		self.dec_embed = pyg.SAGEConv(-1, arg.hid_dim)
 		self.dec_units = nn.ModuleList([dec_unit(arg.hid_dim, arg.hid_dim) for _ in range(arg.encdec_units)])
 	
 	def forward(self, x, llc_enc):
-		x = self.dec_embed(x.x,x.edge_index)
+		x = Data(self.dec_embed(x.x,x.edge_index), x.edge_index)
 		for dec in self.dec_units:
 			x = dec(x, llc_enc)
 		return x
@@ -79,7 +78,7 @@ class dec_unit(nn.Module):
 	
 	def forward(self, ast, llc_enc):
 		ret = self.ast_att(ast)
-		ret = Data(self.ast_lcc_att((ret,llc_enc), ret.edge_index), ret.edge_index)
+		ret = Data(self.ast_lcc_att((ret.x,llc_enc.x), ret.edge_index), ret.edge_index)
 		ret.x = self.ast_llc_cat(ret.x)
 		ret.x = self.norm(ret.x)
 		ret = self.feed_for(ret)

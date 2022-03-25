@@ -37,6 +37,9 @@ class data_proc(Dataset):
 		return ast_load,llc_load
 	
 	def process(self):
+		ohd_ast = T.OneHotDegree(len(self.type_map), cat=False)
+		ohd_llc = T.OneHotDegree(len(self.instruction_identifier), cat=False)
+
 		for llc,ast in tqdm(self.raw_paths, desc="Loading dataset"):
 			with open(ast) as file:
 				try:
@@ -51,13 +54,12 @@ class data_proc(Dataset):
 					logging.info(f"{llc} failed to import due to {e}")
 					continue
 			
-			self.pre_transform = T.OneHotDegree(max(len(trg_ast), len(trg_llc)))
-			ast_data = [self.pre_transform(data) for data in trg_ast]
-			llc_data = [self.pre_transform(data) for data in trg_llc]
-			torch.save(ast_data, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
-			torch.save(llc_data, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
-
+			ohd_ast(trg_ast)
+			ohd_llc(trg_llc)
+			torch.save(trg_ast, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
+			torch.save(trg_llc, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
 			self.num_data_points += 1
+
 		n_rejected = self.arg.data_point_num - self.num_data_points
 		if n_rejected > 0:
 			logging.warning(f"{n_rejected} files rejected")
