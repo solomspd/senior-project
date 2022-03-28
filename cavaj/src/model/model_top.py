@@ -31,6 +31,7 @@ class cavaj(nn.Module):
 		stop = False
 		i = 0
 		ast = Data(x=torch.Tensor([[1]]), edge_index=torch.Tensor(2, 0).long()).to(self.device)
+		loss_avg = 0
 		while not stop and i < len(ground_truth):
 			dec_out = self.dec(ast, enc_out)
 			new_node = Data(self.new_node_final(dec_out.x), dec_out.edge_index)
@@ -49,6 +50,8 @@ class cavaj(nn.Module):
 				sel_graph_truth[idx_map[ground_truth[i][1].item()]] = 1
 				loss += F.mse_loss(node_sel.x, sel_graph_truth) # back prop new edge
 				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]).to(self.device), torch.argmax(node_sel.x)]).unsqueeze(0).T.long()]) # Add new edge to ast being build
+			
+			loss_avg += loss.item()
 
 			loss.backward(retain_graph=True)
 
@@ -56,9 +59,7 @@ class cavaj(nn.Module):
 			ast.x = torch.cat([ast.x, new_node.unsqueeze(0)]) # Add new node to ast being build
 			i += 1
 
-		print("Loss: ", loss.item())
-
-		return ast
+		return ast, loss_avg/i
 
 # biggest things omitted for simplicity are masks, pos encoder, residuals and dropout
 # general structure should be unchanged. some layer dims might need tweeks

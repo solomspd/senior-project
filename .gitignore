@@ -10,8 +10,10 @@
 *.cb
 *.cb2
 cavaj/data
+cavaj/model_checkpoints
 !cavaj/data/proc_scripts
 .vscode/log-dir
+cavaj/src/cava.log
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,latex

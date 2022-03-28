@@ -23,7 +23,7 @@ if __name__ == '__main__':
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	arg.device = device
 
-	logging.basicConfig(level=logging.DEBUG)
+	logging.basicConfig(level=logging.DEBUG, filename="cavaj.log", force=True)
 
 	model = cavaj(arg).to(device)
 
@@ -35,11 +35,13 @@ if __name__ == '__main__':
 	optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
 	crit = torch.nn.CrossEntropyLoss()
 
-
 	for i in tqdm(range(arg.epochs)):
-		for batch in train:
+		btch_iter = tqdm(enumerate(train), total=len(train))
+		for j,batch in btch_iter:
 			optim.optimizer.zero_grad()
-			out = model(batch[0].squeeze(), batch[1])
+			out,loss = model(batch[0].squeeze(), batch[1])
 			optim.step()
+			btch_iter.set_description(f"Last Loss {loss:.3f}")
+			logging.info(f"Epoch: {i}, element: {j} Loss: {loss}")
 		if i % 20:
 			torch.save({'epoch': i, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.optimizer.state_dict()}, checkpoint_path)
