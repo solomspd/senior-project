@@ -38,7 +38,6 @@ class cavaj(nn.Module):
 			stop = torch.argmax(new_node).item() == self.EOS_TOK # check if End Of Sequence token is the new prediction
 
 			# apparently pytorch can accumulate loss like this. pretty neat
-			# TODO: streamline how tensor is a float not a long from data proc stage. make it so we are only dealing with tesnors here, and not casting them
 			idx_map[ground_truth[i][2].item()] = i
 			loss = F.nll_loss(new_node, ground_truth[i][0].unsqueeze(0)) # back prop new node type
 			new_node = torch.argmax(new_node, dim=1) # get the class that was predicted

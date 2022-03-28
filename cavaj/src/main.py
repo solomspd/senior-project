@@ -18,10 +18,13 @@ if __name__ == '__main__':
 	arg = param.parse_args()
 	dataset_path = Path("../data/50k")
 	data = data_proc(arg, dataset_path / "java_src", dataset_path / "bytecode", dataset_path / "cache")
+	checkpoint_path = Path("../model_checkpoints/checkpoint.pt")
+
+	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 
 	logging.basicConfig(level=logging.DEBUG)
 
-	model = cavaj(arg)
+	model = cavaj(arg).to(device)
 
 	train = DataLoader(data[:int(len(data) * 0.7)])
 	val = DataLoader(data[int(len(data) * 0.7):])
@@ -34,6 +37,10 @@ if __name__ == '__main__':
 
 	for i in tqdm(range(arg.epochs)):
 		for batch in train:
+			batch[0].to(device)
+			batch[1].to(device)
 			optim.optimizer.zero_grad()
 			out = model(batch[0].squeeze(), batch[1])
 			optim.step()
+		if i % 20:
+			torch.save({'epoch': i, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.optimizer.state_dict()}, checkpoint_path)
