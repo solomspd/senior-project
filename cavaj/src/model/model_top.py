@@ -21,13 +21,16 @@ class cavaj(nn.Module):
 		self.EOS_TOK = len(self.type_map) # position of EOS token in the final softman layer
 		self.new_node_final = pyg.Linear(arg.hid_dim, self.EOS_TOK + 1)
 		self.node_sel_final = pyg.SAGEConv(arg.hid_dim, 1) # 1 for probability of selecting give node
+		self.device = arg.device
 
 	def forward(self, ground_truth, llc):
+		ground_truth = ground_truth.to(self.device)
+		llc = llc.to(self.device)
 		enc_out = self.enc(llc)
 		idx_map = {} # maps idx cuz we're not sure of the order of incoming nodes
 		stop = False
 		i = 0
-		ast = Data(x=torch.Tensor([[1]]), edge_index=torch.Tensor(2, 0).long())
+		ast = Data(x=torch.Tensor([[1]]), edge_index=torch.Tensor(2, 0).long()).to(self.device)
 		while not stop and i < len(ground_truth):
 			dec_out = self.dec(ast, enc_out)
 			new_node = Data(self.new_node_final(dec_out.x), dec_out.edge_index)
@@ -42,10 +45,10 @@ class cavaj(nn.Module):
 			loss = F.nll_loss(new_node, ground_truth[i][0].unsqueeze(0)) # back prop new node type
 			new_node = torch.argmax(new_node, dim=1) # get the class that was predicted
 			if ground_truth[i][1] >= 0:
-				sel_graph_truth = torch.zeros(node_sel.x.shape) # Turn the current index to a graph tensor to compare to
+				sel_graph_truth = torch.zeros(node_sel.x.shape).to(self.device) # Turn the current index to a graph tensor to compare to
 				sel_graph_truth[idx_map[ground_truth[i][1].item()]] = 1
 				loss += F.mse_loss(node_sel.x, sel_graph_truth) # back prop new edge
-				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]), torch.argmax(node_sel.x)]).unsqueeze(0).T.long()]) # Add new edge to ast being build
+				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]).to(self.device), torch.argmax(node_sel.x)]).unsqueeze(0).T.long()]) # Add new edge to ast being build
 
 			loss.backward(retain_graph=True)
 

@@ -21,6 +21,7 @@ if __name__ == '__main__':
 	checkpoint_path = Path("../model_checkpoints/checkpoint.pt")
 
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
+	arg.device = device
 
 	logging.basicConfig(level=logging.DEBUG)
 
@@ -37,8 +38,6 @@ if __name__ == '__main__':
 
 	for i in tqdm(range(arg.epochs)):
 		for batch in train:
-			batch[0].to(device)
-			batch[1].to(device)
 			optim.optimizer.zero_grad()
 			out = model(batch[0].squeeze(), batch[1])
 			optim.step()
