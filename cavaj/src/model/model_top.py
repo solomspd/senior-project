@@ -1,17 +1,15 @@
 import numpy as np
 from torch import nn
+import torch
 from model.utils import NoamOpt
 import torch.nn.functional as F
 import torch_geometric.nn as pyg
 from torch_geometric.data import Data
 
 # these following imports should be removed once TODOs are completed
-import networkx as nx
 import javalang
 import inspect
 import sys
-
-# from model.transformer_tree_model import Decoder_AST, Encoder, Graph_NN
 
 class cavaj(nn.Module):
 
@@ -20,31 +18,45 @@ class cavaj(nn.Module):
 		self.enc = encoder(arg)
 		self.dec = decoder(arg)
 		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)] # TODO: Copied this over from data_proc so we have a way to know the number of possibilies for the final softmax layer. pass it in a nicer way later
-		self.EOS_TOK = arg.out_dim + 1 # position of EOS token in the final softman layer
-		self.new_node_final = pyg.Linear(arg.hid_dim, self.EOS_TOK)
+		self.EOS_TOK = len(self.type_map) # position of EOS token in the final softman layer
+		self.new_node_final = pyg.Linear(arg.hid_dim, self.EOS_TOK + 1)
 		self.node_sel_final = pyg.SAGEConv(arg.hid_dim, 1) # 1 for probability of selecting give node
 
-	def forward(self, ast, llc):
+	def forward(self, ground_truth, llc):
 		enc_out = self.enc(llc)
-		final_out = nx.Graph()
+		idx_map = {} # maps idx cuz we're not sure of the order of incoming nodes
 		stop = False
 		i = 0
-		while not stop:
+		ast = Data(x=torch.Tensor([[1]]), edge_index=torch.Tensor(2, 0).long())
+		while not stop and i < len(ground_truth):
 			dec_out = self.dec(ast, enc_out)
-			new_node = Data(self.nw_final(dec_out.x, dec_out.edge_index), dec_out.edge_index)
-			new_node = F.log_softmax(new_node.x)
-			node_sel = Data(self.node_sel_final(dec_out.x, dec_out.edge_index), dec_out.edge_index)
-			stop = new_node == self.EOS_TOK # check if End Of Sequence token is the new prediction
+			new_node = Data(self.new_node_final(dec_out.x), dec_out.edge_index)
+			new_node.x = pyg.global_add_pool(new_node.x, batch=None)
+			new_node = F.log_softmax(new_node.x, dim=1) # get class probabilities
+			node_sel = Data(self.node_sel_final(dec_out.x, dec_out.edge_index), dec_out.edge_index) # get next node to connect to
+
+			stop = torch.argmax(new_node).item() == self.EOS_TOK # check if End Of Sequence token is the new prediction
 
 			# apparently pytorch can accumulate loss like this. pretty neat
-			F.nll_loss(new_node, node_ground_truth[i]).backward()
-			F.mse_loss(node_sel, node_ground_truth[i]).backward()
+			# TODO: streamline how tensor is a float not a long from data proc stage. make it so we are only dealing with tesnors here, and not casting them
+			idx_map[ground_truth[i][2].item()] = i
+			loss = F.nll_loss(new_node, ground_truth[i][0].unsqueeze(0)) # back prop new node type
+			new_node = torch.argmax(new_node, dim=1) # get the class that was predicted
+			if ground_truth[i][1] >= 0:
+				sel_graph_truth = torch.zeros(node_sel.x.shape) # Turn the current index to a graph tensor to compare to
+				sel_graph_truth[idx_map[ground_truth[i][1].item()]] = 1
+				loss += F.mse_loss(node_sel.x, sel_graph_truth) # back prop new edge
+				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]), torch.argmax(node_sel.x)]).unsqueeze(0).T.long()]) # Add new edge to ast being build
 
-			# FIXME: realized this is a bad way of going about it. use pytorch geoemtric instead of networkx for final_out
-			final_out.add_node(new_node.x) # TODO: CHANGE THIS TO WORK WITH BATCHS INSTEAD OF INDIVIDUAL NODES BEFORE USING BATCHINGEFORE USING BATCHING
-			final_out.add_edge()
+			loss.backward(retain_graph=True)
 
-		return final_out
+			# TODO: CHANGE THIS TO WORK WITH BATCHS INSTEAD OF INDIVIDUAL NODES BEFORE USING BATCHINGEFORE USING BATCHING
+			ast.x = torch.cat([ast.x, new_node.unsqueeze(0)]) # Add new node to ast being build
+			i += 1
+
+		print("Loss: ", loss.item())
+
+		return ast
 
 # biggest things omitted for simplicity are masks, pos encoder, residuals and dropout
 # general structure should be unchanged. some layer dims might need tweeks
@@ -85,7 +97,8 @@ class decoder(nn.Module):
 		self.dec_units = nn.ModuleList([dec_unit(arg.hid_dim, arg.hid_dim) for _ in range(arg.encdec_units)])
 	
 	def forward(self, x, llc_enc):
-		x = Data(self.dec_embed(x.x,x.edge_index), x.edge_index)
+		embed = self.dec_embed(x.x,x.edge_index)
+		x = Data(embed, x.edge_index)
 		for dec in self.dec_units:
 			x = dec(x, llc_enc)
 		return x
@@ -102,7 +115,7 @@ class dec_unit(nn.Module):
 	
 	def forward(self, ast, llc_enc):
 		ret = self.ast_att(ast)
-		ret = Data(self.ast_lcc_att((ret.x,llc_enc.x), ret.edge_index), ret.edge_index)
+		ret = Data(self.ast_lcc_att((llc_enc.x,ret.x), ret.edge_index), ret.edge_index)
 		ret.x = self.ast_llc_cat(ret.x)
 		ret.x = self.norm(ret.x)
 		ret = self.feed_for(ret)

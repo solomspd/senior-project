@@ -11,8 +11,8 @@
       "program": "${workspaceRoot}/cavaj/src/main.py",
       "console": "integratedTerminal",
       "justMyCode": true,
-      "cwd": "${fileDirname}",
-      "args": ["--data_point_num", "100"],
+      "cwd": "${workspaceRoot}/cavaj/src",
+      // "args": ["--data_point_num", "100"],
       "env": {
         "CUDA_LAUNCH_BLOCKING": "1"
       }

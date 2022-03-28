@@ -1,6 +1,7 @@
 from pathlib import Path
 
 import logging
+from tqdm import tqdm
 
 import networkx as nx
 import torch
@@ -30,10 +31,9 @@ if __name__ == '__main__':
 	optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
 	crit = torch.nn.CrossEntropyLoss()
 
-	model(data[0][0], data[0][1])
 
-	for i in arg.epochs:
+	for i in tqdm(range(arg.epochs)):
 		for batch in train:
-			optim.zero_grad()
-			out = model(batch[0], batch[1])
+			optim.optimizer.zero_grad()
+			out = model(batch[0].squeeze(), batch[1])
 			optim.step()

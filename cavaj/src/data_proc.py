@@ -3,6 +3,7 @@ import re
 import sys
 import logging
 from pathlib import Path
+import matplotlib
 from sklearn.preprocessing import OneHotEncoder
 
 import torch
@@ -37,10 +38,9 @@ class data_proc(Dataset):
 		return ast_load,llc_load
 	
 	def process(self):
-		ohd_ast = T.OneHotDegree(len(self.type_map), cat=False)
 		ohd_llc = T.OneHotDegree(len(self.instruction_identifier), cat=False)
 
-		for llc,ast in tqdm(self.raw_paths, desc="Loading dataset"):
+		for llc,ast in tqdm(self.raw_paths, desc="Loading dataset", total=self.arg.data_point_num):
 			with open(ast) as file:
 				try:
 					trg_ast = self.__proc_ast(file)
@@ -54,14 +54,13 @@ class data_proc(Dataset):
 					logging.info(f"{llc} failed to import due to {e}")
 					continue
 			
-			trg_ast = self.__reduce_to_actions(trg_ast)
-			# ohd_ast(trg_ast)
 			ohd_llc(trg_llc)
 			torch.save(trg_ast, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
 			torch.save(trg_llc, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
 			self.num_data_points += 1
 
 		n_rejected = self.arg.data_point_num - self.num_data_points
+
 		if n_rejected > 0:
 			logging.warning(f"{n_rejected} files rejected")
 		if self.num_data_points == 0:
@@ -69,16 +68,24 @@ class data_proc(Dataset):
 			raise Exception("All files rejected")
 	
 	def __reduce_to_actions(self, ast):
-		ret_que = []
-		exp_que = []
-
+		# Returns an array of pairs of (node type, node parent). in other words, the sequence of actions required to construct the graph
+		ret_que = [[ast.nodes[0]["type"], -1, 0]] # -1 = SOS
+		bfs = nx.bfs_predecessors(ast, 0)
+		for i in bfs:
+			ret_que.append([ast.nodes[i[0]]["type"], i[1], i[0]])
+		ret_que.append([len(self.type_map), -2, 0]) # -2 = EOS
+		ret_que = torch.Tensor(ret_que).long()
+		return ret_que
 	
 	def len(self):
 		return self.num_data_points
 
 	@property
 	def raw_paths(self):
-		return zip(sorted(self.llc_path.iterdir())[:self.arg.data_point_num], sorted(self.src_path.iterdir())[:self.arg.data_point_num])
+		llc_iter = sorted(self.llc_path.iterdir())[:self.arg.data_point_num]
+		src_iter = sorted(self.src_path.iterdir())[:self.arg.data_point_num]
+		self.arg.data_point_num = min(len(llc_iter), len(src_iter))
+		return zip(llc_iter, src_iter)
 	
 	@property
 	def processed_file_names(self):
@@ -90,6 +97,8 @@ class data_proc(Dataset):
 		self.ast_idx = 0
 		self.ast.add_node(self.ast_idx, type=self.type_map.index(javalang.tree.ClassDeclaration))
 		self.__propagate_ast(None, parsed_src.types[0])
+		# TODO: make it choose networkx or action vector according to args
+		return self.__reduce_to_actions(self.ast)
 		return from_networkx(self.ast, group_node_attrs=['type'])
 
 	def __propagate_ast(self, parent, node):
