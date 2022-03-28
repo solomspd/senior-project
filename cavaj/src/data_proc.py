@@ -54,7 +54,8 @@ class data_proc(Dataset):
 					logging.info(f"{llc} failed to import due to {e}")
 					continue
 			
-			ohd_ast(trg_ast)
+			trg_ast = self.__reduce_to_actions(trg_ast)
+			# ohd_ast(trg_ast)
 			ohd_llc(trg_llc)
 			torch.save(trg_ast, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
 			torch.save(trg_llc, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
@@ -66,6 +67,11 @@ class data_proc(Dataset):
 		if self.num_data_points == 0:
 			logging.error("All files rejected")
 			raise Exception("All files rejected")
+	
+	def __reduce_to_actions(self, ast):
+		ret_que = []
+		exp_que = []
+
 	
 	def len(self):
 		return self.num_data_points

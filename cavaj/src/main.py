@@ -27,11 +27,13 @@ if __name__ == '__main__':
 	# loader = DataLoader(data, batch_size=arg.batch_sz, shuffle=False)
 
 	# moved training to main
-	# optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
+	optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
 	crit = torch.nn.CrossEntropyLoss()
 
 	model(data[0][0], data[0][1])
 
 	for i in arg.epochs:
 		for batch in train:
-			pass
+			optim.zero_grad()
+			out = model(batch[0], batch[1])
+			optim.step()
