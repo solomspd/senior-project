@@ -35,11 +35,18 @@ if __name__ == '__main__':
 	optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
 	crit = torch.nn.CrossEntropyLoss()
 
+	failed = 0
 	for i in tqdm(range(arg.epochs)):
 		btch_iter = tqdm(enumerate(train), total=len(train))
 		for j,batch in btch_iter:
 			optim.optimizer.zero_grad()
-			out,loss = model(batch[0].squeeze(), batch[1])
+			try:
+				out,loss = model(batch[0].squeeze(), batch[1])
+			except Exception as e:
+				failed += 1
+				logging.warning(f"failed to propagate batch {j} with exception {e}")
+				if failed > len(train) * 0.5:
+					logging.error(f"failed to propagate more than 50% of dataset ({failed} batches failed)")
 			optim.step()
 			btch_iter.set_description(f"Last Loss {loss:.3f}")
 			logging.info(f"Epoch: {i}, element: {j} Loss: {loss}")
