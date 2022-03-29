@@ -19,6 +19,6 @@ def parse_args():
 	parser.add_argument('--output_dim', type=int, default=128)
 	parser.add_argument('--graph_aug', action='store_true', default=True)
 	parser.add_argument('--embedding_flag',type=int, default=1)
-	parser.add_argument('--lr_ratio', type=float, default=0.15) 
+	parser.add_argument('--lr_rate', type=float, default=0.01) 
 
 	return parser.parse_args()

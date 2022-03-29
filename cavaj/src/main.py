@@ -32,14 +32,15 @@ if __name__ == '__main__':
 	# loader = DataLoader(data, batch_size=arg.batch_sz, shuffle=False)
 
 	# moved training to main
-	optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
+	# optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
+	optim = torch.optim.Adam(model.parameters(), lr=arg.lr_rate, weight_decay=5e-4)
 	crit = torch.nn.CrossEntropyLoss()
 
 	failed = 0
 	for i in tqdm(range(arg.epochs)):
 		btch_iter = tqdm(enumerate(train), total=len(train))
 		for j,batch in btch_iter:
-			optim.optimizer.zero_grad()
+			optim.zero_grad()
 			try:
 				out,loss = model(batch[0].squeeze(), batch[1])
 			except Exception as e:
@@ -51,4 +52,4 @@ if __name__ == '__main__':
 			btch_iter.set_description(f"Last Loss {loss:.3f}")
 			logging.info(f"Epoch: {i}, element: {j} Loss: {loss}")
 		if i % 20:
-			torch.save({'epoch': i, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.optimizer.state_dict()}, checkpoint_path)
+			torch.save({'epoch': i, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path)
