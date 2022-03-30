@@ -20,5 +20,6 @@ def parse_args():
 	parser.add_argument('--graph_aug', action='store_true', default=True)
 	parser.add_argument('--embedding_flag',type=int, default=1)
 	parser.add_argument('--lr_rate', type=float, default=0.01) 
+	parser.add_argument('--chk_interval', help='How many epochs are between each checkpoint', type=int, default=20) 
 
 	return parser.parse_args()

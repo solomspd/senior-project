@@ -13,6 +13,9 @@ from model.c_dataset import dataset
 from model.model_top import cavaj
 from model.utils import NoamOpt
 
+def checkpoint_model(epoch, model, optim, checkpoint_path):
+	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path)
+
 
 if __name__ == '__main__':
 	arg = param.parse_args()
@@ -43,6 +46,8 @@ if __name__ == '__main__':
 			optim.zero_grad()
 			try:
 				out,loss = model(batch[0].squeeze(), batch[1])
+			except KeyboardInterrupt:
+				checkpoint_model(i, model, optim, checkpoint_path)
 			except Exception as e:
 				failed += 1
 				logging.warning(f"failed to propagate batch {j} with exception {e}")
@@ -51,5 +56,5 @@ if __name__ == '__main__':
 			optim.step()
 			btch_iter.set_description(f"Last Loss {loss:.3f}")
 			logging.info(f"Epoch: {i}, element: {j} Loss: {loss}")
-		if i % 20:
-			torch.save({'epoch': i, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path)
+		if i % arg.chk_interval:
+			checkpoint_model(i, model, optim, checkpoint_path)
