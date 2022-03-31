@@ -23,7 +23,7 @@ class cavaj(nn.Module):
 		self.node_sel_final = pyg.SAGEConv(arg.hid_dim, 1) # 1 for probability of selecting give node
 		self.device = arg.device
 
-	def forward(self, ground_truth, llc):
+	def forward(self, ground_truth, llc, optim):
 		ground_truth = ground_truth.to(self.device)
 		llc = llc.to(self.device)
 		enc_out = self.enc(llc)
@@ -58,6 +58,7 @@ class cavaj(nn.Module):
 			# TODO: CHANGE THIS TO WORK WITH BATCHS INSTEAD OF INDIVIDUAL NODES BEFORE USING BATCHINGEFORE USING BATCHING
 			ast.x = torch.cat([ast.x, new_node.unsqueeze(0)]) # Add new node to ast being build
 			i += 1
+		optim.step()
 
 		return ast, loss_avg/i
 

@@ -12,9 +12,10 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       "cwd": "${workspaceRoot}/cavaj/src",
-      // "args": ["--data_point_num", "100"],
+      "args": ["--data_point_num", "400"],
       "env": {
-        "CUDA_LAUNCH_BLOCKING": "1"
+        "CUDA_LAUNCH_BLOCKING": "1",
+        "CUBLAS_WORKSPACE_CONFIG": ":4096:8"
       }
     },
   ]

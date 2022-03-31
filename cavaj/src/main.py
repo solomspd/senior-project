@@ -39,21 +39,24 @@ if __name__ == '__main__':
 	optim = torch.optim.Adam(model.parameters(), lr=arg.lr_rate, weight_decay=5e-4)
 	crit = torch.nn.CrossEntropyLoss()
 
+	# Making results reproducible for debugging. TODO: remove when done
+	torch.manual_seed(0)
+	torch.use_deterministic_algorithms(True, warn_only=True)
+
 	failed = 0
-	for i in tqdm(range(arg.epochs)):
+	for i in tqdm(range(arg.epochs), desc="Epochs"):
 		btch_iter = tqdm(enumerate(train), total=len(train))
 		for j,batch in btch_iter:
-			optim.zero_grad()
 			try:
-				out,loss = model(batch[0].squeeze(), batch[1])
+				optim.zero_grad()
+				out,loss = model(batch[0].squeeze(), batch[1], optim)
 			except KeyboardInterrupt:
-				checkpoint_model(i, model, optim, checkpoint_path)
+				checkpoint_model(i, model, optim, checkpoint_path, optim)
 			except Exception as e:
 				failed += 1
-				logging.warning(f"failed to propagate batch {j} with exception {e}")
-				if failed > len(train) * 0.5:
+				logging.warning(f"failed (total {failed}) to propagate batch {j} with exception {e}")
+				if failed > len(train) * 0.5: # throw error if most data is rejected
 					logging.error(f"failed to propagate more than 50% of dataset ({failed} batches failed)")
-			optim.step()
 			btch_iter.set_description(f"Last Loss {loss:.3f}")
 			logging.info(f"Epoch: {i}, element: {j} Loss: {loss}")
 		if i % arg.chk_interval:
