@@ -9,7 +9,6 @@ from torch_geometric.loader import DataLoader
 
 import param
 from data_proc import data_proc
-from model.c_dataset import dataset
 from model.model_top import cavaj
 from model.utils import NoamOpt
 
@@ -55,7 +54,7 @@ if __name__ == '__main__':
 				if failed > len(train) * 0.5: # throw error if most data is rejected
 					logging.error(f"failed to propagate more than 50% of dataset ({failed} batches failed)")
 			except KeyboardInterrupt:
-				checkpoint_model(i, model, optim, checkpoint_path, optim)
+				checkpoint_model(i, model, optim, checkpoint_path)
 			btch_iter.set_description(f"Last Loss {loss:.3f}")
 			logging.info(f"Epoch: {i}, element: {j} Loss: {loss}")
 		if i % arg.chk_interval:

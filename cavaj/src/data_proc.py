@@ -45,13 +45,13 @@ class data_proc(Dataset):
 				try:
 					trg_ast = self.__proc_ast(file)
 				except Exception as e:
-					logging.info(f"{ast} failed to import due to {e}")
+					logging.warning(f"{ast} failed to import due to {e}")
 					continue
 			with open(llc) as file:
 				try:
 					trg_llc = self.__load_bytecode(file)
 				except Exception as e:
-					logging.info(f"{llc} failed to import due to {e}")
+					logging.warning(f"{llc} failed to import due to {e}")
 					continue
 			
 			ohd_llc(trg_llc)
