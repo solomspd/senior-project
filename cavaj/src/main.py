@@ -18,6 +18,7 @@ def checkpoint_model(epoch, model, optim, checkpoint_path):
 
 
 if __name__ == '__main__':
+	logging.basicConfig(level=logging.DEBUG, filename="cavaj.log", force=True, filemode='w')
 	arg = param.parse_args()
 	dataset_path = Path("../data/50k")
 	data = data_proc(arg, dataset_path / "java_src", dataset_path / "bytecode", dataset_path / "cache")
@@ -25,8 +26,6 @@ if __name__ == '__main__':
 
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	arg.device = device
-
-	logging.basicConfig(level=logging.DEBUG, filename="cavaj.log", force=True)
 
 	model = cavaj(arg).to(device)
 
@@ -47,16 +46,16 @@ if __name__ == '__main__':
 	for i in tqdm(range(arg.epochs), desc="Epochs"):
 		btch_iter = tqdm(enumerate(train), total=len(train))
 		for j,batch in btch_iter:
+			optim.zero_grad()
 			try:
-				optim.zero_grad()
 				out,loss = model(batch[0].squeeze(), batch[1], optim)
-			except KeyboardInterrupt:
-				checkpoint_model(i, model, optim, checkpoint_path, optim)
 			except Exception as e:
 				failed += 1
 				logging.warning(f"failed (total {failed}) to propagate batch {j} with exception {e}")
 				if failed > len(train) * 0.5: # throw error if most data is rejected
 					logging.error(f"failed to propagate more than 50% of dataset ({failed} batches failed)")
+			except KeyboardInterrupt:
+				checkpoint_model(i, model, optim, checkpoint_path, optim)
 			btch_iter.set_description(f"Last Loss {loss:.3f}")
 			logging.info(f"Epoch: {i}, element: {j} Loss: {loss}")
 		if i % arg.chk_interval:
