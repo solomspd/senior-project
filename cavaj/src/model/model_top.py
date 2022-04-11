@@ -24,6 +24,7 @@ class cavaj(nn.Module):
 		self.device = arg.device
 
 	def forward(self, ground_truth, llc, optim):
+		optim.zero_grad()
 		ground_truth = ground_truth.to(self.device)
 		llc = llc.to(self.device)
 		enc_out = self.enc(llc)
@@ -45,19 +46,19 @@ class cavaj(nn.Module):
 			idx_map[ground_truth[i][2].item()] = i
 			loss = F.nll_loss(new_node, ground_truth[i][0].unsqueeze(0)) # back prop new node type
 			new_node = torch.argmax(new_node, dim=1) # get the class that was predicted
-			if ground_truth[i][1] >= 0:
+			if ground_truth[i][1] >= 0: # if current ground truth is not SOS or EOS
 				sel_graph_truth = torch.zeros(node_sel.x.shape).to(self.device) # Turn the current index to a graph tensor to compare to
-				sel_graph_truth[idx_map[ground_truth[i][1].item()]] = 1
+				sel_graph_truth[idx_map[ground_truth[i][1].item()]] = 1 # set ground truth graph
 				loss += F.mse_loss(node_sel.x, sel_graph_truth) # back prop new edge
 				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]).to(self.device), torch.argmax(node_sel.x)]).unsqueeze(0).T.long()]) # Add new edge to ast being build
 			
-			loss_avg += loss.item()
-
 			loss.backward(retain_graph=True)
+			loss_avg += loss.item()
 
 			# TODO: CHANGE THIS TO WORK WITH BATCHS INSTEAD OF INDIVIDUAL NODES BEFORE USING BATCHINGEFORE USING BATCHING
 			ast.x = torch.cat([ast.x, new_node.unsqueeze(0)]) # Add new node to ast being build
 			i += 1
+
 		optim.step()
 
 		return ast, loss_avg/i
@@ -114,6 +115,7 @@ class dec_unit(nn.Module):
 		self.ast_att = attention(dim, n_heads)
 		self.ast_lcc_att = pyg.TransformerConv(dim, dim, n_heads)
 		self.ast_llc_cat = pyg.Linear(dim * n_heads, dim)
+		# self.ast_llc_cat = pyg.Linear(dim, dim)
 		self.norm = pyg.LayerNorm(dim)
 		self.feed_for = feed_forward(dim)
 	

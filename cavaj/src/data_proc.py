@@ -97,9 +97,7 @@ class data_proc(Dataset):
 		self.ast_idx = 0
 		self.ast.add_node(self.ast_idx, type=self.type_map.index(javalang.tree.ClassDeclaration))
 		self.__propagate_ast(None, parsed_src.types[0])
-		# TODO: make it choose networkx or action vector according to args
-		return self.__reduce_to_actions(self.ast)
-		return from_networkx(self.ast, group_node_attrs=['type'])
+		return self.__reduce_to_actions(self.ast), from_networkx(self.ast, group_node_attrs=['type'])
 
 	def __propagate_ast(self, parent, node):
 		if type(node) is list and len(node) == 1:

@@ -47,7 +47,7 @@ if __name__ == '__main__':
 		for j,batch in btch_iter:
 			optim.zero_grad()
 			try:
-				out,loss = model(batch[0].squeeze(), batch[1], optim)
+				out,loss = model(batch[0][0].squeeze(), batch[1], optim)
 			except Exception as e:
 				failed += 1
 				logging.warning(f"failed (total {failed}) to propagate batch {j} with exception {e}")
