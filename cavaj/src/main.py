@@ -5,6 +5,8 @@ from tqdm import tqdm
 
 import networkx as nx
 import torch
+import torch.nn as nn
+import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
 
 import param
@@ -42,12 +44,19 @@ if __name__ == '__main__':
 	torch.use_deterministic_algorithms(True, warn_only=True)
 
 	failed = 0
+	crit = nn.KLDivLoss()
 	for i in tqdm(range(arg.epochs), desc="Epochs"):
 		btch_iter = tqdm(enumerate(train), total=len(train))
 		for j,batch in btch_iter:
 			optim.zero_grad()
 			try:
-				out,loss = model(batch[0][0].squeeze(), batch[1], optim)
+				out = model(batch[0][0].squeeze(), batch[1], optim)
+				# TODO maybe add label smoothing?
+				loss = crit(out.x, batch[0][1])
+				loss += crit(out.edge_index[:0], batch[0][1][:0])
+				# loss = out.x == batch[0][1]
+				# loss += out.edge_index[:0] == batch[0][1][:0]
+				optim.backwards()
 			except Exception as e:
 				failed += 1
 				logging.warning(f"failed (total {failed}) to propagate batch {j} with exception {e}")

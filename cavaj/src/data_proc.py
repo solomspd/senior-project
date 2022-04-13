@@ -68,7 +68,7 @@ class data_proc(Dataset):
 			raise Exception("All files rejected")
 	
 	def __reduce_to_actions(self, ast):
-		# Returns an array of pairs of (node type, node parent). in other words, the sequence of actions required to construct the graph
+		# Returns an array of pairs of (node type, node parent, node index). in other words, the sequence of actions required to construct the graph
 		ret_que = [[ast.nodes[0]["type"], -1, 0]] # -1 = SOS
 		bfs = nx.bfs_predecessors(ast, 0)
 		for i in bfs:
