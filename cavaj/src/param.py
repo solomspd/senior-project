@@ -21,5 +21,6 @@ def parse_args():
 	parser.add_argument('--embedding_flag',type=int, default=1)
 	parser.add_argument('--lr_rate', type=float, default=0.01) 
 	parser.add_argument('--chk_interval', help='How many epochs are between each checkpoint', type=int, default=20) 
+	parser.add_argument('--no_prog', help='disable progress bars', action='store_true', default=False) 
 
 	return parser.parse_args()

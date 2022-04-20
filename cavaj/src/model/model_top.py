@@ -4,6 +4,7 @@ import torch
 from model.utils import NoamOpt
 import torch_geometric.nn as pyg
 from torch_geometric.data import Data
+import torch.nn.functional as F
 
 # these following imports should be removed once TODOs are completed
 import javalang
@@ -17,8 +18,8 @@ class cavaj(nn.Module):
 		self.enc = encoder(arg)
 		self.dec = decoder(arg)
 		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)] # TODO: Copied this over from data_proc so we have a way to know the number of possibilies for the final softmax layer. pass it in a nicer way later
-		self.EOS_TOK = len(self.type_map) # position of EOS token in the final softman layer
-		self.new_node_final = pyg.Linear(arg.hid_dim, self.EOS_TOK + 1)
+		self.EOS_TOK = len(self.type_map) + 1 # position of EOS token in the final softman layer
+		self.new_node_final = pyg.Linear(arg.hid_dim, self.EOS_TOK + 2)
 		self.node_sel_final = pyg.SAGEConv(arg.hid_dim, 1) # 1 for probability of selecting give node
 		self.device = arg.device
 
@@ -29,24 +30,33 @@ class cavaj(nn.Module):
 		idx_map = {} # maps idx cuz we're not sure of the order of incoming nodes
 		stop = False
 		i = 0
-		ast = Data(x=torch.Tensor([[1]]), edge_index=torch.Tensor(2, 0).long()).to(self.device) # empty ast to built on top off
+		# TODO: Find a nicer way to deal with SOS
+		ast = Data(x=torch.Tensor(1,self.EOS_TOK + 2), edge_index=torch.Tensor(2, 0).long()).cpu() # empty ast to built on top off
+		ast.x[0,self.EOS_TOK-1] = 1 # add SOS token
+		edge_data = []
+		# TODO: add embedding to AST
 		while not stop and i < len(ground_truth):
-			dec_out = self.dec(ast, enc_out)
+			# if i == 90: break
+			dec_out = self.dec(ast.clone().detach().to(self.device), enc_out)
 			new_node = Data(self.new_node_final(dec_out.x), dec_out.edge_index)
-			new_node.x = pyg.global_add_pool(new_node.x, batch=None) # collapse output of variable size to a single 1 # TODO try different pooling methods
+			new_node.x = pyg.global_add_pool(new_node.x, batch=None) # collapse output of variable size to a single 1 # TODO: try different pooling methods
 			new_node = F.log_softmax(new_node.x, dim=1) # get class probabilities
 			node_sel = Data(self.node_sel_final(dec_out.x, dec_out.edge_index), dec_out.edge_index) # get next node to connect to
 
 			stop = torch.argmax(new_node).item() == self.EOS_TOK # check if End Of Sequence token is the new prediction
 
-			idx_map[ground_truth[i][2].item()] = i # keep track of node aliasing
-			new_node = torch.argmax(new_node, dim=1) # get the class that was predicted
-			if ground_truth[i][1] >= 0: # if current ground truth is not SOS or EOS
-				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]).to(self.device), torch.argmax(node_sel.x)]).unsqueeze(0).T.long()]) # add new edge to ast being build
+			if ground_truth[i][1] >= 0: # if current node is not SOS or EOS
+				edge_data.append(node_sel.x.reshape(-1).cpu())
+				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]), torch.argmax(node_sel.x).cpu()]).unsqueeze(0).T.long()]) # add new edge to ast being build
+				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.argmax(node_sel.x).cpu(), torch.Tensor([ast.num_nodes])]).unsqueeze(0).T.long()]) # add reverse edge to create a DiGraph so ther graph is non single directional
 
 			# TODO: CHANGE THIS TO WORK WITH BATCHS INSTEAD OF INDIVIDUAL NODES BEFORE USING BATCHINGEFORE USING BATCHING
-			ast.x = torch.cat([ast.x, new_node.unsqueeze(0)]) # Add new node to ast being build
+			ast.x = torch.cat([ast.x, new_node.cpu()]) # Add new node to ast being build
 			i += 1
+		
+		ast.edge_attr = torch.zeros(len(edge_data), edge_data[-1].shape[0]).cpu() # padded sqaure matrix to fit triangular matrix in
+		for i,ii in enumerate(edge_data):
+			ast.edge_attr[i,:ii.shape[0]] = ii
 
 		return ast
 
@@ -63,7 +73,7 @@ class encoder(nn.Module):
 		self.enc_units = nn.ModuleList([enc_unit(arg.hid_dim, arg.n_heads) for _ in range(arg.encdec_units)]) # encode units that do the actual attention
 	
 	def forward(self, x):
-		x = Data(self.src_embed(x.x, x.edge_index), x.edge_index)
+		x.x = self.src_embed(x.x, x.edge_index)
 		for enc in self.enc_units:
 			x = enc(x)
 		return x
@@ -89,8 +99,8 @@ class decoder(nn.Module):
 		self.dec_units = nn.ModuleList([dec_unit(arg.hid_dim, arg.hid_dim) for _ in range(arg.encdec_units)])
 	
 	def forward(self, x, llc_enc):
-		embed = self.dec_embed(x.x,x.edge_index)
-		x = Data(embed, x.edge_index)
+		x.x = torch.argmax(x.x,1).reshape(-1,1).float()
+		x.x = self.dec_embed(x.x,x.edge_index)
 		for dec in self.dec_units:
 			x = dec(x, llc_enc)
 		return x
@@ -108,7 +118,7 @@ class dec_unit(nn.Module):
 	
 	def forward(self, ast, llc_enc):
 		ret = self.ast_att(ast)
-		ret = Data(self.ast_lcc_att((llc_enc.x,ret.x), ret.edge_index), ret.edge_index)
+		ret.x = self.ast_lcc_att((llc_enc.x,ret.x), ret.edge_index)
 		ret.x = self.ast_llc_cat(ret.x)
 		ret.x = self.norm(ret.x)
 		ret = self.feed_for(ret)
@@ -123,7 +133,7 @@ class attention(nn.Module):
 		self.norm = pyg.LayerNorm(dim)
 	
 	def forward(self, x):
-		x = Data(self.att(x.x, x.edge_index), x.edge_index)
+		x.x = self.att(x.x, x.edge_index)
 		x.x = self.concat(x.x)
 		x.x = self.norm(x.x)
 		return x
@@ -136,6 +146,6 @@ class feed_forward(nn.Module):
 		self.norm = pyg.LayerNorm(dim)
 	
 	def forward(self, x):
-		x = Data(self.propagate(x.x, x.edge_index), x.edge_index)
+		x.x = self.propagate(x.x, x.edge_index)
 		x.x = self.norm(x.x)
 		return x
