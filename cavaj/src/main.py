@@ -15,8 +15,6 @@ from data_proc import data_proc
 from model.model_top import cavaj
 from model.utils import NoamOpt
 
-from torch.profiler import profile, record_function, ProfilerActivity
-
 def checkpoint_model(epoch, model, optim, checkpoint_path):
 	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path)
 
@@ -47,7 +45,6 @@ if __name__ == '__main__':
 	# optim = NoamOpt(arg.hid_dim, arg.lr_ratio, arg.warmup, torch.optim.Adam(model.parameters(), lr=0, betas=(0.9, 0.98), eps=1e-9)) # use NoamOpt from attention is all you need
 	optim = torch.optim.Adam(model.parameters(), lr=arg.lr_rate, weight_decay=5e-4)
 	crit = torch.nn.CrossEntropyLoss()
-
 
 	crit = nn.CrossEntropyLoss()
 	for i in tqdm(range(arg.epochs), desc="Epochs", disable=arg.no_prog):

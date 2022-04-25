@@ -45,13 +45,13 @@ class data_proc(Dataset):
 				try:
 					trg_ast = self.__proc_ast(file)
 				except Exception as e:
-					logging.warning(f"{ast} failed to import due to {e}")
+					logging.warning(f"{ast} failed to import AST due to {e}")
 					continue
 			with open(llc) as file:
 				try:
 					trg_llc = self.__load_bytecode(file)
 				except Exception as e:
-					logging.warning(f"{llc} failed to import due to {e}")
+					logging.warning(f"{llc} failed to import LLC due to {e}")
 					continue
 			
 			ohd_llc(trg_llc)
@@ -69,10 +69,15 @@ class data_proc(Dataset):
 	
 	def __reduce_to_actions(self, ast):
 		# Returns an array of pairs of (node type, node parent, node index). in other words, the sequence of actions required to construct the graph
+		edge_alias = {0:0}
+		edge_index = 1
 		ret_que = [[ast.nodes[0]["type"], 0, 0]] # len(token array) = SOS. parent = 0 because it does not have a parent and this 0 should never be used
 		bfs = nx.bfs_predecessors(ast, 0)
 		for i in bfs:
-			ret_que.append([ast.nodes[i[0]]["type"], i[1], i[0]])
+			if i[0] not in edge_alias:
+				edge_alias[i[0]] = edge_index
+				edge_index += 1
+			ret_que.append([ast.nodes[i[0]]["type"], edge_alias[i[1]], edge_alias[i[0]]])
 		ret_que.append([len(self.type_map) + 1, 0, 0]) # len(token array) + 1 = EOS. parent = 0 because it does not have a parent and this 0 should never be used
 		ret_que = torch.Tensor(ret_que).long()
 		return ret_que
