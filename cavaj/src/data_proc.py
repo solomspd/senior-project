@@ -10,6 +10,7 @@ import torch
 from torch_geometric.data import Dataset
 from torch_geometric.utils.convert import from_networkx
 import torch_geometric.transforms as T
+import torch_geometric.utils as pygu
 import networkx as nx
 
 import javalang
@@ -121,7 +122,7 @@ class data_proc(Dataset):
 			else:
 				self.__propagate_ast(cur_idx, node.body)
 		else:
-			if 'expression' in node.attrs and node.expression is not None: #TODO exhaustively cover all possible nodes
+			if 'expression' in node.attrs and node.expression is not None: # TODO exhaustively cover all possible nodes
 				self.__propagate_ast(cur_idx, node.expression)
 
 	def __load_bytecode(self, llc_file):
@@ -135,7 +136,7 @@ class data_proc(Dataset):
 		classes = []
 		instructions = []
 		functions = []
-		graph = nx.DiGraph()
+		graph = nx.Graph()
 		idx = 0
 		for line in lines:
 			if line:

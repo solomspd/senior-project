@@ -1,3 +1,4 @@
+import logging
 import numpy as np
 from torch import nn
 import torch
@@ -36,7 +37,6 @@ class cavaj(nn.Module):
 		edge_data = []
 		# TODO: add embedding to AST
 		while not stop and i < len(ground_truth):
-			# if i == 90: break
 			dec_out = self.dec(ast.clone().detach().to(self.device), enc_out)
 			new_node = Data(self.new_node_final(dec_out.x), dec_out.edge_index)
 			new_node.x = pyg.global_add_pool(new_node.x, batch=None) # collapse output of variable size to a single 1 # TODO: try different pooling methods
@@ -110,16 +110,17 @@ class dec_unit(nn.Module):
 	def __init__(self, dim, n_heads) -> None:
 		super().__init__()
 		self.ast_att = attention(dim, n_heads)
-		self.ast_lcc_att = pyg.TransformerConv(dim, dim, n_heads)
-		self.ast_llc_cat = pyg.Linear(dim * n_heads, dim)
-		# self.ast_llc_cat = pyg.Linear(dim, dim)
+		# self.ast_lcc_att = pyg.TransformerConv(dim, dim, n_heads)
+		# self.ast_llc_cat = pyg.Linear(dim * n_heads, dim)
+		self.ast_lcc_att = nn.MultiheadAttention(dim, n_heads)
 		self.norm = pyg.LayerNorm(dim)
 		self.feed_for = feed_forward(dim)
 	
 	def forward(self, ast, llc_enc):
 		ret = self.ast_att(ast)
-		ret.x = self.ast_lcc_att((llc_enc.x,ret.x), ret.edge_index)
-		ret.x = self.ast_llc_cat(ret.x)
+		# ret.x = self.ast_lcc_att((llc_enc.x,ret.x), ret.edge_index)
+		ret.x,_ = self.ast_lcc_att(ret.x, llc_enc.x, llc_enc.x)
+		# ret.x = self.ast_llc_cat(ret.x)
 		ret.x = self.norm(ret.x)
 		ret = self.feed_for(ret)
 		return ret

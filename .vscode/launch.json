@@ -13,10 +13,10 @@
       "justMyCode": true,
       "cwd": "${workspaceRoot}/cavaj/src",
       "args": ["--data_point_num", "800", "--encdec_units", "1"],
-      // "env": {
-      //   "CUDA_LAUNCH_BLOCKING": "1",
-      //   "CUBLAS_WORKSPACE_CONFIG": ":4096:8"
-      // }
+      "env": {
+        // "CUDA_LAUNCH_BLOCKING": "1",
+        // "CUBLAS_WORKSPACE_CONFIG": ":16:8"
+      }
     },
   ]
 }
