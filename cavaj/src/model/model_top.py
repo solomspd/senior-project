@@ -23,9 +23,9 @@ class cavaj(nn.Module):
 		self.new_node_final = pyg.Linear(arg.hid_dim, self.EOS_TOK + 2)
 		self.node_sel_final = pyg.SAGEConv(arg.hid_dim, 1) # 1 for probability of selecting give node
 		self.device = arg.device
+		self.max_len = arg.max_len
 
-	def forward(self, ground_truth, llc):
-		ground_truth = ground_truth.to(self.device)
+	def forward(self, llc):
 		llc = llc.to(self.device)
 		enc_out = self.enc(llc) # get encode 'memory'
 		idx_map = {} # maps idx cuz we're not sure of the order of incoming nodes
@@ -36,7 +36,7 @@ class cavaj(nn.Module):
 		ast.x[0,self.EOS_TOK-1] = 1 # add SOS token
 		edge_data = []
 		# TODO: add embedding to AST
-		while not stop and i < len(ground_truth):
+		while not stop and i < self.max_len:
 			dec_out = self.dec(ast.clone().detach().to(self.device), enc_out)
 			new_node = Data(self.new_node_final(dec_out.x), dec_out.edge_index)
 			new_node.x = pyg.global_add_pool(new_node.x, batch=None) # collapse output of variable size to a single 1 # TODO: try different pooling methods
@@ -45,10 +45,10 @@ class cavaj(nn.Module):
 
 			stop = torch.argmax(new_node).item() == self.EOS_TOK # check if End Of Sequence token is the new prediction
 
-			if ground_truth[i][1] >= 0: # if current node is not SOS or EOS
-				edge_data.append(node_sel.x.reshape(-1).cpu())
-				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]), torch.argmax(node_sel.x).cpu()]).unsqueeze(0).T.long()]) # add new edge to ast being build
-				ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.argmax(node_sel.x).cpu(), torch.Tensor([ast.num_nodes])]).unsqueeze(0).T.long()]) # add reverse edge to create a DiGraph so ther graph is non single directional
+			# if torch.argmax(new_node) < self.EOS_TOK-1: # if current node is not SOS or EOS
+			edge_data.append(node_sel.x.reshape(-1).cpu())
+			ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.Tensor([ast.num_nodes]), torch.argmax(node_sel.x).cpu()]).unsqueeze(0).T.long()]) # add new edge to ast being build
+			ast.edge_index = torch.hstack([ast.edge_index, torch.hstack([torch.argmax(node_sel.x).cpu(), torch.Tensor([ast.num_nodes])]).unsqueeze(0).T.long()]) # add reverse edge to create a DiGraph so ther graph is non single directional
 
 			# TODO: CHANGE THIS TO WORK WITH BATCHS INSTEAD OF INDIVIDUAL NODES BEFORE USING BATCHINGEFORE USING BATCHING
 			ast.x = torch.cat([ast.x, new_node.cpu()]) # Add new node to ast being build
