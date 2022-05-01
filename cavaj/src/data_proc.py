@@ -40,6 +40,7 @@ class data_proc(Dataset):
 	
 	def process(self):
 		ohd_llc = T.OneHotDegree(len(self.instruction_identifier), cat=False)
+		outlier = 0
 
 		for llc,ast in tqdm(self.raw_paths, desc="Loading dataset", total=self.arg.data_point_num, disable=self.arg.no_prog):
 			with open(ast) as file:
@@ -55,15 +56,25 @@ class data_proc(Dataset):
 					logging.warning(f"{llc} failed to import LLC due to {e}")
 					continue
 			
+			if len(trg_ast[0]) > self.arg.ast_max_len:
+				logging.warning(f"{ast} is an outlier and is too large to process with a 3090")
+				outlier += 1
+				continue
+
+			if trg_llc.x.shape[0] > self.arg.llc_max_len:
+				logging.warning(f"{ast} is an outlier and is too large to process with a 3090")
+				outlier += 1
+				continue
+			
 			ohd_llc(trg_llc)
 			torch.save(trg_ast, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
 			torch.save(trg_llc, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
 			self.num_data_points += 1
 
 		n_rejected = self.arg.data_point_num - self.num_data_points
-
+		
 		if n_rejected > 0:
-			logging.warning(f"{n_rejected} files rejected")
+			logging.warning(f"{outlier} outliers rejected, {n_rejected} total files rejected")
 		if self.num_data_points == 0:
 			logging.error("All files rejected")
 			raise Exception("All files rejected")
