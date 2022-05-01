@@ -2,6 +2,8 @@ from pathlib import Path
 
 import logging
 from tqdm import tqdm
+from datetime import datetime
+from contextlib import nullcontext
 
 import networkx as nx
 import torch
@@ -9,7 +11,7 @@ import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
 from torch.utils.tensorboard import SummaryWriter
-from torch.profiler import profile, record_function, ProfilerActivity, tensorboard_trace_handler
+from torch.profiler import profile, ProfilerActivity, tensorboard_trace_handler, schedule
 
 import param
 from data_proc import data_proc
@@ -23,7 +25,8 @@ def checkpoint_model(epoch, model, optim, checkpoint_path):
 
 
 if __name__ == '__main__':
-	logging.basicConfig(level=logging.DEBUG, filename="cavaj.log", force=True, filemode='w')
+	logging.basicConfig(level=logging.DEBUG, filename="./log/cavaj.log", force=True, filemode='w')
+	log_time = datetime.now().replace(microsecond=0)
 
 	# Making results reproducible for debugging. TODO: remove when done
 	torch.manual_seed(0)
@@ -37,7 +40,7 @@ if __name__ == '__main__':
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	# device = torch.device("cpu")
 	arg.device = device
-	tb = SummaryWriter('./runs')
+	tb = SummaryWriter(f'./log/tb/run_{log_time.isoformat()}')
 
 	model = cavaj(arg).to(device)
 
@@ -55,41 +58,40 @@ if __name__ == '__main__':
 		failed = 0
 		tot_acc = 0
 		accepted = 0
-		for j,batch in trn_iter:
-			# batch[0][1] = batch[0][1].to(device)
-			# if batch[0][0].size()[0] > 50: continue
-			try:
-				optim.zero_grad()
-				if arg.profile:
-					with profile(on_trace_ready=tensorboard_trace_handler("./runs/profiler"),with_stack=True,profile_memory=True) as prof:
-						out = model(batch[1])
-				else:
+		with profile(schedule=schedule(wait=2, warmup=2, active=6), on_trace_ready=tensorboard_trace_handler(f'./log/tb/profiler_{log_time.isoformat()}'), activities=[ProfilerActivity.CPU], profile_memory=True) if arg.profile else nullcontext() as prof:
+			for j,batch in trn_iter:
+				# batch[0][1] = batch[0][1].to(device)
+				# if batch[0][0].size()[0] > 50: continue
+				try:
+					optim.zero_grad()
 					out = model(batch[1])
-				out.x = out.x[1:]
-				new_predicted = to_networkx(out)
-				new_truth = to_networkx(batch[0][1])
-				ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
-				node_loss = crit(out.x[:batch[0][1].x.shape[0]], batch[0][1].x[:out.x.shape[0]].T.squeeze(0))
-				edge_loss = crit(out.edge_attr[:batch[0][0].shape[0]], batch[0][0][:out.edge_attr.shape[0],1])
-				loss = (node_loss + edge_loss)/2
-				loss.backward()
-				optim.step()
-				ged = next(ged_gen)
-				acc = 1 - (ged / (max(len(new_predicted.nodes)+len(new_predicted.edges),len(new_truth.nodes)+len(new_truth.edges))))
-				tot_acc += acc
-				node_loss = node_loss.item()
-				edge_loss = edge_loss.item()
-			except Exception as e:
-				failed += 1
-				logging.warning(f"failed (total {failed}) to propagate batch {j} with exception {e}")
-				if failed > len(train) * 0.5: # throw error if most data is rejected
-					logging.error(f"failed to propagate more than 50% of dataset ({failed} batches failed)")
-				raise
-			except KeyboardInterrupt:
+					out.x = out.x[1:]
+					new_predicted = to_networkx(out)
+					new_truth = to_networkx(batch[0][1])
+					ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
+					node_loss = crit(out.x[:batch[0][1].x.shape[0]], batch[0][1].x[:out.x.shape[0]].T.squeeze(0))
+					edge_loss = crit(out.edge_attr[:batch[0][0].shape[0]], batch[0][0][:out.edge_attr.shape[0],1])
+					loss = (node_loss + edge_loss)/2
+					loss.backward()
+					optim.step()
+					if arg.profile:
+						prof.step()
+					ged = next(ged_gen)
+					acc = 1 - (ged / (max(len(new_predicted.nodes)+len(new_predicted.edges),len(new_truth.nodes)+len(new_truth.edges))))
+					tot_acc += acc
+					node_loss = node_loss.item()
+					edge_loss = edge_loss.item()
+				except Exception as e:
+					failed += 1
+					logging.warning(f"failed (total {failed}) to propagate batch {j} with exception {e}")
+					if failed > len(train) * 0.5: # throw error if most data is rejected
+						logging.error(f"failed to propagate more than 50% of dataset ({failed} batches failed)")
+					raise
+				except KeyboardInterrupt:
+					checkpoint_model(i, model, optim, checkpoint_path)
+				trn_iter.set_description(f"Node Loss: {node_loss:.3f}, Edge Loss: {edge_loss:.3f}")
+				tb.add_scalar("Loss", loss, j)
+				logging.info(f"Epoch: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Acc: {acc:7.2f}, Graph size: {out.x.shape[0]}")
+			if i % arg.chk_interval:
 				checkpoint_model(i, model, optim, checkpoint_path)
-			trn_iter.set_description(f"Node Loss: {node_loss:.3f}, Edge Loss: {edge_loss:.3f}")
-			tb.add_scalar("Loss", loss, j)
-			logging.info(f"Epoch: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Acc: {acc:7.2f}, Graph size: {out.x.shape[0]}, truth: {len(new_truth.nodes)}, ged: {ged}")
-		if i % arg.chk_interval:
-			checkpoint_model(i, model, optim, checkpoint_path)
 	tb.close()
