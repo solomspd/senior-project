@@ -8,7 +8,7 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
-# from torch.utils.tensorboard import SummaryWriter
+from torch.utils.tensorboard import SummaryWriter
 
 import param
 from data_proc import data_proc
@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	arg.device = device
-	# tb = SummaryWriter()
+	tb = SummaryWriter('./runs')
 
 	model = cavaj(arg).to(device)
 
@@ -74,6 +74,8 @@ if __name__ == '__main__':
 			except KeyboardInterrupt:
 				checkpoint_model(i, model, optim, checkpoint_path)
 			btch_iter.set_description(f"Node Loss: {node_loss:.3f}, Edge Loss: {edge_loss:.3}")
+			tb.add_scalar("Loss", loss, j)
 			logging.info(f"Epoch: {i}, Element: {j} Node Loss: {node_loss:.3f}, Edge Loss: {edge_loss:.3}")
 		if i % arg.chk_interval:
 			checkpoint_model(i, model, optim, checkpoint_path)
+	tb.close()
