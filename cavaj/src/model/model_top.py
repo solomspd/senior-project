@@ -33,19 +33,11 @@ class cavaj(nn.Module):
 		idx_map = {} # maps idx cuz we're not sure of the order of incoming nodes
 		stop = False
 		i = 0
-		# TODO: Find a nicer way to deal with SOS
 		ast = Data(x=torch.Tensor(1,self.EOS_TOK + 2), edge_index=torch.Tensor(2, 0).long()).cpu() # empty ast to built on top off
 		ast.x[0,self.EOS_TOK-1] = 1 # add SOS token
 		edge_data = []
 		# TODO: add embedding to AST
 		while not stop and i < self.max_len:
-			# for obj in gc.get_objects():
-			# 	try:
-			# 		if torch.is_tensor(obj) or (hasattr(obj, 'data') and torch.is_tensor(obj.data)):
-			# 			print(type(obj), obj.size())
-			# 	except:
-			# 		pass
-			# print("-----------------END----------------")
 			dec_out = self.dec(ast.clone().detach().to(self.device), enc_out)
 			new_node = Data(self.new_node_final(dec_out.x), dec_out.edge_index)
 			new_node.x = pyg.global_add_pool(new_node.x, batch=None) # collapse output of variable size to a single 1 # TODO: try different pooling methods
@@ -70,7 +62,6 @@ class cavaj(nn.Module):
 
 # biggest things omitted for simplicity are masks, pos encoder, residuals and dropout
 # general structure should be unchanged. some layer dims might need tweeks
-# only real remaining quesiton is the final classifier
 
 # TODO: make vocab length fixed according to the number of all possible bytecode instructions so that it would work with any inference
 class encoder(nn.Module):

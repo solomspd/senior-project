@@ -20,10 +20,10 @@ def parse_args():
 	parser.add_argument('--graph_aug', action='store_true', default=True)
 	parser.add_argument('--embedding_flag',type=int, default=1)
 	parser.add_argument('--lr_rate', type=float, default=0.01) 
-	parser.add_argument('--chk_interval', help='How many epochs are between each checkpoint', type=int, default=20) 
 	parser.add_argument('--no_prog', help='disable progress bars', action='store_true', default=False) 
 	parser.add_argument('--ast_max_len', help='The maximum possible length of the resulting AST', type=int, default=100)
 	parser.add_argument('--llc_max_len', help='The maximum possible length of the input LLC', type=int, default=500)
 	parser.add_argument('--profile', help='Profile model to tensorboard', action='store_true', default=False)
+	parser.add_argument('--checkpoint', help='File to pick up training from again', type=str, default=None)
 
 	return parser.parse_args()
