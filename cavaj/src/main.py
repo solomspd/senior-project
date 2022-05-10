@@ -60,12 +60,15 @@ if __name__ == '__main__':
 	val = data[int(len(data) * 0.7):]
 
 	epoch_iter = tqdm(range(epoch, arg.epochs), desc="Epochs", initial=epoch, total=arg.epochs, disable=arg.no_prog)
+	cos = nn.CosineSimilarity()
 	for i in epoch_iter:
 		trn_iter = tqdm(enumerate(train), total=len(train), disable=arg.no_prog)
 		failed = 0
 		tot_ged_acc = 0
 		tot_ele_node_acc = 0
 		tot_ele_edge_acc = 0
+		tot_node_cos = 0
+		tot_edge_cos = 0
 		tot_loss = 0
 		with profile(schedule=schedule(wait=2, warmup=2, active=6), on_trace_ready=tensorboard_trace_handler(f'./log/tb/profiler_{log_time.isoformat()}'), profile_memory=True) if arg.profile else nullcontext() as prof:
 			for j,batch in trn_iter:
@@ -74,15 +77,23 @@ if __name__ == '__main__':
 					optim.zero_grad()
 					out = model(batch[1])
 					out.x = out.x[1:]
-					node_loss = crit(out.x[:batch[0][1].x.shape[0]], batch[0][1].x[:out.x.shape[0]].T.squeeze(0))
-					edge_loss = crit(out.edge_attr[:batch[0][0].shape[0]], batch[0][0][:out.edge_attr.shape[0],1])
+					node_pred = out.x[:batch[0][1].x.shape[0]]
+					node_truth = batch[0][1].x[:out.x.shape[0]].T.squeeze(0)
+					edge_pred = out.edge_attr[:batch[0][0].shape[0]]
+					edge_truth = batch[0][0][:out.edge_attr.shape[0],1]
+					node_loss = crit(node_pred, node_truth)
+					edge_loss = crit(edge_pred, edge_truth)
 					out.x = torch.argmax(out.x, axis=1)
 					out.edge_attr = torch.argmax(out.edge_attr, axis=1)
 					new_predicted = to_networkx(out)
 					new_truth = to_networkx(batch[0][1])
 					ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
-					ele_node_acc = out.x[:batch[0][1].x.shape[0]] == batch[0][1].x[:out.x.shape[0]].T.squeeze(0)
-					ele_edge_acc = out.edge_attr[:batch[0][0].shape[0]] == batch[0][0][:out.edge_attr.shape[0],1]
+					ele_node_acc = node_pred == node_truth
+					ele_edge_acc = edge_pred == edge_truth
+					bleu_node = ele_node_acc
+					bleu_edge = ele_edge_acc
+					node_cos = cos(node_pred, node_truth)
+					edge_cos = cos(edge_pred, edge_truth)
 					ele_node_acc = torch.sum(ele_node_acc)/len(ele_node_acc)
 					ele_edge_acc = torch.sum(ele_edge_acc)/len(ele_edge_acc)
 					loss = (node_loss + edge_loss)/2
@@ -96,6 +107,8 @@ if __name__ == '__main__':
 					tot_ged_acc += ged_acc
 					tot_ele_node_acc += ele_node_acc
 					tot_ele_edge_acc += ele_edge_acc
+					tot_node_cos += node_cos
+					tot_edge_cos += edge_cos
 					tot_loss += loss
 					node_loss = node_loss.item()
 					edge_loss = edge_loss.item()
@@ -112,6 +125,8 @@ if __name__ == '__main__':
 				tb.add_scalar("Atomic Training/GED Accuracy", ged_acc, j)
 				tb.add_scalar("Atomic Training/element wise node Accuracy", ele_node_acc, j)
 				tb.add_scalar("Atomic Training/element wise edge Accuracy", ele_edge_acc, j)
+				tb.add_scalar("Atomic Training/Cosine node similarity", node_cos, j)
+				tb.add_scalar("Atomic Training/Cosine edge similarity", edge_cos, j)
 				logging.info(f"Epoch Train: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 
 		checkpoint_model(i, model, optim, checkpoint_path)
@@ -119,6 +134,8 @@ if __name__ == '__main__':
 		trn_ged_acc = tot_ged_acc / (j - failed)
 		trn_ele_node_acc = tot_ele_node_acc / (j - failed)
 		trn_ele_edge_acc = tot_ele_edge_acc / (j - failed)
+		trn_node_cos = tot_node_cos / (j - failed)
+		trn_edge_cos = tot_edge_cos / (j - failed)
 		trn_loss = tot_loss / (j - failed)
 		logging.info(f"Epoch Train: {i:3d}, Average GED Acc: {trn_ged_acc:7.2f}, Average Loss: {trn_loss:7.2f}")
 		tb.add_scalar("Training/Loss", trn_loss, i)
@@ -130,6 +147,8 @@ if __name__ == '__main__':
 		tot_ged_acc = 0
 		tot_ele_node_acc = 0
 		tot_ele_edge_acc = 0
+		tot_node_cos = 0
+		tot_edge_cos = 0
 		tot_loss = 0
 		val_iter = tqdm(enumerate(val), total=len(val), disable=arg.no_prog)
 		for j,batch in val_iter:
@@ -138,8 +157,12 @@ if __name__ == '__main__':
 				with torch.no_grad():
 					out = model(batch[1])
 					out.x = out.x[1:]
-					node_loss = crit(out.x[:batch[0][1].x.shape[0]], batch[0][1].x[:out.x.shape[0]].T.squeeze(0))
-					edge_loss = crit(out.edge_attr[:batch[0][0].shape[0]], batch[0][0][:out.edge_attr.shape[0],1])
+					node_pred = out.x[:batch[0][1].x.shape[0]]
+					node_truth = batch[0][1].x[:out.x.shape[0]].T.squeeze(0)
+					edge_pred = out.edge_attr[:batch[0][0].shape[0]]
+					edge_truth = batch[0][0][:out.edge_attr.shape[0],1]
+					node_loss = crit(node_pred, node_truth)
+					edge_loss = crit(edge_pred, edge_truth)
 					out.x = torch.argmax(out.x, axis=1)
 					out.edge_attr = torch.argmax(out.edge_attr, axis=1)
 					new_predicted = to_networkx(out)
@@ -152,8 +175,10 @@ if __name__ == '__main__':
 					# plt.savefig('truth hierarchy.png', dpi = 1000)
 
 					ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
-					ele_node_acc = out.x[:batch[0][1].x.shape[0]] == batch[0][1].x[:out.x.shape[0]].T.squeeze(0)
-					ele_edge_acc = out.edge_attr[:batch[0][0].shape[0]] == batch[0][0][:out.edge_attr.shape[0],1]
+					node_cos = cos(node_pred, node_truth)
+					edge_cos = cos(edge_pred, edge_truth)
+					ele_node_acc = node_pred == node_truth
+					ele_edge_acc = edge_pred == edge_truth
 					ele_node_acc = torch.sum(ele_node_acc)/len(ele_node_acc)
 					ele_edge_acc = torch.sum(ele_edge_acc)/len(ele_edge_acc)
 				loss = (node_loss + edge_loss)/2
@@ -163,6 +188,8 @@ if __name__ == '__main__':
 				tot_ged_acc += ged_acc
 				tot_ele_node_acc += ele_node_acc
 				tot_ele_edge_acc += ele_edge_acc
+				tot_node_cos += node_cos
+				tot_edge_cos += edge_cos
 				tot_loss += loss
 				node_loss = node_loss.item()
 				edge_loss = edge_loss.item()
@@ -183,6 +210,8 @@ if __name__ == '__main__':
 		val_ged_acc = tot_ged_acc / (j - failed)
 		val_ele_node_acc = tot_ele_node_acc / (j - failed)
 		val_ele_edge_acc = tot_ele_edge_acc / (j - failed)
+		val_node_cos = tot_node_cos / (j - failed)
+		val_edge_cos = tot_edge_cos / (j - failed)
 		val_loss = tot_loss / (j - failed)
 		logging.info(f"Epoch Validation: {i:3d}, Average GED Acc: {val_ged_acc:7.2f}, Average Loss: {val_loss:7.2f}")
 		tb.add_scalar("Validation/Loss", val_loss, i)
