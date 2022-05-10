@@ -142,6 +142,8 @@ if __name__ == '__main__':
 		tb.add_scalar("Training/GED Accuracy", trn_ged_acc, i)
 		tb.add_scalar("Training/Element wise node Accuracy", trn_ele_node_acc, i)
 		tb.add_scalar("Training/Element wise edge Accuracy", trn_ele_edge_acc, i)
+		tb.add_scalar("Training/Cosine node similarity", trn_node_cos, j)
+		tb.add_scalar("Training/Cosine edge similarity", trn_edge_cos, j)
 
 		failed = 0
 		tot_ged_acc = 0
@@ -206,6 +208,8 @@ if __name__ == '__main__':
 			tb.add_scalar("Atomic Validation/GED Accuracy", ged_acc, j)
 			tb.add_scalar("Atomic Validation/Element wise node Accuracy", ele_node_acc, j)
 			tb.add_scalar("Atomic Validation/Element wise edge Accuracy", ele_edge_acc, j)
+			tb.add_scalar("Atomic Validation/Cosine node similarity", node_cos, j)
+			tb.add_scalar("Atomic Validation/Cosine edge similarity", edge_cos, j)
 			logging.info(f"Epoch Validation: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 		val_ged_acc = tot_ged_acc / (j - failed)
 		val_ele_node_acc = tot_ele_node_acc / (j - failed)
@@ -218,6 +222,8 @@ if __name__ == '__main__':
 		tb.add_scalar("Validation/GED Accuracy", val_ged_acc, i)
 		tb.add_scalar("Validation/Element wise node Accuracy", val_ele_node_acc, i)
 		tb.add_scalar("Validation/Element wise edge Accuracy", val_ele_edge_acc, i)
+		tb.add_scalar("Validation/Cosine node similarity", val_node_cos, i)
+		tb.add_scalar("Validation/Cosine edge similarity", val_edge_cos, i)
 		epoch_iter.set_description(f"Train Loss: {trn_loss:7.2f}, Acc: {trn_ged_acc:7.2f}. Validation Loss: {val_loss:7.2f}, Acc: {val_ged_acc:7.2f}")
 
 	tb.close()
