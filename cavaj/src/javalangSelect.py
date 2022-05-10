@@ -157,56 +157,93 @@ def ret_string(mylist):
     if x == javalang.EnhancedForControl:
          return str(x[0])
 
-    # if x == javalang.Expression:
+    if x == javalang.Expression:
+        return str(x)
 
-    # if x == javalang.Assignment:
+    if x == javalang.Assignment:
+        return str(x)
 
-    # if x == javalang.TernaryExpression:
+    if x == javalang.TernaryExpression:
+        return str(x)
 
-    # if x == javalang.BinaryOperation:
+    if x == javalang.BinaryOperation:
+        return str(x)
 
-    # if x == javalang.Cast:
+    if x == javalang.Cast:
+        return str(x)
 
-    # if x == javalang.MethodReference:
+    if x == javalang.MethodReference:
+        return str(x)
 
-    # if x == javalang.LambdaExpression:
+    if x == javalang.LambdaExpression:
+        return str(x)
 
-    # if x == javalang.Primary:
+    if x == javalang.Primary:
+        return str(x)
+    
+    if x == javalang.Literal:
+        return "Literal"
 
-    # if x == javalang.Literal:
+    if x == javalang.This:
+        return str(x)
 
-    # if x == javalang.This:
+    if x == javalang.MemberReference:
+        return "Member Reference"
 
-    # if x == javalang.MemberReference:
+    if x == javalang.Invocation:
+        return str(x)
 
-    # if x == javalang.Invocation:
+    if x == javalang.ExplicitConstructorInvocation:
+        return "ExplicitConstructorInvocation"
 
-    # if x == javalang.ExplicitConstructorInvocation:
+    if x == javalang.SuperConstructorInvocation:
+        return "MethodInvocation"
 
-    # if x == javalang.SuperConstructorInvocation:
+    if x == javalang.MethodInvocation:
+        return "MethodInvocation"
 
-    # if x == javalang.MethodInvocation:
+    if x == javalang.SuperMethodInvocation:
+        return "SuperMethodInvocation"
 
-    # if x == javalang.SuperMethodInvocation:
+    if x == javalang.SuperMemberReference:
+        return "ArraySelector"
 
-    # if x == javalang.SuperMemberReference:
+    if x == javalang.ArraySelector:
+        return "ArraySelector"
 
-    # if x == javalang.ArraySelector:
 
-    # if x == javalang.ClassReference:
+    if x == javalang.ClassReference:
+        return "ClassReference"
 
-    # if x == javalang.VoidClassReference:
 
-    # if x == javalang.Creator:
+    if x == javalang.VoidClassReference:
+        return "VoidClassReference"
 
-    # if x == javalang.ArrayCreator:
 
-    # if x == javalang.ClassCreator:
+    if x == javalang.Creator:
+        return "Creator"
 
-    # if x == javalang.InnerClassCreator:
 
-    # if x == javalang.EnumBody:
+    if x == javalang.ArrayCreator:
+        return "ArrayCreator"
 
-    # if x == javalang.EnumConstantDeclaration:
 
-    # if x == javalang.AnnotationMethod:
+    if x == javalang.ClassCreator:
+        return "ClassCreator"
+
+
+    if x == javalang.InnerClassCreator:
+        return "InnerClassCreator"
+
+
+    if x == javalang.EnumBody:
+        return str(x)
+
+
+    if x == javalang.EnumConstantDeclaration:
+        return "EnumConstantDeclaration"
+
+
+    if x == javalang.AnnotationMethod:
+        return str(x[0])
+
