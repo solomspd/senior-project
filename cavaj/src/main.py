@@ -4,7 +4,7 @@ import logging
 from tqdm import tqdm
 from datetime import datetime
 from contextlib import nullcontext
-
+import matplotlib.pyplot as plt
 import networkx as nx
 import torch
 import torch.nn as nn
@@ -59,7 +59,7 @@ if __name__ == '__main__':
 	train = data[:int(len(data) * 0.7)]
 	val = data[int(len(data) * 0.7):]
 
-	epoch_iter = tqdm(range(epoch, arg.epochs), desc="Epochs", disable=arg.no_prog)
+	epoch_iter = tqdm(range(epoch, arg.epochs), desc="Epochs", initial=epoch, total=arg.epochs, disable=arg.no_prog)
 	for i in epoch_iter:
 		trn_iter = tqdm(enumerate(train), total=len(train), disable=arg.no_prog)
 		failed = 0
@@ -112,7 +112,7 @@ if __name__ == '__main__':
 				tb.add_scalar("Atomic Training/GED Accuracy", ged_acc, j)
 				tb.add_scalar("Atomic Training/element wise node Accuracy", ele_node_acc, j)
 				tb.add_scalar("Atomic Training/element wise edge Accuracy", ele_edge_acc, j)
-				logging.info(f"Epoch Train: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
+				logging.info(f"Epoch Train: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 
 		checkpoint_model(i, model, optim, checkpoint_path)
 
@@ -120,7 +120,7 @@ if __name__ == '__main__':
 		trn_ele_node_acc = tot_ele_node_acc / (j - failed)
 		trn_ele_edge_acc = tot_ele_edge_acc / (j - failed)
 		trn_loss = tot_loss / (j - failed)
-		logging.info(f"Epoch Train: {i:3d}, Average Acc: {trn_ged_acc:7.2f}, Average Loss: {trn_loss:7.2f}")
+		logging.info(f"Epoch Train: {i:3d}, Average GED Acc: {trn_ged_acc:7.2f}, Average Loss: {trn_loss:7.2f}")
 		tb.add_scalar("Training/Loss", trn_loss, i)
 		tb.add_scalar("Training/GED Accuracy", trn_ged_acc, i)
 		tb.add_scalar("Training/Element wise node Accuracy", trn_ele_node_acc, i)
@@ -144,6 +144,13 @@ if __name__ == '__main__':
 					out.edge_attr = torch.argmax(out.edge_attr, axis=1)
 					new_predicted = to_networkx(out)
 					new_truth = to_networkx(batch[0][1])
+
+					# nx.draw(new_predicted, with_labels= True, node_size = 7, font_size = 0.05)			
+					# plt.savefig('predicted hierarchy.png', dpi = 1000)
+
+					# nx.draw(new_truth, with_labels= True, node_size = 7, font_size = 0.05)
+					# plt.savefig('truth hierarchy.png', dpi = 1000)
+
 					ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
 					ele_node_acc = out.x[:batch[0][1].x.shape[0]] == batch[0][1].x[:out.x.shape[0]].T.squeeze(0)
 					ele_edge_acc = out.edge_attr[:batch[0][0].shape[0]] == batch[0][0][:out.edge_attr.shape[0],1]
@@ -172,12 +179,12 @@ if __name__ == '__main__':
 			tb.add_scalar("Atomic Validation/GED Accuracy", ged_acc, j)
 			tb.add_scalar("Atomic Validation/Element wise node Accuracy", ele_node_acc, j)
 			tb.add_scalar("Atomic Validation/Element wise edge Accuracy", ele_edge_acc, j)
-			logging.info(f"Epoch Validation: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
+			logging.info(f"Epoch Validation: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 		val_ged_acc = tot_ged_acc / (j - failed)
 		val_ele_node_acc = tot_ele_node_acc / (j - failed)
 		val_ele_edge_acc = tot_ele_edge_acc / (j - failed)
 		val_loss = tot_loss / (j - failed)
-		logging.info(f"Epoch Validation: {i:3d}, Average Acc: {val_ged_acc:7.2f}, Average Loss: {val_loss:7.2f}")
+		logging.info(f"Epoch Validation: {i:3d}, Average GED Acc: {val_ged_acc:7.2f}, Average Loss: {val_loss:7.2f}")
 		tb.add_scalar("Validation/Loss", val_loss, i)
 		tb.add_scalar("Validation/GED Accuracy", val_ged_acc, i)
 		tb.add_scalar("Validation/Element wise node Accuracy", val_ele_node_acc, i)
