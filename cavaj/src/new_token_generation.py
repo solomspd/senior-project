@@ -2,7 +2,7 @@ import inspect
 from copy import deepcopy
 import javalang
 from pathlib import Path
-
+# import javalangSelect.py
 
 ff = open('dummy.txt', 'w')
 def check_if_jl_class(check_this):
@@ -24,7 +24,7 @@ def extract_node_info(instance):
                 if i[0] != '_':  # Not builtin attr (--> get only javalang specific)
                     # print(i, ":::")
                     inv = getattr(instance, i)
-                    # print(inv)
+                    
                     if check_if_jl_class(type(inv)):
                         to_invoke.append(inv)
                     elif type(inv) == list and len(inv) != 0 and check_if_jl_class(type(inv[0])):
@@ -32,7 +32,8 @@ def extract_node_info(instance):
                             to_invoke.append(i)
                     else:
                         if inv is not None and inv:
-                            all_node_info.append(str(inv))
+                            all_node_info.append(type(instance))
+                            # ff.write("%s\n" % type(instance))
     return all_node_info, to_invoke
                
 class node:
@@ -54,14 +55,23 @@ def traverse_tree(instance, flag):
         instance.visited = True
         for x in instance.to_invoke: # one javalang class
             child = node()
-            if check_if_jl_class(type(x)):
+            if  (type(x)):
                 child.atomic_vals, child.to_invoke = extract_node_info(x)
                 for i in child.atomic_vals:
                     if(i):
-                        ast_code.append(i)                        
+                        ast_code.append(type(x))    
+                        print(ast_code)                    
                         # ast_code.append(' ')
-                ff.write("%s\n" % str([type(x),child.atomic_vals]))
-                             
+                        #print()
+                        # print(i)
+                # ff.write("%s\n" % str([type(x),child.atomic_vals]))
+                #ff.write("%s\n" % str(type(x)))
+                if len(child.atomic_vals[1:]) != 0:
+                    temp_list = [type(x), child.atomic_vals[1:]]
+                else:
+                    temp_list = [type(x)]
+                ff.write("%s\n" % str(temp_list))
+            
                        
                 tokens_file.write('\n') 
                 instance.children.append(child)
@@ -72,7 +82,7 @@ if __name__ == "__main__":
     ast_code = []
     src_path = '/home/ramy/andrew/senior-project/cavaj/data/50k/java_src'
     files = [str(item) for item in Path(src_path).iterdir() if item.is_file()]
-    
+        # file = src_path
     for file in files:
         with open(file, 'r') as fileNew:
             try:
@@ -80,7 +90,7 @@ if __name__ == "__main__":
                 data = fileNew.read()
                 parser = javalang.parse.parse(data) 
                 # print(parser)      
-                x, y = extract_node_info(parser.children[2][0])
+                x, y = extract_node_info(parser.children[2][0]) #change
                 root = node()
                 root.atomic_vals = x
                 root.to_invoke = y
@@ -89,14 +99,16 @@ if __name__ == "__main__":
                 # tokens_file_write = open("test.txt",'w')
                 for value in root.atomic_vals:               
                     # if value not in tokens_file.read():
-                    tokens_file.write(value)                   
+                    tokens_file.write(str(value))   
+                    #print(value)            
                     # tokens_file.write(' ') 
                 tokens_file.write('\n')               
                 mytree = root  
                 traverse_tree(root, False)
+                print('/n')
             except Exception as e:
                 print(e)
-    
+
 
 # for i in ast_code:
 #     print(i)
