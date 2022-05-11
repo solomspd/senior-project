@@ -12,8 +12,6 @@ import javalang
 import inspect
 import sys
 
-import gc
-
 class cavaj(nn.Module):
 
 	def __init__(self, arg) -> None:

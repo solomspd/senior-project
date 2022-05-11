@@ -12,6 +12,7 @@ import torch.nn.functional as F
 from torch_geometric.loader import DataLoader
 from torch.utils.tensorboard import SummaryWriter
 from torch.profiler import profile, ProfilerActivity, tensorboard_trace_handler, schedule
+from scipy.spatial import distance
 
 import param
 from data_proc import data_proc
@@ -21,7 +22,7 @@ from torch_geometric.utils.convert import from_networkx, to_networkx
 
 
 def checkpoint_model(epoch, model, optim, checkpoint_path):
-	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path / f"checkpoint-{datetime.now().isoformat()}")
+	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path / f"checkpoint-epoch {epoch}-{datetime.now().isoformat()}")
 
 
 if __name__ == '__main__':
@@ -60,7 +61,6 @@ if __name__ == '__main__':
 	val = data[int(len(data) * 0.7):]
 
 	epoch_iter = tqdm(range(epoch, arg.epochs), desc="Epochs", initial=epoch, total=arg.epochs, disable=arg.no_prog)
-	cos = nn.CosineSimilarity()
 	for i in epoch_iter:
 		trn_iter = tqdm(enumerate(train), total=len(train), disable=arg.no_prog)
 		failed = 0
@@ -83,8 +83,8 @@ if __name__ == '__main__':
 					edge_truth = batch[0][0][:out.edge_attr.shape[0],1]
 					node_loss = crit(node_pred, node_truth)
 					edge_loss = crit(edge_pred, edge_truth)
-					out.x = torch.argmax(out.x, axis=1)
-					out.edge_attr = torch.argmax(out.edge_attr, axis=1)
+					node_pred = torch.argmax(node_pred, axis=1)
+					edge_pred = torch.argmax(edge_pred, axis=1)
 					new_predicted = to_networkx(out)
 					new_truth = to_networkx(batch[0][1])
 					ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
@@ -92,8 +92,8 @@ if __name__ == '__main__':
 					ele_edge_acc = edge_pred == edge_truth
 					bleu_node = ele_node_acc
 					bleu_edge = ele_edge_acc
-					node_cos = cos(node_pred, node_truth)
-					edge_cos = cos(edge_pred, edge_truth)
+					node_cos = 1 - distance.cosine(node_pred.numpy(), node_truth.numpy())
+					edge_cos = 1 - distance.cosine((edge_pred+1).numpy(), (edge_truth+1).numpy())
 					ele_node_acc = torch.sum(ele_node_acc)/len(ele_node_acc)
 					ele_edge_acc = torch.sum(ele_edge_acc)/len(ele_edge_acc)
 					loss = (node_loss + edge_loss)/2
@@ -127,7 +127,7 @@ if __name__ == '__main__':
 				tb.add_scalar("Atomic Training/element wise edge Accuracy", ele_edge_acc, j)
 				tb.add_scalar("Atomic Training/Cosine node similarity", node_cos, j)
 				tb.add_scalar("Atomic Training/Cosine edge similarity", edge_cos, j)
-				logging.info(f"Epoch Train: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
+				logging.info(f"Epoch Train: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, Cosine node: {node_cos:.7f}, Cosine edge: {edge_cos:.7f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 
 		checkpoint_model(i, model, optim, checkpoint_path)
 
@@ -165,8 +165,8 @@ if __name__ == '__main__':
 					edge_truth = batch[0][0][:out.edge_attr.shape[0],1]
 					node_loss = crit(node_pred, node_truth)
 					edge_loss = crit(edge_pred, edge_truth)
-					out.x = torch.argmax(out.x, axis=1)
-					out.edge_attr = torch.argmax(out.edge_attr, axis=1)
+					node_pred = torch.argmax(node_pred, axis=1)
+					edge_pred = torch.argmax(edge_pred, axis=1)
 					new_predicted = to_networkx(out)
 					new_truth = to_networkx(batch[0][1])
 
@@ -177,8 +177,9 @@ if __name__ == '__main__':
 					# plt.savefig('truth hierarchy.png', dpi = 1000)
 
 					ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
-					node_cos = cos(node_pred, node_truth)
-					edge_cos = cos(edge_pred, edge_truth)
+					node_pred, edge_pred = node_pred.float(), edge_pred.float()
+					node_cos = 1 - distance.cosine(node_pred.numpy(), node_truth.numpy())
+					edge_cos = 1 - distance.cosine((edge_pred+1).numpy(), (edge_truth+1).numpy())
 					ele_node_acc = node_pred == node_truth
 					ele_edge_acc = edge_pred == edge_truth
 					ele_node_acc = torch.sum(ele_node_acc)/len(ele_node_acc)
@@ -210,7 +211,7 @@ if __name__ == '__main__':
 			tb.add_scalar("Atomic Validation/Element wise edge Accuracy", ele_edge_acc, j)
 			tb.add_scalar("Atomic Validation/Cosine node similarity", node_cos, j)
 			tb.add_scalar("Atomic Validation/Cosine edge similarity", edge_cos, j)
-			logging.info(f"Epoch Validation: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
+			logging.info(f"Epoch Validation: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, Cosine node: {node_cos:.7f}, Cosine edge: {edge_cos:.7f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 		val_ged_acc = tot_ged_acc / (j - failed)
 		val_ele_node_acc = tot_ele_node_acc / (j - failed)
 		val_ele_edge_acc = tot_ele_edge_acc / (j - failed)
