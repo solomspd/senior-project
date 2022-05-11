@@ -23,7 +23,7 @@ from torch_geometric.utils.convert import from_networkx, to_networkx
 
 
 def checkpoint_model(epoch, model, optim, checkpoint_path, arg):
-	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path / f"checkpoint-epoch {epoch}-{datetime.now().isoformat(), 'args': arg}")
+	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict(), 'args': {'device': arg.device, 'hid_dim': arg.hid_dim, 'ast_max_len': arg.ast_max_len, 'n_heads': arg.n_heads, 'encdec_units': arg.encdec_units}}, checkpoint_path / f"checkpoint-epoch {epoch}-{datetime.now().isoformat()}")
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.DEBUG, filename="./log/cavaj.log", force=True, filemode='w')
@@ -37,7 +37,6 @@ if __name__ == '__main__':
 	dataset_path = Path("../data/50k")
 	data = data_proc(arg, dataset_path / "java_src", dataset_path / "bytecode", dataset_path / "cache")
 	checkpoint_path = Path(f"../model_checkpoints/{log_time.isoformat()}")
-	checkpoint_path.mkdir()
 
 	device = torch.device("cuda" if torch.cuda.is_available() else "cpu")
 	# device = torch.device("cpu")
@@ -51,6 +50,7 @@ if __name__ == '__main__':
 	optim = torch.optim.Adam(model.parameters(), lr=arg.lr_rate, weight_decay=5e-4)
 	crit = torch.nn.CrossEntropyLoss()
 	epoch = 0
+	checkpoint_path.mkdir()
 	if arg.checkpoint is not None:
 		checkpoint = torch.load(arg.checkpoint, map_location='cpu')
 		model.load_state_dict(checkpoint['model_state_dict'])

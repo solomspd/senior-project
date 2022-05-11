@@ -122,6 +122,7 @@ def get_root(fileNew):
     cur_idx = 0
     ast.add_node(cur_idx, type=type_map.index(root.atomic_vals[0]))
     traverse_tree(root, False,0)
+    
     return ast
 
 

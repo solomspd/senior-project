@@ -20,7 +20,9 @@ from tqdm import tqdm
 
 class data_proc(Dataset):
 
-	def __init__(self, arg, src_path, llc_path, cache_path=None):
+	def __init__(self, arg=None, src_path=None, llc_path=None, cache_path=None):
+		if arg is None and src_path is None and llc_path is None and cache_path is None:
+			return # empty class for pure data processing
 		self.llc_path = llc_path
 		self.src_path = src_path
 		self.arg = arg
@@ -76,7 +78,7 @@ class data_proc(Dataset):
 		for llc,ast in tqdm(self.raw_paths, desc="Loading dataset", total=self.arg.data_point_num, disable=self.arg.no_prog):
 			with open(ast) as file:
 				try:
-					trg_ast = self.__proc_ast(file)
+					trg_ast = self.proc_ast(file)
 				except Exception as e:
 					logging.warning(f"{ast} failed to import AST due to {e}")
 					continue
@@ -139,7 +141,7 @@ class data_proc(Dataset):
 	def processed_file_names(self):
 		return [] # TODO: add cache list here when 100% sure we're done with data handing. leaving this empty so we are forced to redo the entire cache every time we run the model
 	
-	def __proc_ast(self, in_file):
+	def proc_ast(self, in_file):
 		# parsed_src = javalang.parse.parse(in_file.read())
 		self.ast = nx.Graph()
 
@@ -208,7 +210,7 @@ class data_proc(Dataset):
 		# 	if 'expression' in node.attrs and node.expression is not None: # TODO exhaustively cover all possible nodes
 		# 		self.__propagate_ast(cur_idx, node.expression)
 
-	def __load_bytecode(self, llc_file):
+	def load_bytecode(self, llc_file):
 		lines = [line.strip() for line in llc_file.readlines()]
 		address_mapper = {}
 		sameloc_mapper = {}

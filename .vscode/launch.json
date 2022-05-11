@@ -12,7 +12,7 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       "cwd": "${workspaceRoot}/cavaj/src",
-      "args": ["--model", "../model_checkpoints/checkpoint.pt", "--llc", "../data/50k/java_src/AABBPool.java"],
+      "args": ["--model", "../model_checkpoints/2022-05-11T22:00:16/checkpoint-epoch 75-2022-05-11T22:00:53.331838", "--llc", "../data/50k/java_src/AABBPool.java"],
     },
     {
       "name": "Debug Model",
@@ -22,7 +22,7 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       "cwd": "${workspaceRoot}/cavaj/src",
-      "args": ["--data_point_num", "-1", "--ast_max_len", "90", "--checkpoint", "../model_checkpoints/checkpoint.pt"],
+      "args": ["--data_point_num", "100", "--ast_max_len", "90", "--checkpoint", "../model_checkpoints/checkpoint.pt"],
       "env": {
         // "CUDA_LAUNCH_BLOCKING": "1",
         // "CUBLAS_WORKSPACE_CONFIG": ":16:8"
