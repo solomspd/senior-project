@@ -12,7 +12,7 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       "cwd": "${workspaceRoot}/cavaj/src",
-      "args": ["--model", "../model_checkpoint/checkpoint", "--llc", "../data/50k/java_src/AABBPool.java"],
+      "args": ["--model", "../model_checkpoints/checkpoint.pt", "--llc", "../data/50k/java_src/AABBPool.java"],
     },
     {
       "name": "Debug Model",

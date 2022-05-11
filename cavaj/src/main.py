@@ -22,11 +22,8 @@ from model.utils import NoamOpt
 from torch_geometric.utils.convert import from_networkx, to_networkx
 
 
-def checkpoint_model(epoch, model, optim, checkpoint_path):
-	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path / f"checkpoint-epoch {epoch}-{datetime.now().isoformat()}")
-
-
-
+def checkpoint_model(epoch, model, optim, checkpoint_path, arg):
+	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path / f"checkpoint-epoch {epoch}-{datetime.now().isoformat(), 'args': arg}")
 
 if __name__ == '__main__':
 	logging.basicConfig(level=logging.DEBUG, filename="./log/cavaj.log", force=True, filemode='w')
@@ -118,11 +115,12 @@ if __name__ == '__main__':
 				except Exception as e:
 					failed += 1
 					logging.warning(f"failed (total {failed}) to train {j} with exception {e}")
+					checkpoint_model(i, model, optim, checkpoint_path, arg)
 					if failed > len(train) * 0.5: # throw error if most data is rejected
 						logging.error(f"failed to train on more than 50% of dataset ({failed} batches failed)")
 					raise
 				except KeyboardInterrupt:
-					checkpoint_model(i, model, optim, checkpoint_path)
+					checkpoint_model(i, model, optim, checkpoint_path, arg)
 				trn_iter.set_description(f"Training Node Loss: {node_loss:.3f}, Edge Loss: {edge_loss:.3f}")
 				tb.add_scalar("Atomic Training/Loss", loss, j)
 				tb.add_scalar("Atomic Training/GED Accuracy", ged_acc, j)
@@ -132,7 +130,7 @@ if __name__ == '__main__':
 				tb.add_scalar("Atomic Training/Cosine edge similarity", edge_cos, j)
 				logging.info(f"Epoch Train: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, Cosine node: {node_cos:.7f}, Cosine edge: {edge_cos:.7f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 
-		checkpoint_model(i, model, optim, checkpoint_path)
+		checkpoint_model(i, model, optim, checkpoint_path, arg)
 
 		trn_ged_acc = tot_ged_acc / (j - failed)
 		trn_ele_node_acc = tot_ele_node_acc / (j - failed)
