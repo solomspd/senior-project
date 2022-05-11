@@ -5,6 +5,16 @@
   "version": "0.2.0",
   "configurations": [
     {
+      "name": "Debug inference",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceRoot}/cavaj/src/inference.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "cwd": "${workspaceRoot}/cavaj/src",
+      "args": ["--model", "../model_checkpoint/checkpoint", "--llc", "../data/50k/java_src/AABBPool.java"],
+    },
+    {
       "name": "Debug Model",
       "type": "python",
       "request": "launch",
