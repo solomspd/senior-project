@@ -2,6 +2,8 @@ import inspect
 from copy import deepcopy
 import javalang
 from pathlib import Path
+import networkx as nx
+import sys
 # import javalangSelect.py
 
 ff = open('dummy.txt', 'w')
@@ -44,71 +46,88 @@ class node:
         self.parent =[]
         self.visited = False
     #a way to link
-    
-def traverse_tree(instance, flag):
+cur_idx=0
+ast = nx.Graph()
+type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)] 
+parent=0
+# child_idx=0
+
+def traverse_tree(instance, flag,parent):
     global ast_code
     global ff
+    global cur_idx
+    # global parent
+    global type_map
+    # global child_idx
+    # cur_idx+=1
+    #type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
     if instance.visited or (len(instance.to_invoke) == 0 and type(instance) != None):  # Base case
+        # parent+=1
         return
     else:
         # first_child = node()
+        # child_idx+=1
+        
         instance.visited = True
         for x in instance.to_invoke: # one javalang class
             child = node()
-            if  (type(x)):
+            # parent = cur_idx
+            if (type(x)):
                 child.atomic_vals, child.to_invoke = extract_node_info(x)
                 for i in child.atomic_vals:
                     if(i):
-                        ast_code.append(type(x))    
-                        print(ast_code)                    
-                        # ast_code.append(' ')
-                        #print()
-                        # print(i)
-                # ff.write("%s\n" % str([type(x),child.atomic_vals]))
-                #ff.write("%s\n" % str(type(x)))
+                        cur_idx+=1
+                        # ast_code.append(type(x)) 
+                        ast.add_node(cur_idx, type=type_map.index((type(x))))
+                        ast.add_edge(parent, cur_idx)
+                        # print(ast_code)                    
+
                 if len(child.atomic_vals[1:]) != 0:
                     temp_list = [type(x), child.atomic_vals[1:]]
                 else:
                     temp_list = [type(x)]
-                ff.write("%s\n" % str(temp_list))
-            
-                       
-                tokens_file.write('\n') 
-                instance.children.append(child)
-                traverse_tree(child, True)
+                ff.write("%s\n" % str(temp_list))     
+                #tokens_file.write('\n') 
+                # instance.children.append(child)
+                traverse_tree(child, True, parent + cur_idx)
+                # parent+=1
 
-
-if __name__ == "__main__":
+def get_root(file ):
+# if __name__ == "__main__":
     ast_code = []
-    src_path = '/home/ramy/andrew/senior-project/cavaj/data/50k/java_src'
-    files = [str(item) for item in Path(src_path).iterdir() if item.is_file()]
+    global type_map
+    # src_path = '/home/ramy/andrew/senior-project/cavaj/data/50k/java_src'
+    # files = [str(item) for item in Path(src_path).iterdir() if item.is_file()]
         # file = src_path
-    for file in files:
-        with open(file, 'r') as fileNew:
-            try:
-                print(file)
-                data = fileNew.read()
-                parser = javalang.parse.parse(data) 
-                # print(parser)      
-                x, y = extract_node_info(parser.children[2][0]) #change
-                root = node()
-                root.atomic_vals = x
-                root.to_invoke = y
-                ast_code.append(root.atomic_vals)
-                tokens_file = open("new_tokens.txt",'a+')
-                # tokens_file_write = open("test.txt",'w')
-                for value in root.atomic_vals:               
-                    # if value not in tokens_file.read():
-                    tokens_file.write(str(value))   
-                    #print(value)            
-                    # tokens_file.write(' ') 
-                tokens_file.write('\n')               
-                mytree = root  
-                traverse_tree(root, False)
-                print('/n')
-            except Exception as e:
-                print(e)
+    # for file in files:
+    with open(file, 'r') as fileNew:
+        try:
+            # print(file)
+            data = fileNew.read()
+            parser = javalang.parse.parse(data) 
+            # print(parser)      
+            x, y = extract_node_info(parser.children[2][0]) #change
+            root = node()
+            root.atomic_vals = x
+            root.to_invoke = y
+            ast_code.append(root.atomic_vals)
+            # tokens_file = open("new_tokens.txt",'a+')
+            # tokens_file_write = open("test.txt",'w')
+            # for value in root.atomic_vals:               
+            #     # if value not in tokens_file.read():
+            #     tokens_file.write(str(value))   
+            #     #print(value)            
+            #     # tokens_file.write(' ') 
+            # tokens_file.write('\n')               
+            mytree = root 
+            ast.add_node(cur_idx, type=type_map.index(root.atomic_vals[0]))
+            traverse_tree(root, False,0)
+            return root
+        except Exception as e:
+            print(e)
 
 
 # for i in ast_code:
 #     print(i)
+
+get_root('/home/g07/senior-project/cavaj/data/50k/java_src/AABBPool.java')

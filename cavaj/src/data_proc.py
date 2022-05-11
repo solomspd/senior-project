@@ -8,9 +8,11 @@ from sklearn.preprocessing import OneHotEncoder
 import matplotlib.pyplot as plt
 import torch
 from torch_geometric.data import Dataset
-from torch_geometric.utils.convert import from_networkx
+from torch_geometric.utils.convert import from_networkx, to_networkx
 import torch_geometric.transforms as T
-import networkx as nx 
+import torch_geometric.utils as pygu
+import networkx as nx
+import new_token_generation
 import javalang
 import random
 from tqdm import tqdm
@@ -24,26 +26,8 @@ class data_proc(Dataset):
 		self.arg = arg
 		self.exclude = set()
 		self.instruction_identifier = ['aaload', 'aastore', 'aconst_null', 'aload', 'aload_0', 'aload_1', 'aload_2', 'aload_3', 'anewarray', 'areturn', 'arraylength', 'astore', 'astore_0', 'astore_1', 'astore_2', 'astore_3', 'athrow', 'baload', 'bastore', 'bipush', 'breakpoint', 'caload', 'castore', 'checkcast', 'd2f', 'd2i', 'd2l', 'dadd', 'daload', 'dastore', 'dcmpg', 'dcmpl', 'dconst_0', 'dconst_1', 'ddiv', 'dload', 'dload_0', 'dload_1', 'dload_2', 'dload_3', 'dmul', 'dneg', 'drem', 'dreturn', 'dstore', 'dstore_0', 'dstore_1', 'dstore_2', 'dstore_3', 'dsub', 'dup', 'dup_x1', 'dup_x2', 'dup2', 'dup2_x1', 'dup2_x2', 'f2d', 'f2i', 'f2l', 'fadd', 'faload', 'fastore', 'fcmpg', 'fcmpl', 'fconst_0', 'fconst_1', 'fconst_2', 'fdiv', 'fload', 'fload_0', 'fload_1', 'fload_2', 'fload_3', 'fmul', 'fneg', 'frem', 'freturn', 'fstore', 'fstore_0', 'fstore_1', 'fstore_2', 'fstore_3', 'fsub', 'getfield', 'getstatic', 'goto', 'goto_w', 'i2b', 'i2c', 'i2d', 'i2f', 'i2l', 'i2s', 'iadd', 'iaload', 'iand', 'iastore', 'iconst_m1', 'iconst_0', 'iconst_1', 'iconst_2', 'iconst_3', 'iconst_4', 'iconst_5', 'idiv', 'if_acmpeq', 'if_acmpne', 'if_icmpeq', 'if_icmpge', 'if_icmpgt', 'if_icmple', 'if_icmplt', 'if_icmpne', 'ifeq', 'ifge', 'ifgt', 'ifle', 'iflt', 'ifne', 'ifnonnull', 'ifnull', 'iinc', 'iload', 'iload_0', 'iload_1', 'iload_2', 'iload_3', 'impdep1', 'impdep2', 'imul', 'ineg', 'instanceof', 'invokedynamic', 'invokeinterface', 'invokespecial', 'invokestatic', 'invokevirtual', 'ior', 'irem', 'ireturn', 'ishl', 'ishr', 'istore', 'istore_0', 'istore_1', 'istore_2', 'istore_3', 'isub', 'iushr', 'ixor', 'jsr†', 'jsr_w†', 'l2d', 'l2f', 'l2i', 'ladd', 'laload', 'land', 'lastore', 'lcmp', 'lconst_0', 'lconst_1', 'ldc', 'ldc_w', 'ldc2_w', 'ldiv', 'lload', 'lload_0', 'lload_1', 'lload_2', 'lload_3', 'lmul', 'lneg', 'lookupswitch', 'lor', 'lrem', 'lreturn', 'lshl', 'lshr', 'lstore', 'lstore_0', 'lstore_1', 'lstore_2', 'lstore_3', 'lsub', 'lushr', 'lxor', 'monitorenter', 'monitorexit', 'multianewarray', 'new', 'newarray', 'nop', 'pop', 'pop2', 'putfield', 'putstatic', 'ret†', 'return', 'saload', 'sastore', 'sipush', 'swap', 'tableswitch', 'wide', '(no name)']
-		files = [str(item) for item in Path(self.src_path).iterdir() if item.is_file()]
-		self.tokens = []
-		self.counter = 1
-		self.type_map =[]
-		try:
-			for file in files:
-				with open(file, 'r') as fileNew:
-					self.data = fileNew.read()
-					self.tokens += list(javalang.tokenizer.tokenize(self.data))
-				for token in self.tokens:
-					self.type_map.append(token.value)
-		except:
-			self.counter+=1
-			print(self.counter)
-		self.type_map = list(dict.fromkeys(self.type_map))
-		self.type_map = [x for x in self.type_map if (x.find('"') and not x[0].isdigit())]
-		with open('tokens.txt', 'w') as testFile:
-			for item in self.type_map:
-				testFile.write("%s\n" % item)
-		#self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
+		self.type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)]
+		# print(self.type_map)
 		self.trg_ast,self.trg_llc = [],[]
 		self.ast_idx = 0
 		self.cache_path = Path('tmp/') if cache_path is None else cache_path
@@ -87,6 +71,7 @@ class data_proc(Dataset):
 	
 	def process(self):
 		ohd_llc = T.OneHotDegree(len(self.instruction_identifier), cat=False)
+		outlier = 0
 
 		for llc,ast in tqdm(self.raw_paths, desc="Loading dataset", total=self.arg.data_point_num, disable=self.arg.no_prog):
 			with open(ast) as file:
@@ -102,15 +87,25 @@ class data_proc(Dataset):
 					logging.warning(f"{llc} failed to import LLC due to {e}")
 					continue
 			
+			if len(trg_ast[0]) > self.arg.ast_max_len:
+				logging.warning(f"{ast} is an outlier and is too large to process with a 3090")
+				outlier += 1
+				continue
+
+			if trg_llc.x.shape[0] > self.arg.llc_max_len:
+				logging.warning(f"{ast} is an outlier and is too large to process with a 3090")
+				outlier += 1
+				continue
+			
 			ohd_llc(trg_llc)
 			torch.save(trg_ast, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
 			torch.save(trg_llc, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
 			self.num_data_points += 1
 
 		n_rejected = self.arg.data_point_num - self.num_data_points
-
+		
 		if n_rejected > 0:
-			logging.warning(f"{n_rejected} files rejected")
+			logging.warning(f"{outlier} outliers rejected, {n_rejected} total files rejected")
 		if self.num_data_points == 0:
 			logging.error("All files rejected")
 			raise Exception("All files rejected")
@@ -145,11 +140,13 @@ class data_proc(Dataset):
 		return [] # TODO: add cache list here when 100% sure we're done with data handing. leaving this empty so we are forced to redo the entire cache every time we run the model
 	
 	def __proc_ast(self, in_file):
-		parsed_src = javalang.parse.parse(in_file.read())
-		self.ast = nx.Graph()
-		self.ast_idx = 0
+		# parsed_src = javalang.parse.parse(in_file.read())
+		
+		# self.ast_idx = 0
 		self.ast.add_node(self.ast_idx, type=self.type_map.index("class"))
-		self.__propagate_ast(None, parsed_src.types[0])
+		self.my_root = new_token_generation.get_root(in_file)
+		# self.__propagate_ast(None,my_root)
+		self.ast = nx.Graph(my_root)
 		pos = self.hierarchy_pos(self.ast,1)
 		nx.draw(self.ast, pos=pos, with_labels=True, node_size=5,font_size=0.01)
 		plt.savefig('hierarchy.png', dpi=1000)
@@ -160,44 +157,55 @@ class data_proc(Dataset):
 	def addToTree(self, parent, cur_idx, str1):
 		if type(str1) != javalang.tree.VariableDeclarator and str1 is not None and str1:
 			self.ast.add_node(cur_idx, type=self.type_map.index(str1))
+		
 			self.ast.add_edge(parent, cur_idx)
 
-	def __propagate_ast(self, parent, node):
-		if type(node) is list and len(node) == 1:
-			node = node[0]
-		cur_idx = self.ast_idx
-		listAttr = node.attrs
-		self.str1 = ""
-		if parent is not None:
-			if type(node.children) is list and len(node.children) > 0: 
-				for newChild in node.children:
-					if newChild is not None and newChild:
-						self.strType = str(type(newChild))
-						if self.strType == "javalang.tree.Class":  # For Classes
-							for InNewChild in newChild.children:
-								for allInNewChild in InNewChild.children:
-									str1 = allInNewChild
-									self.addToTree(parent, cur_idx, str1)
-						elif "javalang.tree" in self.strType: # For any type of Javalang
-							for allInNewChild in newChild.children:
-								str1 = allInNewChild
-								self.addToTree(parent, cur_idx, str1)
-						else: # others
-							if type(newChild) == str:
-								str1 = newChild
-								self.addToTree(parent, cur_idx, str1)
-							else:
-								for allInNewChild in newChild:
-									str1 = allInNewChild
-									self.addToTree(parent, cur_idx, str1)
-		self.ast_idx += 1
-		for attr in node.attrs:
-			#print(vars(node))
-			#print(vars(node)[attr])
-			if vars(node)[attr] is not None:
-				if type(vars(node)[attr]) is list:
-					for i in vars(node)[attr]:
-						self.__propagate_ast(cur_idx, i)			
+	def check_if_jl_class(check_this):
+		for name, obj in inspect.getmembers(javalang.tree):
+			if check_this == obj:
+				return True
+    return False
+
+	# def __propagate_ast(self, parent, node):
+	# 	if type(node) is list and len(node) == 1:
+	# 		node = node[0]
+	# 	cur_idx = self.ast_idx
+	# 	listAttr = node.attrs
+	# 	self.str1 = ""
+	# 	self.toNetwork = to_networkx(node)
+		# if parent is not None:
+		# 	if type(node.children) is list and len(node.children) > 0: 
+		# 		for newChild in node.children:
+		# 			if newChild is not None and newChild:
+		# 				self.strType = str(type(newChild))
+		# 				if self.strType == "javalang.tree.Class":  # For Classes
+		# 					for InNewChild in newChild.children:
+		# 						for allInNewChild in InNewChild.children:
+		# 							str1 = allInNewChild
+		# 							self.addToTree(parent, cur_idx, str1)
+		# 				elif "javalang.tree" in self.strType: # For any type of Javalang
+		# 					for allInNewChild in newChild.children:
+		# 						str1 = allInNewChild
+		# 						self.addToTree(parent, cur_idx, str1)
+		# 				else: # others
+		# 					if type(newChild) == str:
+		# 						str1 = newChild
+		# 						self.addToTree(parent, cur_idx, str1)
+		# 					else:
+		# 						for allInNewChild in newChild:
+		# 							str1 = allInNewChild
+		# 							self.addToTree(parent, cur_idx, str1)
+		# self.ast_idx += 1
+
+		# if 'body' in node.attrs and node.body is not None:
+		# 	if type(node.body) is list:
+		# 		for i in node.body:
+		# 			self.__propagate_ast(cur_idx, i)
+		# 	else:
+		# 		self.__propagate_ast(cur_idx, node.body)
+		# else:
+		# 	if 'expression' in node.attrs and node.expression is not None: # TODO exhaustively cover all possible nodes
+		# 		self.__propagate_ast(cur_idx, node.expression)
 
 	def __load_bytecode(self, llc_file):
 		lines = [line.strip() for line in llc_file.readlines()]
@@ -210,7 +218,7 @@ class data_proc(Dataset):
 		classes = []
 		instructions = []
 		functions = []
-		graph = nx.DiGraph()
+		graph = nx.Graph()
 		idx = 0
 		for line in lines:
 			if line:
