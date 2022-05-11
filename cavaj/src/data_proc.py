@@ -40,34 +40,34 @@ class data_proc(Dataset):
 		llc_load = torch.load(self.cache_path / f"llc_cache_{idx}.pt")
 		return ast_load,llc_load
 
-	def hierarchy_pos(self,G, root=None, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5):
-		if not nx.is_tree(G):
-			raise TypeError('cannot use hierarchy_pos on a graph that is not a tree')
+	# def hierarchy_pos(self,G, root=None, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5):
+	# 	if not nx.is_tree(G):
+	# 		raise TypeError('cannot use hierarchy_pos on a graph that is not a tree')
 
-		if root is None:
-			if isinstance(G, nx.DiGraph):
-				root = next(iter(nx.topological_sort(G)))  #allows back compatibility with nx version 1.11
-			else:
-				root = random.choice(list(G.nodes))
+	# 	if root is None:
+	# 		if isinstance(G, nx.DiGraph):
+	# 			root = next(iter(nx.topological_sort(G)))  #allows back compatibility with nx version 1.11
+	# 		else:
+	# 			root = random.choice(list(G.nodes))
 
-	def _hierarchy_pos(self,G, root, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5, pos = None, parent = None):
-		if pos is None:
-			pos = {root:(xcenter,vert_loc)}
-		else:
-			pos[root] = (xcenter, vert_loc)
-		children = list(G.neighbors(root))
-		if not isinstance(G, nx.DiGraph) and parent is not None:
-			children.remove(parent)  
-		if len(children)!=0:
-			dx = width/len(children) 
-			nextx = xcenter - width/2 - dx/2
-			for child in children:
-				nextx += dx
-				pos = self._hierarchy_pos(G,child, width = dx, vert_gap = vert_gap, 
-									vert_loc = vert_loc-vert_gap, xcenter=nextx,
-									pos=pos, parent = root)
-			return pos       
-		return self._hierarchy_pos(G, root, width, vert_gap, vert_loc, xcenter)	
+	# def _hierarchy_pos(self,G, root, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5, pos = None, parent = None):
+	# 	if pos is None:
+	# 		pos = {root:(xcenter,vert_loc)}
+	# 	else:
+	# 		pos[root] = (xcenter, vert_loc)
+	# 	children = list(G.neighbors(root))
+	# 	if not isinstance(G, nx.DiGraph) and parent is not None:
+	# 		children.remove(parent)  
+	# 	if len(children)!=0:
+	# 		dx = width/len(children) 
+	# 		nextx = xcenter - width/2 - dx/2
+	# 		for child in children:
+	# 			nextx += dx
+	# 			pos = self._hierarchy_pos(G,child, width = dx, vert_gap = vert_gap, 
+	# 								vert_loc = vert_loc-vert_gap, xcenter=nextx,
+	# 								pos=pos, parent = root)
+	# 		return pos       
+	# 	return self._hierarchy_pos(G, root, width, vert_gap, vert_loc, xcenter)	
 	
 	def process(self):
 		ohd_llc = T.OneHotDegree(len(self.instruction_identifier), cat=False)
@@ -87,8 +87,8 @@ class data_proc(Dataset):
 					logging.warning(f"{llc} failed to import LLC due to {e}")
 					continue
 			
-			if len(trg_ast[0]) > self.arg.ast_max_len:
-				logging.warning(f"{ast} is an outlier and is too large to process with a 3090")
+			if trg_ast[1].x.shape[0] > self.arg.ast_max_len:
+				logging.warning(f"{ast} is an outlier and is too large ({len(trg_ast[0])}) to process with a 3090")
 				outlier += 1
 				continue
 
@@ -141,30 +141,31 @@ class data_proc(Dataset):
 	
 	def __proc_ast(self, in_file):
 		# parsed_src = javalang.parse.parse(in_file.read())
-		
+		self.ast = nx.Graph()
+
 		# self.ast_idx = 0
-		self.ast.add_node(self.ast_idx, type=self.type_map.index("class"))
-		self.my_root = new_token_generation.get_root(in_file)
+		# self.ast.add_node(self.ast_idx, type=self.type_map.index("class"))
+		# self.my_root = new_token_generation.get_root(in_file)
 		# self.__propagate_ast(None,my_root)
-		self.ast = nx.Graph(my_root)
-		pos = self.hierarchy_pos(self.ast,1)
-		nx.draw(self.ast, pos=pos, with_labels=True, node_size=5,font_size=0.01)
-		plt.savefig('hierarchy.png', dpi=1000)
+		self.ast = new_token_generation.get_root(in_file)
+		# pos = self.hierarchy_pos(self.ast,1)
+		# nx.draw(self.ast, pos=pos, with_labels=True, node_size=5,font_size=0.01)
+		# plt.savefig('hierarchy.png', dpi=1000)
 		ast_ret = from_networkx(self.ast, group_node_attrs=['type'])
 		ast_ret.x = torch.cat((ast_ret.x, torch.tensor([[len(self.type_map) + 1]]))) # adding EOS (len(token array) + 1) token to ground truth
 		return self.__reduce_to_actions(self.ast), ast_ret
 
-	def addToTree(self, parent, cur_idx, str1):
-		if type(str1) != javalang.tree.VariableDeclarator and str1 is not None and str1:
-			self.ast.add_node(cur_idx, type=self.type_map.index(str1))
+	# def addToTree(self, parent, cur_idx, str1):
+	# 	if type(str1) != javalang.tree.VariableDeclarator and str1 is not None and str1:
+	# 		self.ast.add_node(cur_idx, type=self.type_map.index(str1))
 		
-			self.ast.add_edge(parent, cur_idx)
+	# 		self.ast.add_edge(parent, cur_idx)
 
 	def check_if_jl_class(check_this):
 		for name, obj in inspect.getmembers(javalang.tree):
 			if check_this == obj:
 				return True
-    return False
+		return False
 
 	# def __propagate_ast(self, parent, node):
 	# 	if type(node) is list and len(node) == 1:

@@ -1,7 +1,3 @@
-# for i in child.atomic_vals:
-#                     if(i):
-#                         ast_code.append(i)                        
-#                         ast_code.append(' ')
 import javalang
 def ret_string(mylist):
 

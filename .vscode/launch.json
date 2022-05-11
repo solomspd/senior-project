@@ -22,7 +22,7 @@
       "console": "integratedTerminal",
       "justMyCode": true,
       "cwd": "${workspaceRoot}/cavaj/src",
-      "args": ["--data_point_num", "100", "--ast_max_len", "80", "--checkpoint", "../model_checkpoints/checkpoint.pt"],
+      "args": ["--data_point_num", "-1", "--ast_max_len", "90", "--checkpoint", "../model_checkpoints/checkpoint.pt"],
       "env": {
         // "CUDA_LAUNCH_BLOCKING": "1",
         // "CUBLAS_WORKSPACE_CONFIG": ":16:8"
