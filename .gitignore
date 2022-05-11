@@ -13,7 +13,7 @@ cavaj/data
 cavaj/model_checkpoints
 !cavaj/data/proc_scripts
 .vscode/log-dir
-cavaj/src/cava.log
+cavaj/src/log
 
 
 # Created by https://www.toptal.com/developers/gitignore/api/python,latex
