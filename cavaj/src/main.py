@@ -15,6 +15,7 @@ from torch.profiler import profile, ProfilerActivity, tensorboard_trace_handler,
 from scipy.spatial import distance
 
 import param
+
 from data_proc import data_proc
 from model.model_top import cavaj
 from model.utils import NoamOpt
@@ -23,6 +24,8 @@ from torch_geometric.utils.convert import from_networkx, to_networkx
 
 def checkpoint_model(epoch, model, optim, checkpoint_path):
 	torch.save({'epoch': epoch, 'model_state_dict': model.state_dict(), 'optimizer_state_dict': optim.state_dict()}, checkpoint_path / f"checkpoint-epoch {epoch}-{datetime.now().isoformat()}")
+
+
 
 
 if __name__ == '__main__':
