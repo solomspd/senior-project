@@ -20,6 +20,7 @@ from data_proc import data_proc
 from model.model_top import cavaj
 from model.utils import NoamOpt
 from torch_geometric.utils.convert import from_networkx, to_networkx
+from torch_geometric.data import Data
 
 
 def checkpoint_model(epoch, model, optim, checkpoint_path, arg):
@@ -57,8 +58,8 @@ if __name__ == '__main__':
 		optim.load_state_dict(checkpoint['optimizer_state_dict'])
 		epoch = checkpoint['epoch']
 
-	train = data[:int(len(data) * 0.7)]
-	val = data[int(len(data) * 0.7):]
+	train = data[:int(len(data) * (1-arg.val_part))]
+	val = data[int(len(data) * (1-arg.val_part)):]
 
 	epoch_iter = tqdm(range(epoch, arg.epochs), desc="Epochs", initial=epoch, total=arg.epochs, disable=arg.no_prog)
 	for i in epoch_iter:
@@ -85,8 +86,9 @@ if __name__ == '__main__':
 					edge_loss = crit(edge_pred, edge_truth)
 					node_pred = torch.argmax(node_pred, axis=1)
 					edge_pred = torch.argmax(edge_pred, axis=1)
+					out.x = torch.argmax(out.x, axis=1)
 					new_predicted = to_networkx(out)
-					new_truth = to_networkx(batch[0][1])
+					new_truth = to_networkx(batch[0][1], node_attrs=['x'])
 					ged_gen = nx.optimize_graph_edit_distance(new_truth, new_predicted)
 					ele_node_acc = node_pred == node_truth
 					ele_edge_acc = edge_pred == edge_truth
@@ -122,12 +124,12 @@ if __name__ == '__main__':
 				except KeyboardInterrupt:
 					checkpoint_model(i, model, optim, checkpoint_path, arg)
 				trn_iter.set_description(f"Training Node Loss: {node_loss:.3f}, Edge Loss: {edge_loss:.3f}")
-				tb.add_scalar("Atomic Training/Loss", loss, j)
+				tb.add_scalar("Atomic Training/Loss", loss, i*len(train) + j)
 				tb.add_scalar("Atomic Training/GED Accuracy", ged_acc, j)
-				tb.add_scalar("Atomic Training/element wise node Accuracy", ele_node_acc, j)
-				tb.add_scalar("Atomic Training/element wise edge Accuracy", ele_edge_acc, j)
-				tb.add_scalar("Atomic Training/Cosine node similarity", node_cos, j)
-				tb.add_scalar("Atomic Training/Cosine edge similarity", edge_cos, j)
+				tb.add_scalar("Atomic Training/element wise node Accuracy", ele_node_acc, i*len(train) + j)
+				tb.add_scalar("Atomic Training/element wise edge Accuracy", ele_edge_acc, i*len(train) + j)
+				tb.add_scalar("Atomic Training/Cosine node similarity", node_cos, i*len(train) + j)
+				tb.add_scalar("Atomic Training/Cosine edge similarity", edge_cos, i*len(train) + j)
 				logging.info(f"Epoch Train: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, Cosine node: {node_cos:.7f}, Cosine edge: {edge_cos:.7f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 
 		checkpoint_model(i, model, optim, checkpoint_path, arg)
@@ -143,8 +145,8 @@ if __name__ == '__main__':
 		tb.add_scalar("Training/GED Accuracy", trn_ged_acc, i)
 		tb.add_scalar("Training/Element wise node Accuracy", trn_ele_node_acc, i)
 		tb.add_scalar("Training/Element wise edge Accuracy", trn_ele_edge_acc, i)
-		tb.add_scalar("Training/Cosine node similarity", trn_node_cos, j)
-		tb.add_scalar("Training/Cosine edge similarity", trn_edge_cos, j)
+		tb.add_scalar("Training/Cosine node similarity", trn_node_cos, i)
+		tb.add_scalar("Training/Cosine edge similarity", trn_edge_cos, i)
 
 		failed = 0
 		tot_ged_acc = 0
@@ -169,7 +171,7 @@ if __name__ == '__main__':
 					node_pred = torch.argmax(node_pred, axis=1)
 					edge_pred = torch.argmax(edge_pred, axis=1)
 					new_predicted = to_networkx(out)
-					new_truth = to_networkx(batch[0][1])
+					new_truth = to_networkx(batch[0][1], node_attrs=['x'])
 
 					# nx.draw(new_predicted, with_labels= True, node_size = 7, font_size = 0.05)			
 					# plt.savefig('predicted hierarchy.png', dpi = 1000)
@@ -206,12 +208,12 @@ if __name__ == '__main__':
 			except KeyboardInterrupt:
 				checkpoint_model(i, model, optim, checkpoint_path)
 			val_iter.set_description(f"Validation Node Loss: {node_loss:.3f}, Edge Loss: {edge_loss:.3f}, Acc: {ged_acc:7.2f}")
-			tb.add_scalar("Atomic Validation/Loss", loss, j)
-			tb.add_scalar("Atomic Validation/GED Accuracy", ged_acc, j)
-			tb.add_scalar("Atomic Validation/Element wise node Accuracy", ele_node_acc, j)
-			tb.add_scalar("Atomic Validation/Element wise edge Accuracy", ele_edge_acc, j)
-			tb.add_scalar("Atomic Validation/Cosine node similarity", node_cos, j)
-			tb.add_scalar("Atomic Validation/Cosine edge similarity", edge_cos, j)
+			tb.add_scalar("Atomic Validation/Loss", loss, i*len(val) + j)
+			tb.add_scalar("Atomic Validation/GED Accuracy", ged_acc, i*len(val) + j)
+			tb.add_scalar("Atomic Validation/Element wise node Accuracy", ele_node_acc, i*len(val) + j)
+			tb.add_scalar("Atomic Validation/Element wise edge Accuracy", ele_edge_acc, i*len(val) + j)
+			tb.add_scalar("Atomic Validation/Cosine node similarity", node_cos, i*len(val) + j)
+			tb.add_scalar("Atomic Validation/Cosine edge similarity", edge_cos, i*len(val) + j)
 			logging.info(f"Epoch Validation: {i:3d}, Element: {j:3d} Node Loss: {node_loss:7.2f}, Edge Loss: {edge_loss:7.2f}, Node Acc: {ele_node_acc:7.2f}, Edge Acc: {ele_edge_acc:7.2f}, Cosine node: {node_cos:.7f}, Cosine edge: {edge_cos:.7f}, GED Acc: {ged_acc:7.2f}, Graph size: {out.x.shape[0]}")
 		val_ged_acc = tot_ged_acc / (j - failed)
 		val_ele_node_acc = tot_ele_node_acc / (j - failed)

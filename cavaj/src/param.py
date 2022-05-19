@@ -24,6 +24,7 @@ def parse_args():
 	parser.add_argument('--ast_max_len', help='The maximum possible length of the resulting AST', type=int, default=100)
 	parser.add_argument('--llc_max_len', help='The maximum possible length of the input LLC', type=int, default=500)
 	parser.add_argument('--profile', help='Profile model to tensorboard', action='store_true', default=False)
-	parser.add_argument('--checkpoint', help='File to pick up training from again', type=str, default='/home/g07/senior-project/cavaj/model_checkpoints/2022-05-10T15:22:35')
+	parser.add_argument('--checkpoint', help='File to pick up training from again', type=str)
+	parser.add_argument('--val_part', help='% partition to use as validation', default=0.3, type=int)
 
 	return parser.parse_args()

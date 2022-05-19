@@ -13,6 +13,7 @@ from copy import deepcopy
 import networkx as nx
 from dotdict import dotdict
 import torch_geometric.transforms as T
+from torch_geometric.utils import to_networkx
 
 type_map = [i for name,i in inspect.getmembers(sys.modules[javalang.tree.__name__]) if inspect.isclass(i)] 
 # print(type_map)
@@ -53,6 +54,10 @@ if __name__ == '__main__':
                 print(f'Failed to load Low Level Code file due to {e}')
                 continue
         ohd_llc(llc)
-        pred = model(llc)
+        with torch.no_grad():
+            pred = model(llc)
+        pred.x = torch.argmax(pred.x, axis=1)
+        pred.edge_attr = torch.argmax(pred.edge_attr, axis=1)
+        pred = to_networkx(pred, node_attrs=['x'])
         print(pred)
         

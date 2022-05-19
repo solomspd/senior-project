@@ -42,37 +42,7 @@ class data_proc(Dataset):
 		llc_load = torch.load(self.cache_path / f"llc_cache_{idx}.pt")
 		return ast_load,llc_load
 
-	# def hierarchy_pos(self,G, root=None, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5):
-	# 	if not nx.is_tree(G):
-	# 		raise TypeError('cannot use hierarchy_pos on a graph that is not a tree')
-
-	# 	if root is None:
-	# 		if isinstance(G, nx.DiGraph):
-	# 			root = next(iter(nx.topological_sort(G)))  #allows back compatibility with nx version 1.11
-	# 		else:
-	# 			root = random.choice(list(G.nodes))
-
-	# def _hierarchy_pos(self,G, root, width=1., vert_gap = 0.2, vert_loc = 0, xcenter = 0.5, pos = None, parent = None):
-	# 	if pos is None:
-	# 		pos = {root:(xcenter,vert_loc)}
-	# 	else:
-	# 		pos[root] = (xcenter, vert_loc)
-	# 	children = list(G.neighbors(root))
-	# 	if not isinstance(G, nx.DiGraph) and parent is not None:
-	# 		children.remove(parent)  
-	# 	if len(children)!=0:
-	# 		dx = width/len(children) 
-	# 		nextx = xcenter - width/2 - dx/2
-	# 		for child in children:
-	# 			nextx += dx
-	# 			pos = self._hierarchy_pos(G,child, width = dx, vert_gap = vert_gap, 
-	# 								vert_loc = vert_loc-vert_gap, xcenter=nextx,
-	# 								pos=pos, parent = root)
-	# 		return pos       
-	# 	return self._hierarchy_pos(G, root, width, vert_gap, vert_loc, xcenter)	
-	
 	def process(self):
-		ohd_llc = T.OneHotDegree(len(self.instruction_identifier), cat=False)
 		outlier = 0
 
 		for llc,ast in tqdm(self.raw_paths, desc="Loading dataset", total=self.arg.data_point_num, disable=self.arg.no_prog):
@@ -84,7 +54,7 @@ class data_proc(Dataset):
 					continue
 			with open(llc) as file:
 				try:
-					trg_llc = self.__load_bytecode(file)
+					trg_llc = self.load_bytecode(file)
 				except Exception as e:
 					logging.warning(f"{llc} failed to import LLC due to {e}")
 					continue
@@ -99,7 +69,6 @@ class data_proc(Dataset):
 				outlier += 1
 				continue
 			
-			ohd_llc(trg_llc)
 			torch.save(trg_ast, self.cache_path / f"ast_cache_{self.num_data_points}.pt")
 			torch.save(trg_llc, self.cache_path / f"llc_cache_{self.num_data_points}.pt")
 			self.num_data_points += 1
@@ -157,58 +126,11 @@ class data_proc(Dataset):
 		ast_ret.x = torch.cat((ast_ret.x, torch.tensor([[len(self.type_map) + 1]]))) # adding EOS (len(token array) + 1) token to ground truth
 		return self.__reduce_to_actions(self.ast), ast_ret
 
-	# def addToTree(self, parent, cur_idx, str1):
-	# 	if type(str1) != javalang.tree.VariableDeclarator and str1 is not None and str1:
-	# 		self.ast.add_node(cur_idx, type=self.type_map.index(str1))
-		
-	# 		self.ast.add_edge(parent, cur_idx)
-
 	def check_if_jl_class(check_this):
 		for name, obj in inspect.getmembers(javalang.tree):
 			if check_this == obj:
 				return True
 		return False
-
-	# def __propagate_ast(self, parent, node):
-	# 	if type(node) is list and len(node) == 1:
-	# 		node = node[0]
-	# 	cur_idx = self.ast_idx
-	# 	listAttr = node.attrs
-	# 	self.str1 = ""
-	# 	self.toNetwork = to_networkx(node)
-		# if parent is not None:
-		# 	if type(node.children) is list and len(node.children) > 0: 
-		# 		for newChild in node.children:
-		# 			if newChild is not None and newChild:
-		# 				self.strType = str(type(newChild))
-		# 				if self.strType == "javalang.tree.Class":  # For Classes
-		# 					for InNewChild in newChild.children:
-		# 						for allInNewChild in InNewChild.children:
-		# 							str1 = allInNewChild
-		# 							self.addToTree(parent, cur_idx, str1)
-		# 				elif "javalang.tree" in self.strType: # For any type of Javalang
-		# 					for allInNewChild in newChild.children:
-		# 						str1 = allInNewChild
-		# 						self.addToTree(parent, cur_idx, str1)
-		# 				else: # others
-		# 					if type(newChild) == str:
-		# 						str1 = newChild
-		# 						self.addToTree(parent, cur_idx, str1)
-		# 					else:
-		# 						for allInNewChild in newChild:
-		# 							str1 = allInNewChild
-		# 							self.addToTree(parent, cur_idx, str1)
-		# self.ast_idx += 1
-
-		# if 'body' in node.attrs and node.body is not None:
-		# 	if type(node.body) is list:
-		# 		for i in node.body:
-		# 			self.__propagate_ast(cur_idx, i)
-		# 	else:
-		# 		self.__propagate_ast(cur_idx, node.body)
-		# else:
-		# 	if 'expression' in node.attrs and node.expression is not None: # TODO exhaustively cover all possible nodes
-		# 		self.__propagate_ast(cur_idx, node.expression)
 
 	def load_bytecode(self, llc_file):
 		lines = [line.strip() for line in llc_file.readlines()]
