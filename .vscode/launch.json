@@ -1,0 +1,22 @@
+{
+  // Use IntelliSense to learn about possible attributes.
+  // Hover to view descriptions of existing attributes.
+  // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+  "version": "0.2.0",
+  "configurations": [
+    {
+      "name": "Debug Model",
+      "type": "python",
+      "request": "launch",
+      "program": "${workspaceRoot}/cavaj/src/main.py",
+      "console": "integratedTerminal",
+      "justMyCode": true,
+      "cwd": "${workspaceRoot}/cavaj/src",
+      "args": ["--data_point_num", "100", "--ast_max_len", "80", "--checkpoint", "../model_checkpoints/checkpoint.pt"],
+      "env": {
+        // "CUDA_LAUNCH_BLOCKING": "1",
+        // "CUBLAS_WORKSPACE_CONFIG": ":16:8"
+      }
+    },
+  ]
+}

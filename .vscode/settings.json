@@ -1,0 +1,7 @@
+{
+    "git.ignoreLimitWarning": true,
+    "python.analysis.extraPaths": [
+        "./baseline_model"
+    ],
+    "python.formatting.provider": "autopep8"
+}
